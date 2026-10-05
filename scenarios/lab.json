@@ -1,0 +1,31 @@
+{
+  "appendCategories": [
+    {
+      "id": "lab",
+      "title": { "en": "QA lab", "fa": "آزمایشگاه" },
+      "icon": "icons/categories/lab.png",
+      "color": "#868E96",
+      "order": 99
+    }
+  ],
+  "appendServices": [
+    {
+      "id": "lab",
+      "name": { "en": "Daricheh Lab", "fa": "آزمایشگاه دریچه" },
+      "description": { "en": "Test pages for popups, payments, permissions, files and links", "fa": "صفحه‌های آزمایشی پنجره، پرداخت، مجوز، فایل و پیوند" },
+      "categoryId": "lab",
+      "url": "http://127.0.0.1:8080/lab/index.html",
+      "logo": "logos/lab.png",
+      "brandColor": "#495057",
+      "order": 1,
+      "compatibility": "EXPERIMENTAL",
+      "web": {
+        "allowedDomains": ["127.0.0.1"],
+        "permissions": { "location": true, "camera": true, "microphone": true },
+        "popupPolicy": "NEW_TAB",
+        "externalDomains": ["example.com"],
+        "keepAlive": "NORMAL"
+      }
+    }
+  ]
+}

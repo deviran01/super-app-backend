@@ -1,0 +1,6 @@
+{
+  "app": {
+    "latestVersion": 9999,
+    "channels": { "bazaar": { "latestVersion": 9999 }, "myket": { "latestVersion": 9999 } }
+  }
+}

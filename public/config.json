@@ -1,0 +1,1595 @@
+{
+  "schemaVersion": 1,
+  "configVersion": "2026-10-05.1",
+  "refreshIntervalSeconds": 3600,
+  "app": {
+    "minimumSupportedVersion": 1,
+    "latestVersion": 1,
+    "forceUpdate": false,
+    "updateUrl": "https://daricheh.example/download2",
+    "message": {
+      "en": "This version is no longer supported. Update to keep using your services.",
+      "fa": "این نسخه دیگر پشتیبانی نمی‌شود. برای ادامه استفاده، برنامه را به‌روز کنید."
+    },
+    "optionalMessage": {
+      "en": "A new version with faster switching between services is ready.",
+      "fa": "نسخه جدید با جابه‌جایی سریع‌تر بین سرویس‌ها آماده است."
+    },
+    "channels": {
+      "bazaar": {
+        "minimumSupportedVersion": 1,
+        "latestVersion": 1
+      },
+      "myket": {
+        "minimumSupportedVersion": 1,
+        "latestVersion": 1
+      }
+    }
+  },
+  "features": {
+    "search": true,
+    "favorites": true,
+    "multiProfile": true,
+    "compareMode": true,
+    "downloads": true,
+    "storageManager": true
+  },
+  "web": {
+    "paymentDomains": [
+      "shaparak.ir",
+      "sep.ir",
+      "sadadpsp.ir",
+      "pec.ir",
+      "pep.co.ir",
+      "asanpardakht.ir",
+      "ap.ir",
+      "irankish.com",
+      "zarinpal.com",
+      "payping.ir",
+      "idpay.ir",
+      "zibal.ir",
+      "nextpay.org",
+      "vandar.io",
+      "jibit.ir",
+      "bitpay.ir",
+      "pay.ir",
+      "digipay.ir",
+      "mydigipay.com"
+    ],
+    "externalSchemes": [
+      "tel",
+      "mailto",
+      "sms",
+      "smsto",
+      "geo",
+      "market",
+      "bazaar",
+      "myket",
+      "intent",
+      "tg",
+      "whatsapp"
+    ]
+  },
+  "links": {
+    "privacyPolicyUrl": "https://daricheh.example/privacy",
+    "supportUrl": "https://daricheh.example/support"
+  },
+  "categories": [
+    {
+      "id": "transport",
+      "title": {
+        "en": "Transportation",
+        "fa": "حمل‌ونقل"
+      },
+      "icon": "icons/categories/transport.png",
+      "color": "#2F9E44",
+      "order": 1,
+      "enabled": true
+    },
+    {
+      "id": "food",
+      "title": {
+        "en": "Food",
+        "fa": "غذا"
+      },
+      "icon": "icons/categories/food.png",
+      "color": "#E8590C",
+      "order": 2,
+      "enabled": true
+    },
+    {
+      "id": "shopping",
+      "title": {
+        "en": "Shopping",
+        "fa": "خرید"
+      },
+      "icon": "icons/categories/shopping.png",
+      "color": "#D6336C",
+      "order": 3,
+      "enabled": true
+    },
+    {
+      "id": "classifieds",
+      "title": {
+        "en": "Classifieds",
+        "fa": "نیازمندی‌ها"
+      },
+      "icon": "icons/categories/classifieds.png",
+      "color": "#7048E8",
+      "order": 4,
+      "enabled": true
+    },
+    {
+      "id": "travel",
+      "title": {
+        "en": "Travel",
+        "fa": "سفر"
+      },
+      "icon": "icons/categories/travel.png",
+      "color": "#1C7ED6",
+      "order": 5,
+      "enabled": true
+    },
+    {
+      "id": "maps",
+      "title": {
+        "en": "Maps",
+        "fa": "نقشه و مسیریابی"
+      },
+      "icon": "icons/categories/maps.png",
+      "color": "#0CA678",
+      "order": 6,
+      "enabled": true
+    },
+    {
+      "id": "entertainment",
+      "title": {
+        "en": "Entertainment",
+        "fa": "سرگرمی"
+      },
+      "icon": "icons/categories/entertainment.png",
+      "color": "#AE3EC9",
+      "order": 7,
+      "enabled": true
+    },
+    {
+      "id": "health",
+      "title": {
+        "en": "Health",
+        "fa": "سلامت"
+      },
+      "icon": "icons/categories/health.png",
+      "color": "#F03E3E",
+      "order": 8,
+      "enabled": true
+    },
+    {
+      "id": "finance",
+      "title": {
+        "en": "Finance",
+        "fa": "مالی"
+      },
+      "icon": "icons/categories/finance.png",
+      "color": "#1098AD",
+      "order": 9,
+      "enabled": true
+    },
+    {
+      "id": "utilities",
+      "title": {
+        "en": "Telecom & bills",
+        "fa": "اپراتور و قبوض"
+      },
+      "icon": "icons/categories/utilities.png",
+      "color": "#4C6EF5",
+      "order": 10,
+      "enabled": true
+    },
+    {
+      "id": "government",
+      "title": {
+        "en": "Government",
+        "fa": "خدمات دولتی"
+      },
+      "icon": "icons/categories/government.png",
+      "color": "#495057",
+      "order": 11,
+      "enabled": true
+    },
+    {
+      "id": "messaging",
+      "title": {
+        "en": "Messaging",
+        "fa": "پیام‌رسان"
+      },
+      "icon": "icons/categories/messaging.png",
+      "color": "#15AABF",
+      "order": 12,
+      "enabled": true
+    }
+  ],
+  "services": [
+    {
+      "id": "snapp",
+      "name": {
+        "en": "Snapp",
+        "fa": "اسنپ"
+      },
+      "description": {
+        "en": "Cars, bikes and couriers on demand",
+        "fa": "درخواست خودرو، موتور و پیک"
+      },
+      "categoryId": "transport",
+      "url": "https://app.snapp.taxi/",
+      "logo": "logos/snapp.png",
+      "brandColor": "#00D170",
+      "enabled": true,
+      "order": 10,
+      "featured": true,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "snapp.taxi",
+          "snapp.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": true,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "HIGH",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "snap",
+        "taxi",
+        "ride",
+        "تاکسی",
+        "تاکسی اینترنتی",
+        "ماشین"
+      ]
+    },
+    {
+      "id": "tapsi",
+      "name": {
+        "en": "Tapsi",
+        "fa": "تپسی"
+      },
+      "description": {
+        "en": "Ride hailing across Iran",
+        "fa": "تاکسی اینترنتی در سراسر ایران"
+      },
+      "categoryId": "transport",
+      "url": "https://app.tapsi.cab/",
+      "logo": "logos/tapsi.png",
+      "brandColor": "#FF6A00",
+      "enabled": true,
+      "order": 20,
+      "featured": true,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "tapsi.cab",
+          "tapsi.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": true,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "HIGH",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "tap30",
+        "taxi",
+        "ride",
+        "تاکسی",
+        "تپ سی"
+      ]
+    },
+    {
+      "id": "snappbox",
+      "name": {
+        "en": "Snapp Box",
+        "fa": "اسنپ‌باکس"
+      },
+      "description": {
+        "en": "Parcel delivery",
+        "fa": "ارسال مرسوله"
+      },
+      "categoryId": "transport",
+      "url": "https://app.snapp-box.com/",
+      "logo": "logos/snappbox.png",
+      "brandColor": "#00B862",
+      "enabled": false,
+      "order": 30,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "snapp-box.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": true,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      }
+    },
+    {
+      "id": "snappfood",
+      "name": {
+        "en": "SnappFood",
+        "fa": "اسنپ‌فود"
+      },
+      "description": {
+        "en": "Restaurants and groceries delivered",
+        "fa": "سفارش غذا و سوپرمارکت"
+      },
+      "categoryId": "food",
+      "url": "https://snappfood.ir/",
+      "logo": "logos/snappfood.png",
+      "brandColor": "#FF00A6",
+      "enabled": true,
+      "order": 40,
+      "featured": true,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "snappfood.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": true,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "food",
+        "restaurant",
+        "delivery",
+        "رستوران",
+        "غذا",
+        "زودفود"
+      ]
+    },
+    {
+      "id": "tapsifood",
+      "name": {
+        "en": "Tapsi Food",
+        "fa": "تپسی‌فود"
+      },
+      "description": {
+        "en": "Food delivery from nearby restaurants",
+        "fa": "سفارش غذا از رستوران‌های نزدیک"
+      },
+      "categoryId": "food",
+      "url": "https://tapsi.food/",
+      "logo": "logos/tapsifood.png",
+      "brandColor": "#FF6A00",
+      "enabled": true,
+      "order": 50,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "tapsi.food"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": true,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "food",
+        "رستوران",
+        "غذا"
+      ]
+    },
+    {
+      "id": "digikala",
+      "name": {
+        "en": "Digikala",
+        "fa": "دیجی‌کالا"
+      },
+      "description": {
+        "en": "Iran's largest online store",
+        "fa": "بزرگ‌ترین فروشگاه اینترنتی ایران"
+      },
+      "categoryId": "shopping",
+      "url": "https://www.digikala.com/",
+      "logo": "logos/digikala.png",
+      "brandColor": "#EF394E",
+      "enabled": true,
+      "order": 60,
+      "featured": true,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "digikala.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "digi",
+        "shop",
+        "store",
+        "دیجی",
+        "فروشگاه",
+        "خرید"
+      ]
+    },
+    {
+      "id": "torob",
+      "name": {
+        "en": "Torob",
+        "fa": "ترب"
+      },
+      "description": {
+        "en": "Compare prices before you buy",
+        "fa": "مقایسه قیمت پیش از خرید"
+      },
+      "categoryId": "shopping",
+      "url": "https://torob.com/",
+      "logo": "logos/torob.png",
+      "brandColor": "#E03131",
+      "enabled": true,
+      "order": 70,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "torob.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "price",
+        "compare",
+        "قیمت",
+        "مقایسه"
+      ]
+    },
+    {
+      "id": "basalam",
+      "name": {
+        "en": "Basalam",
+        "fa": "باسلام"
+      },
+      "description": {
+        "en": "Marketplace of local sellers",
+        "fa": "بازار فروشندگان محلی"
+      },
+      "categoryId": "shopping",
+      "url": "https://basalam.com/",
+      "logo": "logos/basalam.png",
+      "brandColor": "#FF6431",
+      "enabled": true,
+      "order": 80,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "basalam.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "handmade",
+        "بازار",
+        "محلی"
+      ]
+    },
+    {
+      "id": "digistyle",
+      "name": {
+        "en": "Digistyle",
+        "fa": "دیجی‌استایل"
+      },
+      "description": {
+        "en": "Fashion and clothing",
+        "fa": "پوشاک و مد"
+      },
+      "categoryId": "shopping",
+      "url": "https://www.digistyle.com/",
+      "logo": "logos/digistyle.png",
+      "brandColor": "#212529",
+      "enabled": true,
+      "order": 90,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "digistyle.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "fashion",
+        "clothes",
+        "لباس",
+        "پوشاک"
+      ]
+    },
+    {
+      "id": "divar",
+      "name": {
+        "en": "Divar",
+        "fa": "دیوار"
+      },
+      "description": {
+        "en": "Buy and sell anything locally",
+        "fa": "خرید و فروش بی‌واسطه"
+      },
+      "categoryId": "classifieds",
+      "url": "https://divar.ir/",
+      "logo": "logos/divar.png",
+      "brandColor": "#A62626",
+      "enabled": true,
+      "order": 100,
+      "featured": true,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "divar.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": true,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "classifieds",
+        "ads",
+        "آگهی",
+        "نیازمندی"
+      ]
+    },
+    {
+      "id": "sheypoor",
+      "name": {
+        "en": "Sheypoor",
+        "fa": "شیپور"
+      },
+      "description": {
+        "en": "Classified ads",
+        "fa": "آگهی‌های نیازمندی"
+      },
+      "categoryId": "classifieds",
+      "url": "https://www.sheypoor.com/",
+      "logo": "logos/sheypoor.png",
+      "brandColor": "#0076CE",
+      "enabled": true,
+      "order": 110,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "sheypoor.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": true,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "ads",
+        "آگهی"
+      ]
+    },
+    {
+      "id": "alibaba",
+      "name": {
+        "en": "Alibaba",
+        "fa": "علی‌بابا"
+      },
+      "description": {
+        "en": "Flights, trains, buses and hotels",
+        "fa": "بلیط هواپیما، قطار، اتوبوس و هتل"
+      },
+      "categoryId": "travel",
+      "url": "https://www.alibaba.ir/",
+      "logo": "logos/alibaba.png",
+      "brandColor": "#FDB713",
+      "enabled": true,
+      "order": 120,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "alibaba.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "flight",
+        "ticket",
+        "hotel",
+        "بلیط",
+        "پرواز",
+        "هتل"
+      ]
+    },
+    {
+      "id": "snapptrip",
+      "name": {
+        "en": "SnappTrip",
+        "fa": "اسنپ‌تریپ"
+      },
+      "description": {
+        "en": "Hotels and flights",
+        "fa": "رزرو هتل و بلیط"
+      },
+      "categoryId": "travel",
+      "url": "https://www.snapptrip.com/",
+      "logo": "logos/snapptrip.png",
+      "brandColor": "#00A884",
+      "enabled": true,
+      "order": 130,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "snapptrip.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "hotel",
+        "flight",
+        "هتل",
+        "بلیط"
+      ]
+    },
+    {
+      "id": "jabama",
+      "name": {
+        "en": "Jabama",
+        "fa": "جاباما"
+      },
+      "description": {
+        "en": "Villas and stays",
+        "fa": "اجاره ویلا و اقامتگاه"
+      },
+      "categoryId": "travel",
+      "url": "https://www.jabama.com/",
+      "logo": "logos/jabama.png",
+      "brandColor": "#F59F00",
+      "enabled": true,
+      "order": 140,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "jabama.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "villa",
+        "stay",
+        "ویلا",
+        "اقامتگاه"
+      ]
+    },
+    {
+      "id": "balad",
+      "name": {
+        "en": "Balad",
+        "fa": "بلد"
+      },
+      "description": {
+        "en": "Maps, places and live traffic",
+        "fa": "نقشه، مکان‌ها و ترافیک زنده"
+      },
+      "categoryId": "maps",
+      "url": "https://balad.ir/",
+      "logo": "logos/balad.png",
+      "brandColor": "#00A86B",
+      "enabled": true,
+      "order": 150,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "balad.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": true,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "map",
+        "navigation",
+        "traffic",
+        "نقشه",
+        "مسیریاب",
+        "ترافیک"
+      ]
+    },
+    {
+      "id": "neshan",
+      "name": {
+        "en": "Neshan",
+        "fa": "نشان"
+      },
+      "description": {
+        "en": "Maps and navigation",
+        "fa": "نقشه و مسیریابی"
+      },
+      "categoryId": "maps",
+      "url": "https://neshan.org/maps",
+      "logo": "logos/neshan.png",
+      "brandColor": "#2A6AF6",
+      "enabled": true,
+      "order": 160,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "neshan.org"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": true,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "map",
+        "navigation",
+        "نقشه",
+        "مسیریاب"
+      ]
+    },
+    {
+      "id": "filimo",
+      "name": {
+        "en": "Filimo",
+        "fa": "فیلیمو"
+      },
+      "description": {
+        "en": "Movies and series",
+        "fa": "فیلم و سریال"
+      },
+      "categoryId": "entertainment",
+      "url": "https://www.filimo.com/",
+      "logo": "logos/filimo.png",
+      "brandColor": "#F9A800",
+      "enabled": true,
+      "order": 170,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "filimo.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "movie",
+        "series",
+        "vod",
+        "فیلم",
+        "سریال"
+      ]
+    },
+    {
+      "id": "namava",
+      "name": {
+        "en": "Namava",
+        "fa": "نماوا"
+      },
+      "description": {
+        "en": "Stream films and shows",
+        "fa": "تماشای آنلاین فیلم و سریال"
+      },
+      "categoryId": "entertainment",
+      "url": "https://www.namava.ir/",
+      "logo": "logos/namava.png",
+      "brandColor": "#1D8CF8",
+      "enabled": true,
+      "order": 180,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "namava.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "movie",
+        "series",
+        "vod",
+        "فیلم",
+        "سریال"
+      ]
+    },
+    {
+      "id": "aparat",
+      "name": {
+        "en": "Aparat",
+        "fa": "آپارات"
+      },
+      "description": {
+        "en": "Videos and live streams",
+        "fa": "ویدیو و پخش زنده"
+      },
+      "categoryId": "entertainment",
+      "url": "https://www.aparat.com/",
+      "logo": "logos/aparat.png",
+      "brandColor": "#DF0F50",
+      "enabled": true,
+      "order": 190,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "aparat.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "video",
+        "live",
+        "ویدیو"
+      ]
+    },
+    {
+      "id": "paziresh24",
+      "name": {
+        "en": "Paziresh24",
+        "fa": "پذیرش۲۴"
+      },
+      "description": {
+        "en": "Book doctor appointments",
+        "fa": "نوبت‌دهی پزشک"
+      },
+      "categoryId": "health",
+      "url": "https://www.paziresh24.com/",
+      "logo": "logos/paziresh24.png",
+      "brandColor": "#3861FB",
+      "enabled": true,
+      "order": 200,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "paziresh24.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "doctor",
+        "appointment",
+        "پزشک",
+        "نوبت",
+        "دکتر"
+      ]
+    },
+    {
+      "id": "doctoreto",
+      "name": {
+        "en": "Doctoreto",
+        "fa": "دکترتو"
+      },
+      "description": {
+        "en": "Online consultations",
+        "fa": "مشاوره آنلاین پزشکی"
+      },
+      "categoryId": "health",
+      "url": "https://doctoreto.com/",
+      "logo": "logos/doctoreto.png",
+      "brandColor": "#00A3C4",
+      "enabled": true,
+      "order": 210,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "doctoreto.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": true,
+          "microphone": true
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "doctor",
+        "consult",
+        "پزشک",
+        "مشاوره"
+      ]
+    },
+    {
+      "id": "nobitex",
+      "name": {
+        "en": "Nobitex",
+        "fa": "نوبیتکس"
+      },
+      "description": {
+        "en": "Crypto exchange",
+        "fa": "بازار رمزارز"
+      },
+      "categoryId": "finance",
+      "url": "https://nobitex.ir/",
+      "logo": "logos/nobitex.png",
+      "brandColor": "#1E58C4",
+      "enabled": true,
+      "order": 220,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "nobitex.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": true,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "crypto",
+        "bitcoin",
+        "رمزارز",
+        "بیت کوین"
+      ]
+    },
+    {
+      "id": "easytrader",
+      "name": {
+        "en": "EasyTrader",
+        "fa": "ایزی‌تریدر"
+      },
+      "description": {
+        "en": "Stock trading by Mofid",
+        "fa": "معاملات بورس مفید"
+      },
+      "categoryId": "finance",
+      "url": "https://easytrader.ir/",
+      "logo": "logos/easytrader.png",
+      "brandColor": "#0B7285",
+      "enabled": true,
+      "order": 230,
+      "featured": false,
+      "compatibility": "EXPERIMENTAL",
+      "web": {
+        "allowedDomains": [
+          "easytrader.ir",
+          "emofid.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "stock",
+        "bourse",
+        "بورس",
+        "سهام",
+        "مفید"
+      ]
+    },
+    {
+      "id": "myirancell",
+      "name": {
+        "en": "My Irancell",
+        "fa": "ایرانسل من"
+      },
+      "description": {
+        "en": "Plans, top-ups and bills",
+        "fa": "بسته، شارژ و قبض"
+      },
+      "categoryId": "utilities",
+      "url": "https://my.irancell.ir/",
+      "logo": "logos/myirancell.png",
+      "brandColor": "#FFC300",
+      "enabled": true,
+      "order": 240,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "irancell.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "irancell",
+        "sim",
+        "charge",
+        "بسته",
+        "شارژ",
+        "ایرانسل"
+      ]
+    },
+    {
+      "id": "hamrahman",
+      "name": {
+        "en": "Hamrah-e Man",
+        "fa": "همراه من"
+      },
+      "description": {
+        "en": "MCI services and bills",
+        "fa": "خدمات و قبض همراه اول"
+      },
+      "categoryId": "utilities",
+      "url": "https://my.mci.ir/",
+      "logo": "logos/hamrahman.png",
+      "brandColor": "#00A0E3",
+      "enabled": true,
+      "order": 250,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "mci.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "mci",
+        "hamrah aval",
+        "همراه اول",
+        "شارژ",
+        "قبض"
+      ]
+    },
+    {
+      "id": "mygov",
+      "name": {
+        "en": "My Gov",
+        "fa": "دولت من"
+      },
+      "description": {
+        "en": "Government e-services",
+        "fa": "خدمات الکترونیک دولت"
+      },
+      "categoryId": "government",
+      "url": "https://my.gov.ir/",
+      "logo": "logos/mygov.png",
+      "brandColor": "#2B8A3E",
+      "enabled": true,
+      "order": 260,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "my.gov.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "government",
+        "دولت",
+        "یارانه"
+      ]
+    },
+    {
+      "id": "bale",
+      "name": {
+        "en": "Bale",
+        "fa": "بله"
+      },
+      "description": {
+        "en": "Messenger and banking",
+        "fa": "پیام‌رسان و خدمات بانکی"
+      },
+      "categoryId": "messaging",
+      "url": "https://web.bale.ai/",
+      "logo": "logos/bale.png",
+      "brandColor": "#00A693",
+      "enabled": true,
+      "order": 270,
+      "featured": false,
+      "compatibility": "EXPERIMENTAL",
+      "web": {
+        "allowedDomains": [
+          "bale.ai"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": true,
+          "microphone": true
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "chat",
+        "messenger",
+        "پیام",
+        "بله"
+      ]
+    },
+    {
+      "id": "eitaa",
+      "name": {
+        "en": "Eitaa",
+        "fa": "ایتا"
+      },
+      "description": {
+        "en": "Messenger",
+        "fa": "پیام‌رسان"
+      },
+      "categoryId": "messaging",
+      "url": "https://web.eitaa.com/",
+      "logo": "logos/eitaa.png",
+      "brandColor": "#F28C28",
+      "enabled": true,
+      "order": 280,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "eitaa.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": true,
+          "microphone": true
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "chat",
+        "messenger",
+        "پیام"
+      ]
+    },
+    {
+      "id": "rubika",
+      "name": {
+        "en": "Rubika",
+        "fa": "روبیکا"
+      },
+      "description": {
+        "en": "Messenger and media",
+        "fa": "پیام‌رسان و رسانه"
+      },
+      "categoryId": "messaging",
+      "url": "https://web.rubika.ir/",
+      "logo": "logos/rubika.png",
+      "brandColor": "#7B2CBF",
+      "enabled": true,
+      "order": 290,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "rubika.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": true,
+          "microphone": true
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "chat",
+        "messenger",
+        "پیام"
+      ]
+    }
+  ],
+  "compareGroups": [
+    {
+      "id": "ride-hailing",
+      "title": {
+        "en": "Ride hailing",
+        "fa": "تاکسی اینترنتی"
+      },
+      "serviceIds": [
+        "snapp",
+        "tapsi"
+      ]
+    },
+    {
+      "id": "food-delivery",
+      "title": {
+        "en": "Food delivery",
+        "fa": "سفارش غذا"
+      },
+      "serviceIds": [
+        "snappfood",
+        "tapsifood"
+      ]
+    },
+    {
+      "id": "maps",
+      "title": {
+        "en": "Maps",
+        "fa": "نقشه"
+      },
+      "serviceIds": [
+        "balad",
+        "neshan"
+      ]
+    },
+    {
+      "id": "travel",
+      "title": {
+        "en": "Travel booking",
+        "fa": "رزرو سفر"
+      },
+      "serviceIds": [
+        "alibaba",
+        "snapptrip",
+        "jabama"
+      ]
+    },
+    {
+      "id": "streaming",
+      "title": {
+        "en": "Streaming",
+        "fa": "فیلم و سریال"
+      },
+      "serviceIds": [
+        "filimo",
+        "namava"
+      ]
+    },
+    {
+      "id": "shopping",
+      "title": {
+        "en": "Shopping",
+        "fa": "خرید"
+      },
+      "serviceIds": [
+        "digikala",
+        "torob",
+        "basalam"
+      ]
+    }
+  ]
+}

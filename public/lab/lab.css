@@ -1,0 +1,8 @@
+:root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+body { margin: 0 auto; max-width: 640px; padding: 16px; line-height: 1.5; }
+h1 { font-size: 24px; margin: 8px 0; }
+h2 { font-size: 16px; margin: 0 0 8px; }
+section { border: 1px solid #8884; border-radius: 16px; padding: 14px; margin: 14px 0; }
+button, .button { display: inline-block; margin: 4px 4px 4px 0; padding: 10px 14px; border-radius: 999px; border: 1px solid #8886; background: #3354e6; color: #fff; font: inherit; text-decoration: none; }
+label { display: block; margin: 8px 0; }
+.muted { color: #888; font-size: 14px; }

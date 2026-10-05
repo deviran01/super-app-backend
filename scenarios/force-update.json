@@ -1,0 +1,14 @@
+{
+  "app": {
+    "minimumSupportedVersion": 9999,
+    "latestVersion": 9999,
+    "message": {
+      "en": "This version of Daricheh has been retired. Update to keep using your services.",
+      "fa": "این نسخه از دریچه بازنشسته شده است. برای ادامه استفاده، برنامه را به‌روز کنید."
+    },
+    "channels": {
+      "bazaar": { "minimumSupportedVersion": 9999, "latestVersion": 9999 },
+      "myket": { "minimumSupportedVersion": 9999, "latestVersion": 9999 }
+    }
+  }
+}

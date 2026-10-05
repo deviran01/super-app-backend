@@ -1,0 +1,12 @@
+{
+  "patchServices": {
+    "tapsi": {
+      "maintenance": {
+        "message": {
+          "en": "Tapsi is upgrading its web app. Back within the hour.",
+          "fa": "تپسی در حال به‌روزرسانی نسخه وب است. تا یک ساعت دیگر برمی‌گردد."
+        }
+      }
+    }
+  }
+}

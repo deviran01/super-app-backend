@@ -1,0 +1,21 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test gateway</title><link rel="stylesheet" href="lab.css"></head>
+<body>
+<h1>Test payment gateway</h1>
+<p class="muted">Stands in for a Shaparak gateway. Choose an outcome.</p>
+<button onclick="finish('ok')">Pay 10,000 IRR</button>
+<button onclick="finish('cancel')">Cancel</button>
+<script>
+const params = new URLSearchParams(location.search);
+function finish(result) {
+  const target = `${params.get('return')}?result=${result}&ref=${Math.floor(Math.random() * 1e8)}`;
+  if (params.get('popup') && window.opener) {
+    window.opener.postMessage({ payment: result }, '*');
+    window.close();
+  } else {
+    location.replace(target);  // gateways redirect back with a reference
+  }
+}
+</script>
+</body></html>

@@ -1,0 +1,5 @@
+{
+  "patchServices": {
+    "digikala": { "enabled": false }
+  }
+}

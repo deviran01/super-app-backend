@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://daricheh.example/schema/config.v1.json",
+  "title": "Daricheh remote configuration v1",
+  "description": "The config document (a static config.json or a REST response). See docs/CONFIG_SPEC.md for semantics. The app is lenient: unknown fields are ignored and invalid entries are dropped individually; this schema describes what a correct document looks like.",
+  "type": "object",
+  "required": ["schemaVersion", "app", "categories", "services"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "configVersion": { "type": "string", "maxLength": 64 },
+    "refreshIntervalSeconds": { "type": "integer", "minimum": 300, "maximum": 604800 },
+    "assetsBaseUrl": { "description": "Relative logo/icon paths resolve against this instead of the document's URL.", "type": "string", "pattern": "^https://" },
+    "app": {
+      "type": "object",
+      "required": ["minimumSupportedVersion"],
+      "properties": {
+        "minimumSupportedVersion": { "type": "integer", "minimum": 0 },
+        "latestVersion": { "type": "integer", "minimum": 0 },
+        "forceUpdate": { "type": "boolean" },
+        "updateUrl": { "$ref": "#/$defs/updateUrl" },
+        "message": { "$ref": "#/$defs/text" },
+        "optionalMessage": { "$ref": "#/$defs/text" },
+        "channels": {
+          "description": "Per-store overrides keyed by build channel (bazaar, myket, direct, …); omitted fields fall back to the app values.",
+          "type": "object",
+          "propertyNames": { "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$" },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "minimumSupportedVersion": { "type": "integer", "minimum": 0 },
+              "latestVersion": { "type": "integer", "minimum": 0 },
+              "forceUpdate": { "type": "boolean" },
+              "updateUrl": { "$ref": "#/$defs/updateUrl" },
+              "message": { "$ref": "#/$defs/text" },
+              "optionalMessage": { "$ref": "#/$defs/text" }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "features": {
+      "type": "object",
+      "properties": {
+        "search": { "type": "boolean" },
+        "favorites": { "type": "boolean" },
+        "multiProfile": { "type": "boolean" },
+        "compareMode": { "type": "boolean" },
+        "downloads": { "type": "boolean" },
+        "storageManager": { "type": "boolean" }
+      },
+      "additionalProperties": { "type": "boolean" }
+    },
+    "web": {
+      "type": "object",
+      "properties": {
+        "paymentDomains": { "type": "array", "items": { "$ref": "#/$defs/domain" } },
+        "externalSchemes": { "type": "array", "items": { "$ref": "#/$defs/scheme" } }
+      }
+    },
+    "links": {
+      "type": "object",
+      "properties": {
+        "privacyPolicyUrl": { "$ref": "#/$defs/httpsUrl" },
+        "supportUrl": { "$ref": "#/$defs/httpsUrl" }
+      }
+    },
+    "categories": { "type": "array", "items": { "$ref": "#/$defs/category" } },
+    "services": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/service" } },
+    "compareGroups": { "type": "array", "items": { "$ref": "#/$defs/compareGroup" } }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$" },
+    "text": {
+      "description": "A string (English) or an object of ISO 639-1 language code to string.",
+      "oneOf": [
+        { "type": "string", "minLength": 1 },
+        { "type": "object", "propertyNames": { "pattern": "^[a-z]{2,3}$" }, "additionalProperties": { "type": "string" }, "minProperties": 1 }
+      ]
+    },
+    "color": { "type": "string", "pattern": "^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$" },
+    "domain": { "type": "string", "pattern": "^(\\*\\.)?([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z][a-z0-9-]{0,61}[a-z0-9]$" },
+    "scheme": { "type": "string", "pattern": "^[a-z][a-z0-9+.-]{0,31}$", "not": { "enum": ["http", "https", "javascript", "file", "content", "data", "blob", "about", "ws", "wss", "chrome"] } },
+    "httpsUrl": { "type": "string", "pattern": "^https://" },
+    "assetUrl": { "description": "Absolute https URL, or a path resolved like a link in a web page against assetsBaseUrl or the document's URL.", "type": "string", "pattern": "^(https://|[^:]*$)" },
+    "updateUrl": { "description": "Download page used by builds outside a store (direct).", "type": "string", "pattern": "^https://" },
+    "category": {
+      "type": "object",
+      "required": ["id", "title"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "$ref": "#/$defs/text" },
+        "icon": { "$ref": "#/$defs/assetUrl" },
+        "color": { "$ref": "#/$defs/color" },
+        "order": { "type": "integer" },
+        "enabled": { "type": "boolean" }
+      }
+    },
+    "service": {
+      "type": "object",
+      "required": ["id", "name", "categoryId", "url"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "$ref": "#/$defs/text" },
+        "description": { "$ref": "#/$defs/text" },
+        "categoryId": { "$ref": "#/$defs/id" },
+        "url": { "$ref": "#/$defs/httpsUrl" },
+        "logo": { "$ref": "#/$defs/assetUrl" },
+        "brandColor": { "$ref": "#/$defs/color" },
+        "enabled": { "type": "boolean" },
+        "order": { "type": "integer" },
+        "featured": { "type": "boolean" },
+        "badge": { "$ref": "#/$defs/text" },
+        "compatibility": { "enum": ["SUPPORTED", "PARTIAL", "EXPERIMENTAL", "DISABLED"] },
+        "keywords": { "type": "array", "maxItems": 30, "items": { "type": "string", "maxLength": 40 } },
+        "maintenance": { "type": "object", "properties": { "message": { "$ref": "#/$defs/text" } } },
+        "web": { "$ref": "#/$defs/webConfig" }
+      }
+    },
+    "webConfig": {
+      "type": "object",
+      "properties": {
+        "allowedDomains": { "type": "array", "items": { "$ref": "#/$defs/domain" } },
+        "javascript": { "type": "boolean" },
+        "domStorage": { "type": "boolean" },
+        "permissions": {
+          "type": "object",
+          "properties": {
+            "location": { "type": "boolean" },
+            "camera": { "type": "boolean" },
+            "microphone": { "type": "boolean" }
+          }
+        },
+        "fileUpload": { "type": "boolean" },
+        "downloads": { "type": "boolean" },
+        "popupPolicy": { "enum": ["NEW_TAB", "SAME_TAB", "EXTERNAL_BROWSER", "BLOCK"] },
+        "offDomainNavigation": { "enum": ["STAY_IN_TAB", "OPEN_EXTERNALLY"] },
+        "externalDomains": { "type": "array", "items": { "$ref": "#/$defs/domain" } },
+        "externalSchemes": { "type": "array", "items": { "$ref": "#/$defs/scheme" } },
+        "thirdPartyCookies": { "type": "boolean" },
+        "userAgent": {
+          "type": "object",
+          "properties": {
+            "mode": { "enum": ["DEFAULT", "STRIP_WEBVIEW_MARKER", "CUSTOM"] },
+            "value": { "type": "string", "maxLength": 512 }
+          }
+        },
+        "cacheMode": { "enum": ["DEFAULT", "PREFER_CACHE", "NO_CACHE"] },
+        "keepAlive": { "enum": ["HIGH", "NORMAL", "LOW"] },
+        "restoreLastUrl": { "type": "boolean" },
+        "errorPage": {
+          "type": "object",
+          "properties": {
+            "message": { "$ref": "#/$defs/text" },
+            "helpUrl": { "$ref": "#/$defs/httpsUrl" }
+          }
+        }
+      }
+    },
+    "compareGroup": {
+      "type": "object",
+      "required": ["id", "serviceIds"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "$ref": "#/$defs/text" },
+        "serviceIds": { "type": "array", "minItems": 2, "items": { "$ref": "#/$defs/id" } }
+      }
+    }
+  }
+}

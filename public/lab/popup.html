@@ -1,0 +1,10 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab popup</title><link rel="stylesheet" href="lab.css"></head>
+<body>
+<h1>Popup window</h1>
+<p>Opener present: <b id="op"></b></p>
+<button onclick="window.opener && window.opener.postMessage({from: 'popup', at: Date.now()}, '*')">postMessage to opener</button>
+<button onclick="window.close()">window.close()</button>
+<script>document.getElementById('op').textContent = !!window.opener;</script>
+</body></html>
