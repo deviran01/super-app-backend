@@ -1,0 +1,27 @@
+{
+  "default": {
+    "minimumSupportedVersion": 1,
+    "latestVersion": 1,
+    "forceUpdate": false,
+    "message": {
+      "en": "This version is no longer supported. Update to keep using your services.",
+      "fa": "این نسخه دیگر پشتیبانی نمی‌شود. برای ادامه استفاده، برنامه را به‌روز کنید."
+    },
+    "optionalMessage": {
+      "en": "A new version with faster switching between services is ready.",
+      "fa": "نسخه جدید با جابه‌جایی سریع‌تر بین سرویس‌ها آماده است."
+    }
+  },
+  "channels": {
+    "bazaar": {
+      "updateUrl": "https://cafebazaar.ir/app/io.celin.super.app",
+      "minimumSupportedVersion": 1,
+      "latestVersion": 1
+    },
+    "myket": {
+      "updateUrl": "https://myket.ir/app/io.celin.super.app",
+      "minimumSupportedVersion": 1,
+      "latestVersion": 1
+    }
+  }
+}

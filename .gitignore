@@ -1,12 +1,11 @@
-# Output of tools/export_static.py
-dist/
-
 # Deployment target (user@host); never committed — this repository is public.
 deploy/.env
 
 # Python
 __pycache__/
 *.pyc
+.venv/
+.pytest_cache/
 
 # OS / editors
 .DS_Store

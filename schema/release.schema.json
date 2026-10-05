@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://superapp.2z2.ir/schema/release.v1.json",
+  "title": "Daricheh release rules (data/release.json)",
+  "description": "Update policy per store. GET /api/v1/app/version?channel=<store> answers with the store's rule merged onto default.",
+  "type": "object",
+  "required": [
+    "default"
+  ],
+  "properties": {
+    "default": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/rule"
+        },
+        {
+          "required": [
+            "minimumSupportedVersion"
+          ]
+        }
+      ]
+    },
+    "channels": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/rule"
+      }
+    }
+  },
+  "$defs": {
+    "rule": {
+      "type": "object",
+      "properties": {
+        "minimumSupportedVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Builds below this see the blocking update screen (hard update)."
+        },
+        "latestVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Builds below this (and not blocked) see the update banner (soft update)."
+        },
+        "forceUpdate": {
+          "type": "boolean",
+          "description": "Block every build below latestVersion."
+        },
+        "updateUrl": {
+          "type": "string",
+          "pattern": "^https://",
+          "description": "The store page the app opens (e.g. https://cafebazaar.ir/app/io.celin.super.app)."
+        },
+        "message": {
+          "$ref": "#/$defs/text"
+        },
+        "optionalMessage": {
+          "$ref": "#/$defs/text"
+        }
+      },
+      "additionalProperties": false
+    },
+    "text": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      ]
+    }
+  }
+}

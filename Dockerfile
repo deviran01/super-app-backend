@@ -1,0 +1,24 @@
+# Daricheh API: FastAPI on uvicorn, on the same base image as the host's other Python services.
+# Content (data/, public/) is mounted at run time, so publishing a change needs no rebuild.
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+WORKDIR /srv
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY app ./app
+COPY scenarios ./scenarios
+
+RUN useradd --uid 10001 --no-create-home --shell /usr/sbin/nologin api
+USER api
+
+EXPOSE 8000
+# Behind the host's nginx (and ArvanCloud): trust its X-Forwarded-* headers. The port is
+# published on loopback only, so nothing else can send them.
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", \
+     "--proxy-headers", "--forwarded-allow-ips", "*", "--no-server-header"]

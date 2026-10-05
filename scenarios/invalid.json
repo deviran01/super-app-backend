@@ -1,1 +1,3 @@
-{ "raw": "{\"schemaVersion\": 1, \"app\": {\"minimumSupportedVersion\": 1}, \"services\": [" }
+{
+  "raw": "{\"schemaVersion\": 1, \"services\": ["
+}

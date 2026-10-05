@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Builds public/config.json, the config document served by server.py and uploaded as-is
-to a static host (see README.md).
+"""Builds the API's content: data/catalog.json (GET /api/v1/config) and data/release.json
+(GET /api/v1/app/version). See README.md.
 
 The catalog is data, not code: edit the tables below (or the JSON directly) and the app
 picks the change up on its next refresh. Kept as a script so the sample stays readable
@@ -10,7 +10,8 @@ import json
 import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, "..", "public", "config.json")
+DATA = os.path.join(HERE, "..", "data")
+STORE_PACKAGE = "io.celin.super.app"
 
 CATEGORIES = [
     # id, en, fa, color
@@ -208,28 +209,6 @@ def main():
         "schemaVersion": 1,
         "configVersion": "2026-10-05.1",
         "refreshIntervalSeconds": 3600,
-        "app": {
-            # Defaults for every build. Keep them at the version that is live in every store.
-            "minimumSupportedVersion": 1,
-            "latestVersion": 1,
-            "forceUpdate": False,
-            # Download page for the "direct" build (website APK). Store builds always open
-            # their own store instead.
-            "updateUrl": "https://daricheh.example/download",
-            "message": {
-                "en": "This version is no longer supported. Update to keep using your services.",
-                "fa": "این نسخه دیگر پشتیبانی نمی‌شود. برای ادامه استفاده، برنامه را به‌روز کنید.",
-            },
-            "optionalMessage": {
-                "en": "A new version with faster switching between services is ready.",
-                "fa": "نسخه جدید با جابه‌جایی سریع‌تر بین سرویس‌ها آماده است.",
-            },
-            # Per-store overrides: move a store ahead only once its review approved the release.
-            "channels": {
-                "bazaar": {"minimumSupportedVersion": 1, "latestVersion": 1},
-                "myket": {"minimumSupportedVersion": 1, "latestVersion": 1},
-            },
-        },
         "features": {
             "search": True,
             "favorites": True,
@@ -263,10 +242,43 @@ def main():
             for gid, en, fa, ids in COMPARE_GROUPS
         ],
     }
-    with open(OUT, "w", encoding="utf-8") as f:
-        json.dump(config, f, ensure_ascii=False, indent=2)
-        f.write("\n")
-    print(f"wrote {OUT}: {len(config['categories'])} categories, {len(config['services'])} services")
+    release = {
+        # Applies to every build unless its store overrides a field below. Keep it at the
+        # version that is live in every store; raise a store's minimum only once the release
+        # is live in that store (docs/RELEASING.md in the app repository).
+        "default": {
+            "minimumSupportedVersion": 1,
+            "latestVersion": 1,
+            "forceUpdate": False,
+            "message": {
+                "en": "This version is no longer supported. Update to keep using your services.",
+                "fa": "این نسخه دیگر پشتیبانی نمی‌شود. برای ادامه استفاده، برنامه را به‌روز کنید.",
+            },
+            "optionalMessage": {
+                "en": "A new version with faster switching between services is ready.",
+                "fa": "نسخه جدید با جابه‌جایی سریع‌تر بین سرویس‌ها آماده است.",
+            },
+        },
+        # Per store (the app's build channel). updateUrl is the store page the app opens.
+        "channels": {
+            "bazaar": {
+                "updateUrl": f"https://cafebazaar.ir/app/{STORE_PACKAGE}",
+                "minimumSupportedVersion": 1,
+                "latestVersion": 1,
+            },
+            "myket": {
+                "updateUrl": f"https://myket.ir/app/{STORE_PACKAGE}",
+                "minimumSupportedVersion": 1,
+                "latestVersion": 1,
+            },
+        },
+    }
+    os.makedirs(DATA, exist_ok=True)
+    for name, document in (("catalog.json", config), ("release.json", release)):
+        with open(os.path.join(DATA, name), "w", encoding="utf-8") as f:
+            json.dump(document, f, ensure_ascii=False, indent=2)
+            f.write("\n")
+    print(f"wrote data/catalog.json ({len(config['categories'])} categories, {len(config['services'])} services) and data/release.json")
 
 
 if __name__ == "__main__":

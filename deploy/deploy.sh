@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Publishes the config backend to the server:
-#   1. exports public/ as an upload-ready folder (checks it first);
-#   2. uploads it to /srv/superapp/public — images first, config.json last, so a client never
-#      sees a document whose images aren't there yet;
-#   3. starts or updates the container (no restart when only content changed).
+# Publishes the API to the server:
+#   1. checks data/ locally (the same checks the API runs before serving a file);
+#   2. uploads the code, then images, then data/ last, so a client never gets a catalog whose
+#      images aren't there yet;
+#   3. rebuilds the image if the code changed and (re)starts the container; content-only
+#      changes are picked up by the running API without a restart.
 #
 #   deploy/deploy.sh
 #
@@ -18,22 +19,24 @@ ROOT="$(cd "$HERE/.." && pwd)"
 [ -f "$HERE/.env" ] && . "$HERE/.env"
 HOST="${DEPLOY_HOST:?Set DEPLOY_HOST=user@host (environment or deploy/.env)}"
 REMOTE="${DEPLOY_DIR:-/srv/superapp}"
-STAGE="$(mktemp -d)"
-trap 'rm -rf "$STAGE"' EXIT
 
-python3 "$ROOT/tools/export_static.py" --out "$STAGE/public"
-# World-readable: the container's nginx runs as an unprivileged user. (Set here rather than
-# with rsync --chmod, which macOS's rsync lacks.)
-chmod -R u=rwX,go=rX "$STAGE/public"
-chmod 644 "$HERE/compose.yaml" "$HERE/nginx.conf"
+cd "$ROOT"
+python3 -c 'from app.content import ContentStore; ContentStore()' # fails on unusable data
+
+# World-readable: the container runs as an unprivileged user. (Set here rather than with
+# rsync --chmod, which macOS's rsync lacks.)
+chmod -R u=rwX,go=rX app scenarios data public/logos public/icons
+chmod 644 Dockerfile requirements.txt compose.yaml .dockerignore
 
 RSYNC=(rsync -rlpt --rsync-path="sudo rsync")
-ssh "$HOST" "sudo mkdir -p $REMOTE/public"
-"${RSYNC[@]}" "$HERE/compose.yaml" "$HERE/nginx.conf" "$HOST:$REMOTE/"
-"${RSYNC[@]}" --exclude /config.json "$STAGE/public/" "$HOST:$REMOTE/public/"
-"${RSYNC[@]}" "$STAGE/public/config.json" "$HOST:$REMOTE/public/config.json"
-# Only now drop images the new document no longer references.
-"${RSYNC[@]}" --delete "$STAGE/public/" "$HOST:$REMOTE/public/"
-
-ssh "$HOST" "cd $REMOTE && sudo docker compose up -d --wait --wait-timeout 60 && curl -fsS http://127.0.0.1:8120/health >/dev/null"
-echo "Deployed. Live: https://${DEPLOY_DOMAIN:-superapp.2z2.ir}/config.json"
+ssh "$HOST" "sudo mkdir -p $REMOTE/public $REMOTE/data"
+"${RSYNC[@]}" --delete --exclude __pycache__ app scenarios "$HOST:$REMOTE/"
+"${RSYNC[@]}" Dockerfile requirements.txt compose.yaml .dockerignore "$HOST:$REMOTE/"
+"${RSYNC[@]}" public/logos public/icons "$HOST:$REMOTE/public/"
+"${RSYNC[@]}" --delete data/ "$HOST:$REMOTE/data/"
+# Only now drop images the new catalog no longer references (and anything not served).
+"${RSYNC[@]}" --delete public/logos public/icons "$HOST:$REMOTE/public/"
+ssh "$HOST" "cd $REMOTE && sudo find public -mindepth 1 -maxdepth 1 ! -name logos ! -name icons -exec rm -rf {} + \
+  && sudo docker compose up -d --build --remove-orphans --wait --wait-timeout 90 \
+  && curl -fsS http://127.0.0.1:8120/health >/dev/null"
+echo "Deployed. Live: https://${DEPLOY_DOMAIN:-superapp.2z2.ir}/api/v1/config"

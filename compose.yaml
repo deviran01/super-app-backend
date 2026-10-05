@@ -1,0 +1,33 @@
+# Daricheh API. Production: /srv/superapp on the server, published on 127.0.0.1:8120 behind
+# the host nginx (deploy/host-nginx/). Locally: SUPERAPP_PORT=8080 docker compose up --build
+name: superapp
+
+services:
+  api:
+    build: .
+    image: superapp-api:latest
+    container_name: superapp-api
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${SUPERAPP_PORT:-8120}:8000"
+    environment:
+      # QA overlays from scenarios/ (e.g. "lab,force-update"); empty in production.
+      SUPERAPP_SCENARIOS: ${SUPERAPP_SCENARIOS:-}
+    volumes:
+      - ./data:/srv/data:ro
+      - ./public:/srv/public:ro
+    # Hardened and capped so it can never starve other services on the host.
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 192m
+    cpus: 0.5
+    pids_limit: 64
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

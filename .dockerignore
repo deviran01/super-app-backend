@@ -1,0 +1,6 @@
+# Only app/ and scenarios/ go into the image; data/ and public/ are mounted.
+*
+!app/
+!scenarios/
+!requirements.txt
+**/__pycache__

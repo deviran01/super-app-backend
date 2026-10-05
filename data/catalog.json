@@ -2,30 +2,6 @@
   "schemaVersion": 1,
   "configVersion": "2026-10-05.1",
   "refreshIntervalSeconds": 3600,
-  "app": {
-    "minimumSupportedVersion": 1,
-    "latestVersion": 1,
-    "forceUpdate": false,
-    "updateUrl": "https://daricheh.example/download2",
-    "message": {
-      "en": "This version is no longer supported. Update to keep using your services.",
-      "fa": "این نسخه دیگر پشتیبانی نمی‌شود. برای ادامه استفاده، برنامه را به‌روز کنید."
-    },
-    "optionalMessage": {
-      "en": "A new version with faster switching between services is ready.",
-      "fa": "نسخه جدید با جابه‌جایی سریع‌تر بین سرویس‌ها آماده است."
-    },
-    "channels": {
-      "bazaar": {
-        "minimumSupportedVersion": 1,
-        "latestVersion": 1
-      },
-      "myket": {
-        "minimumSupportedVersion": 1,
-        "latestVersion": 1
-      }
-    }
-  },
   "features": {
     "search": true,
     "favorites": true,

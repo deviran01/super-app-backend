@@ -1,5 +1,9 @@
 {
-  "app": {
-    "channels": { "bazaar": { "latestVersion": 9999 } }
+  "release": {
+    "channels": {
+      "bazaar": {
+        "latestVersion": 9999
+      }
+    }
   }
 }
