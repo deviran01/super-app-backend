@@ -1,4 +1,4 @@
-# Daricheh API: FastAPI on uvicorn, on the same base image as the host's other Python services.
+# Anar API: FastAPI on uvicorn, on the same base image as the host's other Python services.
 # Content (data/, public/) is mounted at run time, so publishing a change needs no rebuild.
 FROM python:3.11-slim
 

@@ -24,6 +24,8 @@ const PAGES = [
 ];
 
 const app = document.getElementById("app");
+// Assets live under a versioned path (/admin/assets/<hash>/); resolve them from this module.
+const MARK = new URL("../favicon.svg", import.meta.url).href;
 let content, titleEl, draftBar, shell;
 
 function currentPage() {
@@ -55,8 +57,8 @@ function showLogin(message) {
       submit.disabled = false;
     }
   } } },
-    h("img", { class: "mark", src: "favicon.svg", alt: "" }),
-    h("div", {}, h("h1", { text: "Daricheh Admin" }), h("div", { class: "muted", text: "Sign in to manage the app's services." })),
+    h("img", { class: "mark", src: MARK, alt: "" }),
+    h("div", {}, h("h1", { text: "Anar Admin" }), h("div", { class: "muted", text: "Sign in to manage the app's services." })),
     username, password, error, submit);
   fill(app, h("div", { class: "login" }, form));
   username.focus();
@@ -68,7 +70,7 @@ whenSignedOut(() => showLogin("Your session ended. Sign in again."));
 
 function renderShell() {
   const nav = h("nav", { class: "sidebar", "aria-label": "Sections" },
-    h("div", { class: "brand" }, h("img", { src: "favicon.svg", alt: "" }), h("div", {}, "Daricheh", h("small", { text: "Admin" }))),
+    h("div", { class: "brand" }, h("img", { src: MARK, alt: "" }), h("div", {}, "Anar", h("small", { text: "Admin" }))),
     PAGES.map(([key, page, iconName]) => h("a", { class: "nav-link", href: `#/${key}`, dataset: { page: key }, on: { click: () => shell.classList.remove("nav-open") } }, icon(iconName), page.title)),
     h("div", { class: "nav-spacer" }),
     h("div", { class: "account" }, h("div", { class: "avatar", text: (state.user || "?").slice(0, 1) }), h("div", { class: "grow", style: { flex: 1, minWidth: 0 } }, h("div", { class: "name", text: state.user }), h("div", { class: "hint", text: "Admin" })),
@@ -98,7 +100,7 @@ function renderDraftBar() {
 async function renderPage() {
   const [key, page] = currentPage();
   titleEl.textContent = page.title;
-  document.title = `${page.title} · Daricheh Admin`;
+  document.title = `${page.title} · Anar Admin`;
   for (const link of document.querySelectorAll(".nav-link")) {
     if (link.dataset.page === key) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");

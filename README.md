@@ -1,6 +1,6 @@
-# Daricheh backend
+# Anar backend
 
-REST API of the Daricheh Android app (client: `deviran01/super-app-android`) and the admin
+REST API of the Anar Android app (client: `deviran01/super-app-android`) and the admin
 dashboard that manages it. It serves the catalog (every service, category and logo) and each
 store's update policy. Python 3.11, FastAPI and uvicorn in Docker; the contract is
 [CONFIG_SPEC.md](https://github.com/deviran01/super-app-android/blob/main/docs/CONFIG_SPEC.md).

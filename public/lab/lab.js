@@ -31,7 +31,7 @@ document.querySelectorAll('input[type=file]').forEach((input) => input.addEventL
   document.getElementById('files').textContent = [...input.files].map(f => `${f.name} (${f.type || '?'}, ${f.size} B)`).join(', ') || 'cancelled';
 }));
 
-document.getElementById('datalink').href = 'data:text/plain;base64,' + btoa('Daricheh lab invoice\n');
+document.getElementById('datalink').href = 'data:text/plain;base64,' + btoa('Anar lab invoice\n');
 
 function blobDownload() {
   const url = URL.createObjectURL(new Blob(['blob download'], { type: 'text/plain' }));

@@ -14,7 +14,7 @@ export function render(root) {
   const stat = (label, value, hint) => h("div", { class: "card stat" }, h("div", { class: "muted small", text: label }), h("div", { class: "value", text: value }), hint && h("div", { class: "hint", text: hint }));
   const origin = location.origin;
   fill(root, 
-    h("div", { class: "page-head" }, h("div", { class: "grow" }, h("h1", { text: "Overview" }), h("div", { class: "muted", text: "Manage what the Daricheh app shows, then publish." }))),
+    h("div", { class: "page-head" }, h("div", { class: "grow" }, h("h1", { text: "Overview" }), h("div", { class: "muted", text: "Manage what the Anar app shows, then publish." }))),
     h("div", { class: "stats" },
       stat("Services", `${enabled} / ${services.length}`, "enabled / total"),
       stat("Categories", String(catalog.categories.length)),

@@ -1,4 +1,4 @@
-"""Daricheh REST API.
+"""Anar REST API.
 
     GET /api/v1/config        the catalog: services, categories, rules (docs: CONFIG_SPEC.md)
     GET /api/v1/app/version   the update policy for the caller's store: minimum version
@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Annotated, Any
 
 from fastapi import FastAPI, Query, Request, Response
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -40,7 +41,7 @@ IMAGE_MAX_AGE = 7 * 24 * 3600
 store = ContentStore(scenarios=SCENARIOS)
 
 app = FastAPI(
-    title="Daricheh API",
+    title="Anar API",
     version="1",
     # Interactive docs only where asked for (local development); production exposes the API alone.
     docs_url="/docs" if os.environ.get("SUPERAPP_DOCS") == "1" else None,
@@ -53,6 +54,24 @@ app.state.admin_store = AdminStore(DATA_DIR)
 app.state.admin_accounts = AdminAccounts(DATA_DIR / "admin")
 app.state.public_dir = PUBLIC_DIR
 app.include_router(admin_router)
+
+ADMIN_STATIC = Path(__file__).parent / "admin" / "static"
+
+
+def _asset_version() -> str:
+    """Content hash of the dashboard's files: a deploy that changes any of them changes every
+    asset URL, so no browser or CDN cache can serve a stale script, style or image."""
+    digest = hashlib.sha256()
+    for path in sorted(ADMIN_STATIC.rglob("*")):
+        if path.is_file():
+            digest.update(path.relative_to(ADMIN_STATIC).as_posix().encode())
+            digest.update(path.read_bytes())
+    return digest.hexdigest()[:12]
+
+
+ASSET_VERSION = _asset_version()
+ADMIN_ASSETS = f"/admin/assets/{ASSET_VERSION}"
+ADMIN_INDEX = (ADMIN_STATIC / "index.html").read_text(encoding="utf-8").replace("__ASSETS__", f"assets/{ASSET_VERSION}")
 
 ADMIN_HEADERS = {
     # Everything the dashboard loads comes from this origin; nothing may frame it.
@@ -124,15 +143,29 @@ async def cache_and_security_headers(request: Request, call_next):
         response.headers["Cache-Control"] = f"public, max-age={IMAGE_MAX_AGE}"
     elif path == "/admin" or path.startswith("/admin/"):
         response.headers.update(ADMIN_HEADERS)
-        # Never cached anywhere: not by the browser, not by the CDN.
-        response.headers["Cache-Control"] = "no-store"
+        if path.startswith(ADMIN_ASSETS + "/") and response.status_code == 200:
+            # Versioned by content: safe to keep forever.
+            response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+        else:
+            # The page and the API: never cached, not by the browser, not by the CDN.
+            response.headers["Cache-Control"] = "no-store"
     return response
+
+
+@app.get("/admin", include_in_schema=False)
+def admin_redirect() -> RedirectResponse:
+    return RedirectResponse("/admin/")
+
+
+@app.get("/admin/", include_in_schema=False)
+def admin_page() -> HTMLResponse:
+    return HTMLResponse(ADMIN_INDEX)
 
 
 for folder in ("logos", "icons"):
     if (PUBLIC_DIR / folder).is_dir():
         app.mount(f"/{folder}", StaticFiles(directory=PUBLIC_DIR / folder), name=folder)
-app.mount("/admin", StaticFiles(directory=Path(__file__).parent / "admin" / "static", html=True), name="admin")
+app.mount(ADMIN_ASSETS, StaticFiles(directory=ADMIN_STATIC), name="admin-assets")
 # Local QA pages for the "lab" scenario; not shipped in the production image.
 if "lab" in SCENARIOS and (PUBLIC_DIR / "lab").is_dir():
     app.mount("/lab", StaticFiles(directory=PUBLIC_DIR / "lab", html=True), name="lab")

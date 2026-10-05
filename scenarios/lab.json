@@ -11,7 +11,7 @@
   "appendServices": [
     {
       "id": "lab",
-      "name": { "en": "Daricheh Lab", "fa": "آزمایشگاه دریچه" },
+      "name": { "en": "Anar Lab", "fa": "آزمایشگاه انار" },
       "description": { "en": "Test pages for popups, payments, permissions, files and links", "fa": "صفحه‌های آزمایشی پنجره، پرداخت، مجوز، فایل و پیوند" },
       "categoryId": "lab",
       "url": "http://127.0.0.1:8080/lab/index.html",

@@ -1,4 +1,4 @@
-# Daricheh API and admin dashboard. Production: /srv/superapp on the server, published on
+# Anar API and admin dashboard. Production: /srv/superapp on the server, published on
 # 127.0.0.1:8120 behind the host nginx (deploy/host-nginx/).
 # Locally: SUPERAPP_PORT=8080 SUPERAPP_DEV=1 docker compose up --build
 name: superapp

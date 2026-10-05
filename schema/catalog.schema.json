@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://superapp.2z2.ir/schema/catalog.v1.json",
-  "title": "Daricheh catalog v1 (GET /api/v1/config)",
+  "title": "Anar catalog v1 (GET /api/v1/config)",
   "description": "data/catalog.json, served by GET /api/v1/config (the API adds assetsBaseUrl). The app is lenient: unknown fields are ignored and invalid entries are dropped individually; this schema describes what a correct document looks like.",
   "type": "object",
   "required": [

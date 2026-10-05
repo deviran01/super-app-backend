@@ -67,6 +67,15 @@ def test_everything_needs_a_session(env):
     assert "frame-ancestors 'none'" in client.get("/admin/").headers["content-security-policy"]
 
 
+def test_dashboard_assets_are_versioned_by_content(env):
+    client = TestClient(main.app, base_url=BASE)
+    page = client.get("/admin/").text
+    assert f"assets/{main.ASSET_VERSION}/js/main.js" in page and "__ASSETS__" not in page
+    script = client.get(f"/admin/assets/{main.ASSET_VERSION}/js/main.js")
+    assert script.status_code == 200 and "immutable" in script.headers["cache-control"]
+    assert client.get("/admin/js/main.js").status_code == 404  # no unversioned copies to go stale
+
+
 def test_session_cookie_is_locked_down(env):
     client = TestClient(main.app, base_url=BASE)
     response = client.post("/admin/api/session", json={"username": "ali", "password": PASSWORD})

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://superapp.2z2.ir/schema/release.v1.json",
-  "title": "Daricheh release rules (data/release.json)",
+  "title": "Anar release rules (data/release.json)",
   "description": "Update policy per store. GET /api/v1/app/version?channel=<store> answers with the store's rule merged onto default.",
   "type": "object",
   "required": [
