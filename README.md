@@ -93,10 +93,13 @@ Two sources, one table of daily counters (`data/stats/stats.db`, SQLite, kept 40
   [CONFIG_SPEC.md](https://github.com/deviran01/super-app-android/blob/main/docs/CONFIG_SPEC.md#post-apiv1events--usage-totals).
 
 Reports can't be authenticated (the app has no identity), so treat the numbers as
-estimates. The server keeps only known events, catalog ids and channels, caps each count
-per report, accepts days from the last week, and buckets unknown versions as "other" — a
-forged report can nudge numbers but can't add text or grow the database. Counts are
-buffered in memory and written every 10 seconds, and before every dashboard read.
+estimates. The server keeps only known events, catalog ids and channels, merges each report
+per day and counter before capping it (one install adds at most one active day), accepts days
+from the last week, stores the app version only for users and installs, and buckets unknown
+versions as "other". Forged reports can nudge numbers, but can't add text, and the rows they
+can create are bounded (catalog ids × fixed values × 4 channels per day). Counts are buffered
+in memory and written by a background thread every 10 seconds, and before every dashboard
+read.
 
 ## Releases: soft and hard updates per store
 
@@ -186,7 +189,7 @@ everything else on it:
 |---|---|---|
 | Container `superapp-api` | `/srv/superapp` (compose project `superapp`) | `python:3.11-slim`, uvicorn as an unprivileged user, loopback `127.0.0.1:8120` only, read-only root FS, all capabilities dropped, 192 MB / 0.5 CPU / 64 PID cap |
 | Content | `/srv/superapp/data`, `/srv/superapp/public` | written by the dashboard (owned by uid 10001); `data/admin/` holds accounts, the draft and history; `data/stats/` the usage statistics |
-| Host nginx site | `/etc/nginx/sites-available/superapp.2z2.ir.conf` | copy of `deploy/host-nginx/superapp.2z2.ir.conf`; the API is GET/HEAD only except `POST /api/v1/events` (64 KB), and `/admin` also accepts edits and uploads (6 MB) |
+| Host nginx site | `/etc/nginx/sites-available/superapp.2z2.ir.conf` | copy of `deploy/host-nginx/superapp.2z2.ir.conf`; the API is GET/HEAD only except `POST /api/v1/events` (64 KB); `/admin` takes edits (256 KB) and image uploads (6 MB); `X-Forwarded-For` is set by nginx, never passed through |
 | TLS | Let's Encrypt via webroot `/var/www/letsencrypt` | renews with the host's certbot timer; its own hook reloads nginx |
 | CDN | ArvanCloud proxies the domain | Arvan terminates TLS for users and reaches the origin over HTTPS. It honors `Cache-Control`: API responses are never cached at the edge (`no-cache` + ETag → 304s), images are (7 days) |
 

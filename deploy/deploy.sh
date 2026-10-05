@@ -26,19 +26,18 @@ python3 -c 'from app.content import ContentStore; ContentStore()' # fails on an 
 
 # World-readable: the container runs as an unprivileged user. (Set here rather than with
 # rsync --chmod, which macOS's rsync lacks.)
-chmod -R u=rwX,go=rX app scenarios data public/logos public/icons
-chmod 644 Dockerfile requirements.txt compose.yaml .dockerignore
+# data/admin/ (local accounts and signing key) is never uploaded and stays private.
+chmod -R u=rwX,go=rX app scenarios public/logos public/icons
+chmod 644 Dockerfile requirements.txt compose.yaml .dockerignore data/catalog.json data/release.json
 
 RSYNC=(rsync -rlpt --rsync-path="sudo rsync")
 ssh "$HOST" "sudo mkdir -p $REMOTE/public $REMOTE/data"
 "${RSYNC[@]}" --delete --exclude __pycache__ app scenarios "$HOST:$REMOTE/"
 "${RSYNC[@]}" Dockerfile requirements.txt compose.yaml .dockerignore "$HOST:$REMOTE/"
 "${RSYNC[@]}" public/logos public/icons "$HOST:$REMOTE/public/"
-if ssh "$HOST" "test -f $REMOTE/data/catalog.json"; then
-  echo "data/ is managed by the admin dashboard on the server; not overwritten."
-else
-  "${RSYNC[@]}" data/catalog.json data/release.json "$HOST:$REMOTE/data/"
-fi
+# Seeds data/ on the first deploy only. --ignore-existing (decided by the receiving side) never
+# replaces what the dashboard published, even if a connection hiccup made a remote check fail.
+"${RSYNC[@]}" --ignore-existing data/catalog.json data/release.json "$HOST:$REMOTE/data/"
 if [ "${DEPLOY_BUILD:-local}" = "server" ]; then
   UP="sudo docker compose up -d --build --remove-orphans --wait --wait-timeout 90"
 else

@@ -33,19 +33,26 @@ const fmt = (n) => number.format(n || 0);
 const pct = (part, whole) => (whole ? `${Math.round((part / whole) * 100)}%` : "—");
 
 let latest = 0;
+let loaded = null; // { query, data } of the last answer, reused when only the chart metric changes
 
-export async function render(root) {
-  const request = ++latest;
-  fill(root, head(() => render(root)), h("div", { class: "muted", text: "Loading…" }));
+export async function render(root, reuse = false) {
+  const query = `/stats?days=${view.days}${view.channel ? `&channel=${view.channel}` : ""}`;
   let data;
-  try {
-    data = await api.get(`/stats?days=${view.days}${view.channel ? `&channel=${view.channel}` : ""}`);
-  } catch (error) {
-    showError(error);
-    return;
+  if (reuse && loaded?.query === query) {
+    data = loaded.data;
+  } else {
+    const request = ++latest;
+    fill(root, head(() => render(root)), h("div", { class: "muted", text: "Loading…" }));
+    try {
+      data = await api.get(query);
+    } catch (error) {
+      showError(error);
+      return;
+    }
+    // A newer range or store was picked while this one loaded.
+    if (request !== latest) return;
+    loaded = { query, data };
   }
-  // A newer range or store was picked while this one loaded.
-  if (request !== latest) return;
   const t = data.totals;
   const reported = t.appOpens + t.serviceOpens + t.installs + data.daily.reduce((sum, d) => sum + d.activeUsers, 0);
   fill(root,
@@ -59,7 +66,7 @@ export async function render(root) {
       stat("Update clicks", fmt(t.updateClicks), `${fmt(t.forceUpdateShown)} hard · ${fmt(t.optionalUpdateShown)} soft prompts`),
       stat("Page load failures", fmt(t.loadFailures), "pages that showed an error")),
     h("div", { class: "stack" },
-      chartCard(data.daily, () => render(root)),
+      chartCard(data.daily, () => render(root, true)),
       !reported && h("div", { class: "card card-body muted", text: "No app reports in this range yet. Apps send their totals when they go to the background (at most every 15 minutes) and at launch." }),
       servicesCard(data.services),
       h("div", { class: "grid-2 align-start" },

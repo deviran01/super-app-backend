@@ -16,6 +16,7 @@ import os
 import re
 import threading
 from dataclasses import dataclass, field
+from functools import cached_property
 from pathlib import Path
 from typing import Any
 
@@ -32,6 +33,9 @@ class ContentError(ValueError):
     """The data files are unusable."""
 
 
+KNOWN_CHANNELS = ("bazaar", "myket", "direct")
+
+
 @dataclass(frozen=True)
 class Content:
     catalog: dict[str, Any]
@@ -40,6 +44,28 @@ class Content:
     forced_status: int | None = None
     raw_catalog: str | None = None
     scenarios: tuple[str, ...] = field(default_factory=tuple)
+    # Answers built from this content (body and ETag), keyed by request variant. A content
+    # change creates a new Content, so nothing here can go stale.
+    responses: dict[Any, Any] = field(default_factory=dict, compare=False, repr=False)
+
+    # Derived once per content version (a frozen dataclass still allows cached_property).
+    @cached_property
+    def service_ids(self) -> frozenset[str]:
+        return frozenset(s["id"] for s in self.catalog.get("services", []) if isinstance(s, dict) and "id" in s)
+
+    @cached_property
+    def category_ids(self) -> frozenset[str]:
+        return frozenset(c["id"] for c in self.catalog.get("categories", []) if isinstance(c, dict) and "id" in c)
+
+    @cached_property
+    def channels(self) -> frozenset[str]:
+        return frozenset(KNOWN_CHANNELS) | frozenset((self.release.get("channels") or {}).keys())
+
+    @cached_property
+    def highest_version(self) -> int:
+        rules = [self.release.get("default") or {}, *(self.release.get("channels") or {}).values()]
+        versions = [v for rule in rules for k in ("latestVersion", "minimumSupportedVersion") if isinstance(v := rule.get(k), int)]
+        return max(versions, default=1)
 
 
 def deep_merge(base: Any, patch: Any) -> Any:
@@ -100,7 +126,13 @@ class ContentStore:
         self.get()  # fail fast on startup when the files are unusable
 
     def get(self) -> Content:
-        stamp = self._file_stamp()
+        try:
+            stamp = self._file_stamp()
+        except OSError as error:
+            # A file missing for a moment (a manual edit, a restore): keep serving what worked.
+            if self._content is None:
+                raise ContentError(str(error)) from error
+            return self._content
         if stamp != self._stamp:
             with self._lock:
                 if stamp != self._stamp:

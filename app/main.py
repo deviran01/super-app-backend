@@ -32,7 +32,7 @@ from .admin.auth import AdminAccounts
 from .admin.routes import router as admin_router
 from .admin.store import AdminStore
 from .content import CHANNEL_PATTERN, DATA_DIR, ROOT, Content, ContentStore, resolve_release, update_status
-from .stats import KNOWN_CHANNELS, MAX_COUNTS_PER_DAY, MAX_REPORT_DAYS, StatsStore
+from .stats import StatsStore
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 
@@ -43,8 +43,10 @@ SCENARIOS = [s.strip() for s in os.environ.get("SUPERAPP_SCENARIOS", "").split("
 PUBLIC_URL = os.environ.get("SUPERAPP_PUBLIC_URL")
 IMAGE_MAX_AGE = 7 * 24 * 3600
 MAX_EVENTS_BYTES = 64 * 1024
+MAX_ADMIN_JSON_BYTES = 256 * 1024
+MAX_CACHED_VARIANTS = 64
 # Versions above the highest one in the release rules (+ this margin) are counted as "other".
-VERSION_MARGIN = 50
+VERSION_MARGIN = 10
 API_ENDPOINTS = {"/api/v1/config": "config", "/api/v1/app/version": "version", "/api/v1/events": "events"}
 
 store = ContentStore(scenarios=SCENARIOS)
@@ -65,7 +67,7 @@ app = FastAPI(
     redoc_url=None,
     openapi_url="/openapi.json" if os.environ.get("SUPERAPP_DOCS") == "1" else None,
 )
-app.add_middleware(GZipMiddleware, minimum_size=1024)
+app.add_middleware(GZipMiddleware, minimum_size=1024, compresslevel=6)
 
 app.state.admin_store = AdminStore(DATA_DIR)
 app.state.admin_accounts = AdminAccounts(DATA_DIR / "admin")
@@ -107,13 +109,24 @@ AppVersion = Annotated[int | None, Query(ge=0, description="The app's versionCod
 Platform = Annotated[str, Query(pattern=r"^[a-z]{1,16}$")]
 
 
-def _json(request: Request, payload: Any) -> Response:
+def _encode(payload: Any) -> tuple[bytes, str]:
     body = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
-    return _revalidated(request, body)
+    return body, '"%s"' % hashlib.sha256(body).hexdigest()[:32]
 
 
-def _revalidated(request: Request, body: bytes, media_type: str = "application/json; charset=utf-8") -> Response:
-    etag = '"%s"' % hashlib.sha256(body).hexdigest()[:32]
+def _cached(content: Content, key: Any, build):
+    """One variant of an answer (body and ETag, or a resolved policy), built once per content
+    version. Bounded: keys come partly from the request (channel, host), so a flood of made-up
+    values is answered without being kept."""
+    cached = content.responses.get(key)
+    if cached is None:
+        cached = build()
+        if len(content.responses) < MAX_CACHED_VARIANTS:
+            content.responses[key] = cached
+    return cached
+
+
+def _revalidated(request: Request, body: bytes, etag: str, media_type: str = "application/json; charset=utf-8") -> Response:
     headers = {"ETag": etag, "Cache-Control": "no-cache"}
     sent = {tag.strip().removeprefix("W/") for tag in request.headers.get("if-none-match", "").split(",")}
     if etag in sent:
@@ -127,12 +140,13 @@ def get_config(request: Request, platform: Platform = "android", channel: Channe
     if content.forced_status:
         return Response(status_code=content.forced_status)
     if content.raw_catalog is not None:
-        return _revalidated(request, content.raw_catalog.encode("utf-8"))
-    document = dict(content.catalog)
+        body = content.raw_catalog.encode("utf-8")
+        return _revalidated(request, body, '"%s"' % hashlib.sha256(body).hexdigest()[:32])
     # Image paths in the catalog are relative to the site root; give clients the absolute base
     # (behind the proxy this is https://<public host>/).
-    document.setdefault("assetsBaseUrl", PUBLIC_URL or str(request.base_url))
-    return _json(request, document)
+    base = PUBLIC_URL or str(request.base_url)
+    body, etag = _cached(content, ("config", base), lambda: _encode({**content.catalog, "assetsBaseUrl": content.catalog.get("assetsBaseUrl", base)}))
+    return _revalidated(request, body, etag)
 
 
 @app.get("/api/v1/app/version")
@@ -140,10 +154,10 @@ def get_app_version(request: Request, platform: Platform = "android", channel: C
     content = store.get()
     if content.forced_status:
         return Response(status_code=content.forced_status)
-    policy = resolve_release(content.release, channel)
-    if appVersion is not None:
-        policy["update"] = update_status(appVersion, policy)
-    return _json(request, policy)
+    policy = _cached(content, ("policy", channel), lambda: resolve_release(content.release, channel))
+    status = update_status(appVersion, policy) if appVersion is not None else None
+    body, etag = _cached(content, ("version", channel, status), lambda: _encode({**policy, "update": status} if status else policy))
+    return _revalidated(request, body, etag)
 
 
 class ReportCount(BaseModel):
@@ -154,7 +168,9 @@ class ReportCount(BaseModel):
 
 class ReportDay(BaseModel):
     day: str = Field(max_length=10)
-    counts: list[ReportCount] = Field(max_length=MAX_COUNTS_PER_DAY)
+    # No item limits here: the 64 KB body cap bounds the work, and the stats store keeps what
+    # fits instead of refusing the whole report (which the app would retry forever).
+    counts: list[ReportCount]
 
 
 class UsageReport(BaseModel):
@@ -164,17 +180,12 @@ class UsageReport(BaseModel):
     platform: str = Field(pattern=r"^[a-z]{1,16}$")
     channel: str = Field(pattern=CHANNEL_PATTERN.pattern)
     appVersion: int = Field(ge=0, le=1_000_000_000)
-    days: list[ReportDay] = Field(max_length=MAX_REPORT_DAYS)
+    days: list[ReportDay]
 
 
-def _known_channels(content: Content) -> set[str]:
-    return set(KNOWN_CHANNELS) | set((content.release.get("channels") or {}).keys())
-
-
-def _max_version(content: Content) -> int:
-    rules = [content.release.get("default") or {}, *(content.release.get("channels") or {}).values()]
-    versions = [v for rule in rules for k in ("latestVersion", "minimumSupportedVersion") if isinstance(v := rule.get(k), int)]
-    return max(versions, default=1) + VERSION_MARGIN
+def _bucketed_version(content: Content, version: int) -> int:
+    """Versions far above the newest release are forged or broken: counted as 0 ("other")."""
+    return version if 0 < version <= content.highest_version + VERSION_MARGIN else 0
 
 
 @app.post("/api/v1/events", status_code=204)
@@ -182,23 +193,23 @@ async def post_events(request: Request) -> Response:
     content = store.get()
     if content.forced_status:
         return Response(status_code=content.forced_status)
-    body = b""
+    body = bytearray()
     async for chunk in request.stream():
         body += chunk
         if len(body) > MAX_EVENTS_BYTES:
             return Response(status_code=413)
     try:
-        report = UsageReport.model_validate_json(body)
+        report = UsageReport.model_validate_json(bytes(body))
     except ValidationError:
         return Response(status_code=400)
     request.state.stats_channel = report.channel
     request.state.stats_version = report.appVersion
     request.app.state.stats.add_report(
         report.model_dump(),
-        services={s["id"] for s in content.catalog.get("services", []) if isinstance(s, dict) and "id" in s},
-        categories={c["id"] for c in content.catalog.get("categories", []) if isinstance(c, dict) and "id" in c},
-        channels=_known_channels(content),
-        max_version=_max_version(content),
+        services=content.service_ids,
+        categories=content.category_ids,
+        channels=content.channels,
+        max_version=content.highest_version + VERSION_MARGIN,
     )
     return Response(status_code=204)
 
@@ -210,29 +221,23 @@ def health() -> dict[str, str]:
 
 
 @app.middleware("http")
-async def count_api_calls(request: Request, call_next):
-    response = await call_next(request)
-    endpoint = API_ENDPOINTS.get(request.url.path)
-    if endpoint is not None:
-        content = store.get()
-        channel = getattr(request.state, "stats_channel", None) or request.query_params.get("channel") or "direct"
-        try:
-            version = int(getattr(request.state, "stats_version", None) or request.query_params.get("appVersion") or 0)
-        except ValueError:
-            version = 0
-        request.app.state.stats.count_api_call(
-            endpoint,
-            response.status_code,
-            channel if channel in _known_channels(content) else "other",
-            version if 0 < version <= _max_version(content) else 0,
-        )
-    return response
-
-
-@app.middleware("http")
-async def cache_and_security_headers(request: Request, call_next):
-    response = await call_next(request)
+async def headers_and_counts(request: Request, call_next):
     path = request.url.path
+    # JSON to the dashboard API is small; only image uploads are big. Refused before parsing,
+    # so an unauthenticated 6 MB body can't balloon the process.
+    if path.startswith("/admin/api/") and not path.startswith("/admin/api/images/"):
+        length = request.headers.get("content-length", "")
+        if length.isdigit() and int(length) > MAX_ADMIN_JSON_BYTES:
+            return Response(status_code=413)
+    endpoint = API_ENDPOINTS.get(path)
+    try:
+        response = await call_next(request)
+    except Exception:
+        if endpoint is not None:
+            _count(request, endpoint, 500)  # a crash still shows up as a server error
+        raise
+    if endpoint is not None:
+        _count(request, endpoint, response.status_code)
     if response.status_code == 200 and path.startswith(("/logos/", "/icons/")):
         # Images keep their name until they change (uploads are named by their content).
         response.headers["Cache-Control"] = f"public, max-age={IMAGE_MAX_AGE}"
@@ -245,6 +250,16 @@ async def cache_and_security_headers(request: Request, call_next):
             # The page and the API: never cached, not by the browser, not by the CDN.
             response.headers["Cache-Control"] = "no-store"
     return response
+
+
+def _count(request: Request, endpoint: str, status: int) -> None:
+    content = store.get()
+    channel = getattr(request.state, "stats_channel", None) or request.query_params.get("channel") or "direct"
+    try:
+        version = int(getattr(request.state, "stats_version", None) or request.query_params.get("appVersion") or 0)
+    except ValueError:
+        version = 0
+    request.app.state.stats.count_api_call(endpoint, status, channel if channel in content.channels else "other", _bucketed_version(content, version))
 
 
 @app.get("/admin", include_in_schema=False)

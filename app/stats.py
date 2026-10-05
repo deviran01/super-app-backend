@@ -10,11 +10,12 @@ Two sources feed the same table:
   counters that each install sends at most once per day / once ever.
 
 Reports aren't authenticated (the app has no identity to authenticate), so the numbers are
-best-effort: each report is capped, and only known events, catalog ids and channels are kept,
-which bounds what a forged report can add or how many rows it can create.
+best-effort: each report is merged and capped per counter, only known events, catalog ids and
+channels are kept, and the app version is stored only for users and installs, which bounds what
+a forged report can add or how many rows it can create.
 
-Counts are buffered in memory and written to SQLite (``data/stats/stats.db``) every few
-seconds and before every read.
+Counts are buffered in memory and written to SQLite (``data/stats/stats.db``) by a
+background thread every few seconds, and before every read.
 """
 from __future__ import annotations
 
@@ -27,7 +28,7 @@ from collections import Counter
 from contextlib import contextmanager
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Iterable, Iterator
+from typing import AbstractSet as Set, Any, Iterable, Iterator
 
 log = logging.getLogger("stats")
 
@@ -35,12 +36,12 @@ log = logging.getLogger("stats")
 IRAN = timezone(timedelta(hours=3, minutes=30))
 
 FLUSH_SECONDS = 10
+MAX_PENDING_KEYS = 50_000
 RETENTION_DAYS = 400
 MAX_REPORT_DAYS = 8
 MAX_COUNTS_PER_DAY = 400
 MAX_RANGE_DAYS = 366
 
-KNOWN_CHANNELS = ("bazaar", "myket", "direct")
 OTHER = "other"
 OPEN_SOURCES = {"home", "favorites", "recent", "category", "search", "tabs", "quick_switch", "add_service"}
 PAGE_ERRORS = {
@@ -48,6 +49,8 @@ PAGE_ERRORS = {
     "unsupported_url", "crashed", "web_view_unavailable", "generic",
 }
 CLEAR_SCOPES = {"cache", "service", "all"}
+# The only app events stored per app version (the dashboard's users/installs per version).
+VERSIONED_EVENTS = {"active_day", "first_open"}
 
 # event -> (validators of its dimensions, the most one install can add in a day)
 SERVICE, CATEGORY = "service", "category"
@@ -98,73 +101,112 @@ def status_class(status: int) -> str:
 
 
 class StatsStore:
-    def __init__(self, path: Path, clock=time.monotonic) -> None:
+    def __init__(self, path: Path) -> None:
         self._path = path
-        self._clock = clock
-        self._lock = threading.Lock()
+        self._lock = threading.Lock()  # guards _pending only; held for microseconds
+        self._write_lock = threading.Lock()  # one writer at a time
         self._pending: Counter[Key] = Counter()
-        self._last_flush = clock()
         self._ready = False
+        self._pruned_on: date | None = None
+        self._worker: threading.Thread | None = None
 
     # --- writing ------------------------------------------------------------------------
 
     def count_api_call(self, endpoint: str, status: int, channel: str, version: int) -> None:
         self._add([((today().isoformat(), "api", endpoint, status_class(status), "", channel, version), 1)])
 
-    def add_report(self, report: dict[str, Any], *, services: set[str], categories: set[str], channels: set[str], max_version: int) -> int:
-        """Adds an app report (already shape-checked by the API model); returns the counters kept."""
+    def add_report(self, report: dict[str, Any], *, services: Set[str], categories: Set[str], channels: Set[str], max_version: int) -> int:
+        """Adds an app report (already shape-checked by the API model); returns the counters kept.
+
+        Entries are merged per day and counter before the per-install caps apply, so repeating
+        a day or a counter inside one report can't multiply it.
+        """
         channel = report["channel"] if report["channel"] in channels else OTHER
         version = report["appVersion"] if 1 <= report["appVersion"] <= max_version else 0
         newest = today() + timedelta(days=1)  # devices ahead of Iran's date
         oldest = newest - timedelta(days=MAX_REPORT_DAYS + 1)
         ids = {SERVICE: services, CATEGORY: categories}
-        kept: list[tuple[Key, int]] = []
-        for entry in report["days"][:MAX_REPORT_DAYS]:
+        totals: Counter[tuple[str, str, str, str]] = Counter()
+        per_day: Counter[str] = Counter()
+        for entry in report["days"]:
             day = _parse_day(entry["day"])
             if day is None or not oldest <= day <= newest:
                 continue
-            for count in entry["counts"][:MAX_COUNTS_PER_DAY]:
+            for count in entry["counts"]:
                 rule = EVENTS.get(count["event"])
                 dims = count["dims"]
-                if rule is None or len(dims) != len(rule[0]):
+                if rule is None or len(dims) != len(rule[0]) or count["n"] <= 0:
                     continue
                 if not all(dim in (ids[check] if isinstance(check, str) else check) for dim, check in zip(dims, rule[0])):
                     continue
-                n = min(count["n"], rule[1])
-                if n <= 0:
-                    continue
                 padded = (list(dims) + ["", ""])[:2]
-                kept.append(((day.isoformat(), "app", count["event"], padded[0], padded[1], channel, version), n))
+                key = (day.isoformat(), count["event"], padded[0], padded[1])
+                if key not in totals:
+                    if per_day[key[0]] >= MAX_COUNTS_PER_DAY:
+                        continue
+                    per_day[key[0]] += 1
+                totals[key] += count["n"]
+        kept = [
+            # The app version is kept only where the dashboard uses it (users and installs per
+            # version); for every other event it would multiply rows for nothing.
+            ((day, "app", event, d1, d2, channel, version if event in VERSIONED_EVENTS else 0), min(n, EVENTS[event][1]))
+            for (day, event, d1, d2), n in totals.items()
+        ]
         self._add(kept)
         return len(kept)
 
     def _add(self, items: Iterable[tuple[Key, int]]) -> None:
+        dropped = 0
         with self._lock:
             for key, n in items:
+                if key not in self._pending and len(self._pending) >= MAX_PENDING_KEYS:
+                    dropped += 1  # a flood of distinct counters: drop until the next write
+                    continue
                 self._pending[key] += n
-            if self._clock() - self._last_flush >= FLUSH_SECONDS:
-                self._flush_locked()
+        if dropped:
+            log.warning("Dropped %d counters: too many pending", dropped)
+        self._ensure_worker()
+
+    def _ensure_worker(self) -> None:
+        """Writes happen on a background thread, never on a request."""
+        if self._worker is None:
+            with self._lock:
+                if self._worker is None:
+                    self._worker = threading.Thread(target=self._run, name="stats-writer", daemon=True)
+                    self._worker.start()
+
+    def _run(self) -> None:
+        while True:
+            time.sleep(FLUSH_SECONDS)
+            self.flush()
 
     def flush(self) -> None:
-        with self._lock:
-            self._flush_locked()
+        with self._write_lock:
+            with self._lock:
+                pending, self._pending = self._pending, Counter()
+            if not pending:
+                return
+            rows = [(*key, n) for key, n in pending.items()]
+            try:
+                with self._db() as db:
+                    db.executemany(
+                        "INSERT INTO counts (day, source, event, dim1, dim2, channel, version, n) VALUES (?, ?, ?, ?, ?, ?, ?, ?) "
+                        "ON CONFLICT (day, source, event, dim1, dim2, channel, version) DO UPDATE SET n = n + excluded.n",
+                        rows,
+                    )
+                    self._prune(db)
+            except sqlite3.Error:
+                # Put back and retry on the next write; statistics never fail a request.
+                log.exception("Couldn't save %d counters", len(rows))
+                with self._lock:
+                    self._pending.update(pending)
 
-    def _flush_locked(self) -> None:
-        self._last_flush = self._clock()
-        if not self._pending:
-            return
-        rows = [(*key, n) for key, n in self._pending.items()]
-        try:
-            with self._db() as db:
-                db.executemany(
-                    "INSERT INTO counts (day, source, event, dim1, dim2, channel, version, n) VALUES (?, ?, ?, ?, ?, ?, ?, ?) "
-                    "ON CONFLICT (day, source, event, dim1, dim2, channel, version) DO UPDATE SET n = n + excluded.n",
-                    rows,
-                )
-            self._pending.clear()
-        except sqlite3.Error:
-            # Kept in memory and retried on the next flush; statistics never fail a request.
-            log.exception("Couldn't save %d counters", len(rows))
+    def _prune(self, db: sqlite3.Connection) -> None:
+        """Drops days older than the retention period, once a day."""
+        current = today()
+        if self._pruned_on != current:
+            db.execute("DELETE FROM counts WHERE day < ?", ((current - timedelta(days=RETENTION_DAYS)).isoformat(),))
+            self._pruned_on = current
 
     @contextmanager
     def _db(self) -> Iterator[sqlite3.Connection]:
@@ -173,10 +215,10 @@ class StatsStore:
             self._path.parent.mkdir(parents=True, exist_ok=True)
         db = sqlite3.connect(self._path, timeout=5)
         try:
+            db.execute("PRAGMA synchronous=NORMAL")  # safe with WAL; far fewer fsyncs
             if not self._ready:
                 db.execute("PRAGMA journal_mode=WAL")
                 db.executescript(SCHEMA)
-                db.execute("DELETE FROM counts WHERE day < ?", ((today() - timedelta(days=RETENTION_DAYS)).isoformat(),))
                 self._ready = True
             with db:
                 yield db
@@ -194,17 +236,16 @@ class StatsStore:
         params: tuple[Any, ...] = (first.isoformat(), last.isoformat()) + ((channel,) if channel else ())
         # Channels and versions: API calls, daily active users and installs.
         audience = f"{where} AND (source = 'api' OR event IN ('active_day', 'first_open'))"
-        with self._lock:
-            self._flush_locked()
-            if not self._path.exists():
-                rows, by_channel, by_version = [], [], []
-            else:
-                with self._db() as db:
-                    rows = db.execute(
-                        f"SELECT day, source, event, dim1, dim2, SUM(n) FROM counts WHERE {where} GROUP BY day, source, event, dim1, dim2", params
-                    ).fetchall()
-                    by_channel = db.execute(f"SELECT channel, source, event, SUM(n) FROM counts WHERE {audience} GROUP BY channel, source, event", params).fetchall()
-                    by_version = db.execute(f"SELECT version, source, event, SUM(n) FROM counts WHERE {audience} GROUP BY version, source, event", params).fetchall()
+        self.flush()  # include the last seconds; readers don't block the API (WAL)
+        if not self._path.exists():
+            rows, by_channel, by_version = [], [], []
+        else:
+            with self._db() as db:
+                rows = db.execute(
+                    f"SELECT day, source, event, dim1, dim2, SUM(n) FROM counts WHERE {where} GROUP BY day, source, event, dim1, dim2", params
+                ).fetchall()
+                by_channel = db.execute(f"SELECT channel, source, event, SUM(n) FROM counts WHERE {audience} GROUP BY channel, source, event", params).fetchall()
+                by_version = db.execute(f"SELECT version, source, event, SUM(n) FROM counts WHERE {audience} GROUP BY version, source, event", params).fetchall()
         return _summarize(first, last, rows, by_channel, by_version)
 
 

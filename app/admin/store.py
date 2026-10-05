@@ -99,8 +99,12 @@ class AdminStore:
             return live
 
     def _live_meta(self) -> dict[str, Any]:
-        entries = self.history()
-        return entries[0] if entries else {}
+        # Only the newest entry: reading all of history on every request is wasted work.
+        for path in sorted(self.history_dir.glob("*.json"), reverse=True):
+            entry = self._read(path)
+            if entry:
+                return {key: entry[key] for key in ("id", "publishedAt", "publishedBy", "note", "summary")}
+        return {}
 
     @staticmethod
     def _read(path: Path) -> Any:
@@ -123,8 +127,9 @@ class AdminStore:
             )
             return self._state()
 
-    def discard(self) -> DraftState:
+    def discard(self, base_revision: int | None = None) -> DraftState:
         with self._lock:
+            self._check_revision(base_revision)
             (self.admin_dir / "draft.json").unlink(missing_ok=True)
             return self._state()
 
@@ -144,12 +149,12 @@ class AdminStore:
             (self.admin_dir / "draft.json").unlink(missing_ok=True)
             return self._state()
 
-    def restore(self, entry_id: str, user: str) -> DraftState:
+    def restore(self, entry_id: str, user: str, base_revision: int | None = None) -> DraftState:
         with self._lock:
             entry = self._read(self._entry_path(entry_id))
             if entry is None:
                 raise KeyError(entry_id)
-            current = self._state()
+            current = self._check_revision(base_revision)
             write_json_atomically(
                 self.admin_dir / "draft.json",
                 {
@@ -161,6 +166,13 @@ class AdminStore:
                 },
             )
             return self._state()
+
+    def _check_revision(self, base_revision: int | None) -> DraftState:
+        """Refuses to replace a draft that changed since the caller last saw it."""
+        current = self._state()
+        if base_revision is not None and base_revision != current.revision:
+            raise Conflict(f"the draft is at revision {current.revision}, not {base_revision}")
+        return current
 
     # --- history ----------------------------------------------------------------------
 

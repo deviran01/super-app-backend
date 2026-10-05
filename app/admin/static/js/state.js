@@ -1,7 +1,7 @@
 // The dashboard's view of the draft. Pages read `state.draft` and change it only through
 // commit(), which saves the whole draft to the server (validated there, with the revision
 // the change was based on, so two admins can't silently overwrite each other).
-import { api } from "./api.js";
+import { api, ApiError } from "./api.js";
 
 export const state = {
   user: null,
@@ -31,18 +31,60 @@ function apply(response) {
   notify();
 }
 
-export async function loadState() { apply(await api.get("/state")); }
-
-/** Applies `mutate` to a copy of the draft and saves it. Throws ApiError with `problems`. */
-export async function commit(mutate) {
-  const next = structuredClone(state.draft);
-  mutate(next);
-  apply(await api.put("/draft", { revision: state.revision, catalog: next.catalog, release: next.release }));
+/**
+ * Reloads the draft. `quiet` (tab came back into view): pages re-render only when something
+ * actually changed on the server, so unsaved form input isn't wiped for nothing.
+ */
+export async function loadState({ quiet = false } = {}) {
+  const response = await api.get("/state");
+  if (quiet && response.revision === state.revision && response.published?.id === state.published?.id) return;
+  apply(response);
 }
 
-export async function publish(note) { apply(await api.post("/publish", { revision: state.revision, note })); }
-export async function discard() { apply(await api.post("/draft/discard")); }
-export async function restore(id) { apply(await api.post(`/history/${encodeURIComponent(id)}/restore`)); }
+let pinnedRevision = null;
+let queue = Promise.resolve();
+
+/**
+ * Runs `save` with commits based on `revision` (when a form was opened): if another admin
+ * changed the draft since, the save is refused instead of overwriting their change.
+ */
+export async function withRevision(revision, save) {
+  pinnedRevision = revision;
+  try { return await save(); } finally { pinnedRevision = null; }
+}
+
+/**
+ * Applies `mutate` to a copy of the draft and saves it. Throws ApiError with `problems`.
+ * Commits run one after another, each on the draft the previous one produced, so quick
+ * successive edits (two switches, two drags) don't collide with each other.
+ */
+export function commit(mutate) {
+  const base = pinnedRevision;
+  const run = queue.then(() => save(mutate, base));
+  queue = run.catch(() => {});
+  return run;
+}
+
+async function save(mutate, base) {
+  const next = structuredClone(state.draft);
+  mutate(next);
+  await conflictAware(() => api.put("/draft", { revision: base ?? state.revision, catalog: next.catalog, release: next.release }));
+}
+
+/** On a 409 the draft is reloaded, so the page shows what the other admin saved. */
+async function conflictAware(request) {
+  try {
+    apply(await request());
+  } catch (error) {
+    if (!(error instanceof ApiError) || error.status !== 409) throw error;
+    await loadState().catch(() => {});
+    throw new ApiError(409, "Another admin changed the draft meanwhile. It has been reloaded; open the form again and redo your change.");
+  }
+}
+
+export async function publish(note) { await conflictAware(() => api.post("/publish", { revision: state.revision, note })); }
+export async function discard() { await conflictAware(() => api.post("/draft/discard", { revision: state.revision })); }
+export async function restore(id) { await conflictAware(() => api.post(`/history/${encodeURIComponent(id)}/restore`, { revision: state.revision })); }
 
 // --- helpers ----------------------------------------------------------------------------
 

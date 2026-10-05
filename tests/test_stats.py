@@ -1,4 +1,3 @@
-import json
 import shutil
 from datetime import timedelta
 from pathlib import Path
@@ -147,3 +146,32 @@ def test_the_dashboard_reads_statistics_signed_in_only(client, admin):
     assert response.status_code == 200 and response.headers["cache-control"] == "no-store"
     assert response.json()["totals"]["activeToday"] == 1
     assert admin.get("/admin/api/stats", params={"days": 0}).status_code == 422
+
+
+def test_one_report_counts_one_install_however_it_repeats_itself(client, stats):
+    body = report(*[("active_day", (), 1)] * 50, ("first_open", (), 3))
+    body["days"] += [dict(body["days"][0]) for _ in range(5)]  # the same day again
+    assert client.post("/api/v1/events", json=body).status_code == 204
+    totals = stats.summary(1)["totals"]
+    assert totals["activeToday"] == 1 and totals["installs"] == 1
+
+
+def test_app_events_are_stored_without_the_version_except_users_and_installs(client, stats, tmp_path):
+    import sqlite3
+
+    client.post("/api/v1/events", json=report(("active_day", (), 1), ("service_opened", ("snapp", "home"), 2), version=1))
+    stats.flush()
+    rows = dict(sqlite3.connect(tmp_path / "stats" / "stats.db").execute("SELECT event, version FROM counts WHERE source = 'app'").fetchall())
+    assert rows == {"active_day": 1, "service_opened": 0}
+
+
+def test_a_long_report_is_trimmed_not_refused(client, stats):
+    many = report(*[("service_opened", ("snapp", source), 1) for source in ("home", "search")] * 300)
+    assert client.post("/api/v1/events", json=many).status_code == 204
+    assert stats.summary(1)["totals"]["serviceOpens"] == 600
+
+
+def test_a_missing_data_file_keeps_the_last_content(client, data_dir):
+    assert client.get("/api/v1/config", params=QUERY).status_code == 200
+    (data_dir / "catalog.json").unlink()
+    assert client.get("/api/v1/config", params=QUERY).status_code == 200

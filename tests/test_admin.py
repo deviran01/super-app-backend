@@ -181,3 +181,38 @@ def test_password_change_keeps_this_session_and_ends_others(admin):
     assert response.status_code == 200
     assert admin.get("/admin/api/state").status_code == 200
     assert other.get("/admin/api/state").status_code == 401
+
+
+def test_large_json_is_refused_before_sign_in(env):
+    client = TestClient(main.app, base_url=BASE, headers=HEADERS)
+    big = b"[" + b"[]," * 100_000 + b"[]]"
+    assert client.post("/admin/api/session", content=big, headers={"Content-Type": "application/json"}).status_code == 413
+
+
+def test_a_crafted_cookie_is_just_signed_out(env):
+    # Browsers can send non-ASCII cookie bytes; the signature check must not crash on them.
+    assert main.app.state.admin_accounts.resolve("e30.\udce9") is None
+    assert main.app.state.admin_accounts.resolve("e30.é") is None
+
+
+def test_huge_images_are_refused_before_decoding(admin):
+    out = io.BytesIO()
+    Image.new("L", (5000, 4000)).save(out, "PNG")  # 20 MP, tiny file
+    response = admin.post("/admin/api/images/logo?name=snapp", content=out.getvalue(), headers={"Content-Type": "image/png"})
+    assert response.status_code == 422 and "megapixels" in response.json()["detail"]
+
+
+def test_discard_refuses_a_draft_that_changed_meanwhile(admin):
+    stale = state(admin)["revision"]
+    assert save(admin, lambda d: d["catalog"]["services"][0].update(enabled=False)).status_code == 200
+    assert admin.post("/admin/api/draft/discard", json={"revision": stale}).status_code == 409
+    assert admin.post("/admin/api/draft/discard", json={"revision": state(admin)["revision"]}).status_code == 200
+
+
+def test_a_recreated_account_does_not_revive_old_sessions(env, admin):
+    accounts = main.app.state.admin_accounts
+    accounts.create("second", PASSWORD, created_by="ali")
+    old = accounts.issue("second")
+    accounts.delete("second", by="ali")
+    accounts.create("second", PASSWORD, created_by="ali")
+    assert accounts.resolve(old) is None

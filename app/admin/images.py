@@ -12,6 +12,7 @@ import hashlib
 import io
 import re
 import urllib.request
+import warnings
 from pathlib import Path
 
 from PIL import Image, ImageOps, UnidentifiedImageError
@@ -20,7 +21,11 @@ MAX_UPLOAD_BYTES = 5 * 1024 * 1024
 LOGO_SIZE = 256
 ICON_SIZE = 128
 PACKAGE_RE = re.compile(r"^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+$")
-Image.MAX_IMAGE_PIXELS = 40_000_000  # refuse decompression bombs
+# A 16 MP picture is ~64 MB decoded; bigger ones would push the 192 MB container over its
+# limit. Pillow only warns up to 2× this and raises above, so the size is also checked
+# explicitly before decoding.
+MAX_PIXELS = 16_000_000
+Image.MAX_IMAGE_PIXELS = MAX_PIXELS
 
 
 class ImageError(ValueError):
@@ -31,12 +36,20 @@ def _open(data: bytes) -> Image.Image:
     if len(data) > MAX_UPLOAD_BYTES:
         raise ImageError(f"the image is larger than {MAX_UPLOAD_BYTES // 1024 // 1024} MB")
     try:
-        image = Image.open(io.BytesIO(data))
+        with warnings.catch_warnings():
+            # Pillow warns about big images itself; the explicit check below refuses them.
+            warnings.simplefilter("ignore", Image.DecompressionBombWarning)
+            image = Image.open(io.BytesIO(data))
+        if image.format not in {"PNG", "JPEG", "WEBP"}:
+            raise ImageError("use a PNG, JPEG or WebP image")
+        # Only the header is read so far: refuse huge pictures before decoding them.
+        if image.width * image.height > MAX_PIXELS:
+            raise ImageError(f"the image is too large ({image.width}×{image.height}); use one under {MAX_PIXELS // 1_000_000} megapixels")
+        if image.format == "JPEG":
+            image.draft("RGB", (1024, 1024))  # decode a photo at a reduced scale
         image.load()
     except (UnidentifiedImageError, OSError, Image.DecompressionBombError) as error:
         raise ImageError("not a PNG, JPEG or WebP image") from error
-    if image.format not in {"PNG", "JPEG", "WEBP"}:
-        raise ImageError("use a PNG, JPEG or WebP image")
     return ImageOps.exif_transpose(image)
 
 

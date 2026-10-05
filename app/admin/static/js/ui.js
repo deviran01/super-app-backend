@@ -1,7 +1,7 @@
 // Reusable UI: toasts, dialogs, the editing drawer, form fields and sortable lists.
 import { api, ApiError } from "./api.js";
 import { append, clear, h, icon } from "./dom.js";
-import { imageUrl } from "./state.js";
+import { imageUrl, state, withRevision } from "./state.js";
 
 // --- feedback ---------------------------------------------------------------------------
 
@@ -15,12 +15,22 @@ export function showError(error) {
   toast(error instanceof ApiError || error instanceof Error ? error.message : String(error), "error");
 }
 
+// Open overlays, newest last: Escape closes only the one on top (a dialog over a drawer).
+const overlays = [];
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && overlays.length) overlays[overlays.length - 1]();
+});
+
 function overlay(node, onClose, scrimClass = "scrim") {
   const scrim = h("div", { class: scrimClass, on: { click: () => onClose() } });
-  const keys = (event) => { if (event.key === "Escape") onClose(); };
-  document.addEventListener("keydown", keys);
+  overlays.push(onClose);
   document.body.append(scrim, node);
-  return () => { document.removeEventListener("keydown", keys); scrim.remove(); node.remove(); };
+  return () => {
+    const index = overlays.lastIndexOf(onClose);
+    if (index >= 0) overlays.splice(index, 1);
+    scrim.remove();
+    node.remove();
+  };
 }
 
 export function dialog({ title, body, actions }) {
@@ -54,13 +64,15 @@ export function confirm({ title, message, confirmLabel = "Confirm", danger = fal
 export function drawer({ title, subtitle, body, onSave, saveLabel = "Save to draft", footerStart, onProblems }) {
   const problems = h("div");
   const save = h("button", { class: "btn primary", text: saveLabel });
+  // The form shows the draft as it was now; saving later must not overwrite newer changes.
+  const openedAt = state.revision;
   let remove;
   const close = () => remove();
   save.addEventListener("click", async () => {
     clear(problems);
     save.disabled = true;
     try {
-      await onSave();
+      await withRevision(openedAt, onSave);
       close();
     } catch (error) {
       if (error instanceof ApiError && error.problems.length) {

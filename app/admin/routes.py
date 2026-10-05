@@ -4,6 +4,7 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
+from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, Field, ValidationError
 
 from .auth import COOKIE, SECURE_COOKIES, SESSION_SECONDS, AdminAccounts, client_address, require_admin
@@ -102,9 +103,20 @@ def save_draft(body: SaveDraft, request: Request, username: str = Depends(requir
         raise HTTPException(status_code=409, detail=f"Someone else saved meanwhile ({conflict}). Reload to see their changes.")
 
 
+class BaseRevision(BaseModel):
+    # Optional for older dashboards; when sent, a draft that changed meanwhile isn't replaced.
+    revision: int | None = None
+
+
+CONFLICT = "Another admin changed the draft meanwhile. It has been reloaded; check it and try again."
+
+
 @router.post("/draft/discard")
-def discard(request: Request, _: str = Depends(require_admin)) -> dict[str, Any]:
-    return _state_json(store(request).discard())
+def discard(request: Request, body: BaseRevision | None = None, _: str = Depends(require_admin)) -> dict[str, Any]:
+    try:
+        return _state_json(store(request).discard(body.revision if body else None))
+    except Conflict:
+        raise HTTPException(status_code=409, detail=CONFLICT)
 
 
 class Publish(BaseModel):
@@ -139,11 +151,13 @@ def history_entry(entry_id: str, request: Request, _: str = Depends(require_admi
 
 
 @router.post("/history/{entry_id}/restore")
-def restore(entry_id: str, request: Request, username: str = Depends(require_admin)) -> dict[str, Any]:
+def restore(entry_id: str, request: Request, body: BaseRevision | None = None, username: str = Depends(require_admin)) -> dict[str, Any]:
     try:
-        return _state_json(store(request).restore(entry_id, username))
+        return _state_json(store(request).restore(entry_id, username, body.revision if body else None))
     except KeyError:
         raise HTTPException(status_code=404, detail="No such version")
+    except Conflict:
+        raise HTTPException(status_code=409, detail=CONFLICT)
 
 
 # --- images -------------------------------------------------------------------------------
@@ -164,18 +178,23 @@ async def _body(request: Request) -> bytes:
 
 @router.post("/images/logo")
 async def upload_logo(request: Request, name: str = Query(), _: str = Depends(require_admin)) -> dict[str, str]:
-    try:
-        return {"path": save(request.app.state.public_dir, "logos", _name(name), logo_png(await _body(request)))}
-    except ImageError as error:
-        raise HTTPException(status_code=422, detail=str(error))
+    return await _upload(request, name, "logos", logo_png)
 
 
 @router.post("/images/icon")
 async def upload_icon(request: Request, name: str = Query(), _: str = Depends(require_admin)) -> dict[str, str]:
+    return await _upload(request, name, "icons/categories", icon_png)
+
+
+async def _upload(request: Request, name: str, folder: str, convert) -> dict[str, str]:
+    name = _name(name)
+    data = await _body(request)
     try:
-        return {"path": save(request.app.state.public_dir, "icons/categories", _name(name), icon_png(await _body(request)))}
+        # Decoding and resizing take a while: off the event loop, so the API keeps answering.
+        png = await run_in_threadpool(convert, data)
     except ImageError as error:
         raise HTTPException(status_code=422, detail=str(error))
+    return {"path": save(request.app.state.public_dir, folder, name, png)}
 
 
 class StoreIcon(BaseModel):

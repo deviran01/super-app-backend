@@ -34,13 +34,18 @@ MAX_FAILURES = 5
 LOCK_SECONDS = 15 * 60
 CSRF_HEADER = "x-superapp-admin"
 
+# scrypt below takes 16 MiB per hash; at most two at a time keeps a burst of sign-ins
+# inside the container's memory limit.
+_HASHING = threading.BoundedSemaphore(2)
+
 SECURE_COOKIES = os.environ.get("SUPERAPP_DEV") != "1"
 COOKIE = "__Host-superapp_admin" if SECURE_COOKIES else "superapp_admin"
 
 
 def hash_password(password: str, salt: bytes | None = None) -> tuple[str, str]:
     salt = salt or secrets.token_bytes(16)
-    digest = hashlib.scrypt(password.encode("utf-8"), salt=salt, n=2**14, r=8, p=1, maxmem=64 * 1024 * 1024)
+    with _HASHING:
+        digest = hashlib.scrypt(password.encode("utf-8"), salt=salt, n=2**14, r=8, p=1, maxmem=64 * 1024 * 1024)
     return base64.b64encode(salt).decode(), base64.b64encode(digest).decode()
 
 
@@ -94,7 +99,8 @@ class AdminAccounts:
             if any(a["username"] == username for a in data["admins"]):
                 raise ValueError(f"{username!r} already exists")
             salt, digest = hash_password(password)
-            entry = {"username": username, "salt": salt, "hash": digest, "epoch": 0, "createdAt": time.time(), "createdBy": created_by}
+            # A random first epoch: sessions of a deleted account with the same name stay invalid.
+            entry = {"username": username, "salt": salt, "hash": digest, "epoch": secrets.randbelow(2**31), "createdAt": time.time(), "createdBy": created_by}
             data["admins"].append(entry)
             self._save(data)
         return Admin(username, entry["createdAt"], created_by)
@@ -137,21 +143,26 @@ class AdminAccounts:
         now = time.time()
         if len(self._failures) > 10_000:  # forget expired lockouts
             self._failures = {k: v for k, v in self._failures.items() if v[1] > now}
-        for key in (f"user:{username}", f"ip:{client}"):
-            count, until = self._failures.get(key, (0, 0.0))
-            if count >= MAX_FAILURES and now < until:
-                raise PermissionError(int(until - now))
+        keys = (f"user:{username}", f"ip:{client}")
+        with self._lock:
+            for key in keys:
+                count, until = self._failures.get(key, (0, 0.0))
+                if count >= MAX_FAILURES and now < until:
+                    raise PermissionError(int(until - now))
+            # Counted before hashing, so a burst of parallel attempts can't all get through;
+            # a lock that has expired starts a fresh count instead of re-locking at once.
+            for key in keys:
+                count, until = self._failures.get(key, (0, 0.0))
+                self._failures[key] = ((count if now < until else 0) + 1, now + LOCK_SECONDS)
         admin = next((a for a in self._load()["admins"] if a["username"] == username), None)
         # Hash even for unknown users, so timing doesn't reveal which usernames exist.
         salt = base64.b64decode(admin["salt"]) if admin else b"0" * 16
         _, digest = hash_password(password, salt)
         ok = admin is not None and hmac.compare_digest(digest, admin["hash"])
-        for key in (f"user:{username}", f"ip:{client}"):
-            if ok:
-                self._failures.pop(key, None)
-            else:
-                count, _ = self._failures.get(key, (0, 0.0))
-                self._failures[key] = (count + 1, now + LOCK_SECONDS)
+        if ok:
+            with self._lock:
+                for key in keys:
+                    self._failures.pop(key, None)
         return ok
 
     def issue(self, username: str) -> str:
@@ -165,7 +176,8 @@ class AdminAccounts:
         if not token or "." not in token:
             return None
         body, signature = token.rsplit(".", 1)
-        if not hmac.compare_digest(signature, self._sign(body)):
+        # Bytes: a cookie may carry non-ASCII text, which compare_digest rejects as str.
+        if not hmac.compare_digest(signature.encode("utf-8", "surrogateescape"), self._sign(body).encode()):
             return None
         try:
             payload = json.loads(base64.urlsafe_b64decode(body + "=" * (-len(body) % 4)))

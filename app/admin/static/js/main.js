@@ -107,7 +107,11 @@ async function renderPage() {
     if (link.dataset.page === key) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   }
-  await page.render(content);
+  // A fresh container per render: a page that finishes loading after the user moved on
+  // renders into a detached element instead of over the new page.
+  const view = h("div");
+  fill(content, view);
+  await page.render(view);
 }
 
 // --- actions ----------------------------------------------------------------------------
@@ -162,7 +166,7 @@ async function start() {
       if (!["history", "admins", "statistics"].includes(key)) renderPage().catch(showError);
     });
     // Another admin may publish meanwhile: refresh when the tab comes back.
-    document.addEventListener("visibilitychange", () => { if (!document.hidden && state.user) loadState().catch(() => {}); });
+    document.addEventListener("visibilitychange", () => { if (!document.hidden && state.user) loadState({ quiet: true }).catch(() => {}); });
   }
 }
 
