@@ -4,6 +4,7 @@ import { fill, h, icon } from "./dom.js";
 import { changes, discard, loadState, publish, state, subscribe } from "./state.js";
 import { confirm, dialog, showError, toast } from "./ui.js";
 import * as overview from "./pages/overview.js";
+import * as statistics from "./pages/statistics.js";
 import * as services from "./pages/services.js";
 import * as categories from "./pages/categories.js";
 import * as compare from "./pages/compare.js";
@@ -14,6 +15,7 @@ import * as admins from "./pages/admins.js";
 
 const PAGES = [
   ["overview", overview, "overview"],
+  ["statistics", statistics, "chart"],
   ["services", services, "apps"],
   ["categories", categories, "categories"],
   ["compare", compare, "compare"],
@@ -155,9 +157,9 @@ async function start() {
     window.addEventListener("hashchange", () => renderPage().catch(showError));
     subscribe(() => {
       renderDraftBar();
-      // History and Admins load their own data; the others re-render from the draft.
+      // History, Admins and Statistics load their own data; the others re-render from the draft.
       const [key] = currentPage();
-      if (key !== "history" && key !== "admins") renderPage().catch(showError);
+      if (!["history", "admins", "statistics"].includes(key)) renderPage().catch(showError);
     });
     // Another admin may publish meanwhile: refresh when the tab comes back.
     document.addEventListener("visibilitychange", () => { if (!document.hidden && state.user) loadState().catch(() => {}); });

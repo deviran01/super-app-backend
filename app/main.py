@@ -3,12 +3,14 @@
     GET /api/v1/config        the catalog: services, categories, rules (docs: CONFIG_SPEC.md)
     GET /api/v1/app/version   the update policy for the caller's store: minimum version
                               (hard update), latest version (soft update), store link
+    POST /api/v1/events       anonymous daily usage totals from the app (app/stats.py)
     GET /health               liveness for Docker
     /admin                    the admin dashboard (sign-in required; app/admin/)
 
 Both API endpoints take `platform`, `channel` (bazaar | myket | direct) and `appVersion`,
 answer with an ETag and `Cache-Control: no-cache`, and return 304 when the client's
 `If-None-Match` still matches. The app sends nothing else: no user, session or device data.
+Calls to all three are counted per day for the dashboard's Statistics page.
 """
 from __future__ import annotations
 
@@ -16,6 +18,7 @@ import hashlib
 import json
 import logging
 import os
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated, Any
 
@@ -23,11 +26,13 @@ from fastapi import FastAPI, Query, Request, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from .admin.auth import AdminAccounts
 from .admin.routes import router as admin_router
 from .admin.store import AdminStore
-from .content import CHANNEL_PATTERN, DATA_DIR, ROOT, ContentStore, resolve_release, update_status
+from .content import CHANNEL_PATTERN, DATA_DIR, ROOT, Content, ContentStore, resolve_release, update_status
+from .stats import KNOWN_CHANNELS, MAX_COUNTS_PER_DAY, MAX_REPORT_DAYS, StatsStore
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 
@@ -37,10 +42,22 @@ SCENARIOS = [s.strip() for s in os.environ.get("SUPERAPP_SCENARIOS", "").split("
 # base URL, which behind the proxy comes from the forwarded host and scheme.
 PUBLIC_URL = os.environ.get("SUPERAPP_PUBLIC_URL")
 IMAGE_MAX_AGE = 7 * 24 * 3600
+MAX_EVENTS_BYTES = 64 * 1024
+# Versions above the highest one in the release rules (+ this margin) are counted as "other".
+VERSION_MARGIN = 50
+API_ENDPOINTS = {"/api/v1/config": "config", "/api/v1/app/version": "version", "/api/v1/events": "events"}
 
 store = ContentStore(scenarios=SCENARIOS)
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    yield
+    app.state.stats.flush()
+
+
 app = FastAPI(
+    lifespan=lifespan,
     title="Anar API",
     version="1",
     # Interactive docs only where asked for (local development); production exposes the API alone.
@@ -53,6 +70,7 @@ app.add_middleware(GZipMiddleware, minimum_size=1024)
 app.state.admin_store = AdminStore(DATA_DIR)
 app.state.admin_accounts = AdminAccounts(DATA_DIR / "admin")
 app.state.public_dir = PUBLIC_DIR
+app.state.stats = StatsStore(DATA_DIR / "stats" / "stats.db")
 app.include_router(admin_router)
 
 ADMIN_STATIC = Path(__file__).parent / "admin" / "static"
@@ -128,10 +146,87 @@ def get_app_version(request: Request, platform: Platform = "android", channel: C
     return _json(request, policy)
 
 
+class ReportCount(BaseModel):
+    event: str = Field(max_length=40)
+    dims: list[Annotated[str, Field(max_length=64)]] = Field(default_factory=list, max_length=2)
+    n: int = Field(ge=0, le=1_000_000)
+
+
+class ReportDay(BaseModel):
+    day: str = Field(max_length=10)
+    counts: list[ReportCount] = Field(max_length=MAX_COUNTS_PER_DAY)
+
+
+class UsageReport(BaseModel):
+    """What the app uploads: daily totals for one build — no identifier of any kind."""
+    model_config = ConfigDict(extra="ignore")
+
+    platform: str = Field(pattern=r"^[a-z]{1,16}$")
+    channel: str = Field(pattern=CHANNEL_PATTERN.pattern)
+    appVersion: int = Field(ge=0, le=1_000_000_000)
+    days: list[ReportDay] = Field(max_length=MAX_REPORT_DAYS)
+
+
+def _known_channels(content: Content) -> set[str]:
+    return set(KNOWN_CHANNELS) | set((content.release.get("channels") or {}).keys())
+
+
+def _max_version(content: Content) -> int:
+    rules = [content.release.get("default") or {}, *(content.release.get("channels") or {}).values()]
+    versions = [v for rule in rules for k in ("latestVersion", "minimumSupportedVersion") if isinstance(v := rule.get(k), int)]
+    return max(versions, default=1) + VERSION_MARGIN
+
+
+@app.post("/api/v1/events", status_code=204)
+async def post_events(request: Request) -> Response:
+    content = store.get()
+    if content.forced_status:
+        return Response(status_code=content.forced_status)
+    body = b""
+    async for chunk in request.stream():
+        body += chunk
+        if len(body) > MAX_EVENTS_BYTES:
+            return Response(status_code=413)
+    try:
+        report = UsageReport.model_validate_json(body)
+    except ValidationError:
+        return Response(status_code=400)
+    request.state.stats_channel = report.channel
+    request.state.stats_version = report.appVersion
+    request.app.state.stats.add_report(
+        report.model_dump(),
+        services={s["id"] for s in content.catalog.get("services", []) if isinstance(s, dict) and "id" in s},
+        categories={c["id"] for c in content.catalog.get("categories", []) if isinstance(c, dict) and "id" in c},
+        channels=_known_channels(content),
+        max_version=_max_version(content),
+    )
+    return Response(status_code=204)
+
+
 @app.get("/health", include_in_schema=False)
 def health() -> dict[str, str]:
     store.get()
     return {"status": "ok"}
+
+
+@app.middleware("http")
+async def count_api_calls(request: Request, call_next):
+    response = await call_next(request)
+    endpoint = API_ENDPOINTS.get(request.url.path)
+    if endpoint is not None:
+        content = store.get()
+        channel = getattr(request.state, "stats_channel", None) or request.query_params.get("channel") or "direct"
+        try:
+            version = int(getattr(request.state, "stats_version", None) or request.query_params.get("appVersion") or 0)
+        except ValueError:
+            version = 0
+        request.app.state.stats.count_api_call(
+            endpoint,
+            response.status_code,
+            channel if channel in _known_channels(content) else "other",
+            version if 0 < version <= _max_version(content) else 0,
+        )
+    return response
 
 
 @app.middleware("http")

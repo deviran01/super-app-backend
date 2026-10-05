@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Copies what is live on the server back into this repository — the published catalog and
 # release rules, and the images uploaded from the admin dashboard — so git keeps a history
-# and a fresh server can be seeded from it. Never pulls data/admin/ (accounts, drafts).
+# and a fresh server can be seeded from it. Never pulls data/admin/ (accounts, drafts) or
+# data/stats/ (usage statistics).
 #
 #   deploy/pull.sh && git diff --stat
 set -euo pipefail

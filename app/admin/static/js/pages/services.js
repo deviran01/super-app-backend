@@ -55,7 +55,7 @@ export function render(root) {
   );
 }
 
-function logo(service, size = 40) {
+export function logo(service, size = 40) {
   const monogram = () => h("div", { class: "logo placeholder-logo", style: { background: service.brandColor || "var(--text-3)" }, text: (text(service.name, service.id) || "?").slice(0, 1) });
   const src = imageUrl(service.logo);
   if (!src) return monogram();

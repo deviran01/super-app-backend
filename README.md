@@ -9,6 +9,7 @@ store's update policy. Python 3.11, FastAPI and uvicorn in Docker; the contract 
 |---|---|
 | `GET /api/v1/config` | The catalog (`data/catalog.json`) plus `assetsBaseUrl`, the absolute base for its image paths. |
 | `GET /api/v1/app/version` | The update policy for the caller's store: `minimumSupportedVersion` (hard update), `latestVersion` (soft update), `forceUpdate`, `updateUrl` (that store's page), messages, and `update` (`REQUIRED` / `OPTIONAL` / `NONE`) when `appVersion` is sent. |
+| `POST /api/v1/events` | Anonymous daily usage totals from the app ([statistics](#usage-statistics)); `204`. |
 | `GET /logos/…`, `GET /icons/…` | Images, cached for 7 days. |
 | `GET /health` | Liveness for Docker. |
 | `/admin/` | The [admin dashboard](#admin-dashboard) (sign-in required). |
@@ -21,6 +22,7 @@ or device data.
 ```text
 app/main.py                 routes, ETag/304, image caching, security headers
 app/content.py              loads data/ (reloaded when the files change), checks, QA scenarios
+app/stats.py                usage statistics: API-call counts and app reports (SQLite, data/stats/)
 app/admin/                  dashboard: API (routes.py), validation (schema.py), draft/publish/
                             history (store.py), accounts and sessions (auth.py), images, UI (static/)
 app/cli.py                  admin accounts from the command line
@@ -52,6 +54,10 @@ deploy/                     deploy.sh and the host nginx site
   rules and makes it live (users get it on their next launch). *Discard* drops the draft.
 - **History**: every published version, who published it and why; any one can be restored
   into the draft. **Admins**: add or remove accounts, change your password.
+- **Statistics**: daily active users, installs, API calls, app and service opens, how
+  services are opened (home, search, favorites…), categories, searches with no results,
+  update prompts and clicks, page-load errors per service, stores and app versions — for 7,
+  30 or 90 days, per store.
 
 Security: scrypt-hashed passwords; signed, `HttpOnly`, `Secure`, `SameSite=Strict` session
 cookies (12 h) that sign-out and password changes revoke; a required request header against
@@ -71,6 +77,26 @@ cd /srv/superapp
 sudo docker compose exec api python -m app.cli create-admin <username> --generate   # prints a password
 sudo docker compose exec api python -m app.cli set-password <username> --generate
 ```
+
+## Usage statistics
+
+Two sources, one table of daily counters (`data/stats/stats.db`, SQLite, kept 400 days):
+
+- **API calls**, counted by the server for `config`, `version` and `events`: day (Iran time),
+  endpoint, result (`2xx` / `304` / `4xx` / `5xx`), channel and app version. No IP address
+  or other request data is stored.
+- **App reports** (`POST /api/v1/events`): the app counts events on the device and sends
+  daily totals at launch and when it goes to the background (at most every 15 minutes).
+  There is no user or device identifier: daily active users and installs are counters each
+  install sends at most once a day / once ever. Users can turn reports off in the app
+  (Settings → Privacy). Format and event list: the app's
+  [CONFIG_SPEC.md](https://github.com/deviran01/super-app-android/blob/main/docs/CONFIG_SPEC.md#post-apiv1events--usage-totals).
+
+Reports can't be authenticated (the app has no identity), so treat the numbers as
+estimates. The server keeps only known events, catalog ids and channels, caps each count
+per report, accepts days from the last week, and buckets unknown versions as "other" — a
+forged report can nudge numbers but can't add text or grow the database. Counts are
+buffered in memory and written every 10 seconds, and before every dashboard read.
 
 ## Releases: soft and hard updates per store
 
@@ -159,8 +185,8 @@ everything else on it:
 | Piece | Where | Notes |
 |---|---|---|
 | Container `superapp-api` | `/srv/superapp` (compose project `superapp`) | `python:3.11-slim`, uvicorn as an unprivileged user, loopback `127.0.0.1:8120` only, read-only root FS, all capabilities dropped, 192 MB / 0.5 CPU / 64 PID cap |
-| Content | `/srv/superapp/data`, `/srv/superapp/public` | written by the dashboard (owned by uid 10001); `data/admin/` holds accounts, the draft and history |
-| Host nginx site | `/etc/nginx/sites-available/superapp.2z2.ir.conf` | copy of `deploy/host-nginx/superapp.2z2.ir.conf`; the API is GET/HEAD only, `/admin` also accepts edits and uploads (6 MB) |
+| Content | `/srv/superapp/data`, `/srv/superapp/public` | written by the dashboard (owned by uid 10001); `data/admin/` holds accounts, the draft and history; `data/stats/` the usage statistics |
+| Host nginx site | `/etc/nginx/sites-available/superapp.2z2.ir.conf` | copy of `deploy/host-nginx/superapp.2z2.ir.conf`; the API is GET/HEAD only except `POST /api/v1/events` (64 KB), and `/admin` also accepts edits and uploads (6 MB) |
 | TLS | Let's Encrypt via webroot `/var/www/letsencrypt` | renews with the host's certbot timer; its own hook reloads nginx |
 | CDN | ArvanCloud proxies the domain | Arvan terminates TLS for users and reaches the origin over HTTPS. It honors `Cache-Control`: API responses are never cached at the edge (`no-cache` + ETag → 304s), images are (7 days) |
 

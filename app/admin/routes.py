@@ -1,4 +1,4 @@
-"""Admin API (/admin/api): sign-in, the draft, publishing, history, images and accounts."""
+"""Admin API (/admin/api): sign-in, the draft, publishing, history, images, accounts and usage statistics."""
 from __future__ import annotations
 
 from typing import Any
@@ -193,6 +193,16 @@ def logo_from_store(body: StoreIcon, request: Request, _: str = Depends(require_
 
 
 # --- accounts -----------------------------------------------------------------------------
+
+
+@router.get("/stats")
+def stats(
+    request: Request,
+    days: int = Query(30, ge=1, le=366),
+    channel: str | None = Query(None, pattern=r"^[a-z0-9][a-z0-9_-]{0,63}$"),
+    _: str = Depends(require_admin),
+) -> dict[str, Any]:
+    return request.app.state.stats.summary(days, channel)
 
 
 @router.get("/admins")

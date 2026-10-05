@@ -60,6 +60,8 @@ const ICONS = {
   external: "M14 4h6v6m0-6-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5",
   check: "m5 12.5 4.5 4.5L19 7.5",
   key: "M15 9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-3 3v9m0-4h3m-3 3h2",
+  chart: "M4 20V10m6 10V4m6 16v-7m4 7H3",
+  refresh: "M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5",
 };
 
 export function icon(name) {

@@ -14,3 +14,6 @@ __pycache__/
 .DS_Store
 .idea/
 .vscode/
+
+# Usage statistics (SQLite) written by a local run.
+data/stats/
