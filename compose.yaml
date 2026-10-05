@@ -1,5 +1,6 @@
-# Daricheh API. Production: /srv/superapp on the server, published on 127.0.0.1:8120 behind
-# the host nginx (deploy/host-nginx/). Locally: SUPERAPP_PORT=8080 docker compose up --build
+# Daricheh API and admin dashboard. Production: /srv/superapp on the server, published on
+# 127.0.0.1:8120 behind the host nginx (deploy/host-nginx/).
+# Locally: SUPERAPP_PORT=8080 SUPERAPP_DEV=1 docker compose up --build
 name: superapp
 
 services:
@@ -13,9 +14,13 @@ services:
     environment:
       # QA overlays from scenarios/ (e.g. "lab,force-update"); empty in production.
       SUPERAPP_SCENARIOS: ${SUPERAPP_SCENARIOS:-}
+      # 1 locally (plain http): admin cookies without the Secure flag.
+      SUPERAPP_DEV: ${SUPERAPP_DEV:-}
     volumes:
-      - ./data:/srv/data:ro
-      - ./public:/srv/public:ro
+      # Written by the admin dashboard: drafts, history, accounts, published files and
+      # uploaded images. Owned by the container's user (uid 10001).
+      - ./data:/srv/data
+      - ./public:/srv/public
     # Hardened and capped so it can never starve other services on the host.
     read_only: true
     tmpfs:

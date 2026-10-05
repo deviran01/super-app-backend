@@ -4,6 +4,7 @@
     GET /api/v1/app/version   the update policy for the caller's store: minimum version
                               (hard update), latest version (soft update), store link
     GET /health               liveness for Docker
+    /admin                    the admin dashboard (sign-in required; app/admin/)
 
 Both API endpoints take `platform`, `channel` (bazaar | myket | direct) and `appVersion`,
 answer with an ETag and `Cache-Control: no-cache`, and return 304 when the client's
@@ -22,7 +23,10 @@ from fastapi import FastAPI, Query, Request, Response
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from .content import CHANNEL_PATTERN, ROOT, ContentStore, resolve_release, update_status
+from .admin.auth import AdminAccounts
+from .admin.routes import router as admin_router
+from .admin.store import AdminStore
+from .content import CHANNEL_PATTERN, DATA_DIR, ROOT, ContentStore, resolve_release, update_status
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 
@@ -44,6 +48,22 @@ app = FastAPI(
     openapi_url="/openapi.json" if os.environ.get("SUPERAPP_DOCS") == "1" else None,
 )
 app.add_middleware(GZipMiddleware, minimum_size=1024)
+
+app.state.admin_store = AdminStore(DATA_DIR)
+app.state.admin_accounts = AdminAccounts(DATA_DIR / "admin")
+app.state.public_dir = PUBLIC_DIR
+app.include_router(admin_router)
+
+ADMIN_HEADERS = {
+    # Everything the dashboard loads comes from this origin; nothing may frame it.
+    "Content-Security-Policy": (
+        "default-src 'self'; img-src 'self' data: https:; style-src 'self'; script-src 'self'; "
+        "font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"
+    ),
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "no-referrer",
+    "X-Robots-Tag": "noindex, nofollow",
+}
 
 Channel = Annotated[str, Query(pattern=CHANNEL_PATTERN.pattern, description="Store the build was published in")]
 AppVersion = Annotated[int | None, Query(ge=0, description="The app's versionCode")]
@@ -96,17 +116,23 @@ def health() -> dict[str, str]:
 
 
 @app.middleware("http")
-async def image_cache_headers(request: Request, call_next):
+async def cache_and_security_headers(request: Request, call_next):
     response = await call_next(request)
-    if response.status_code == 200 and request.url.path.startswith(("/logos/", "/icons/")):
-        # Images keep their name until they change (give a changed image a new name).
+    path = request.url.path
+    if response.status_code == 200 and path.startswith(("/logos/", "/icons/")):
+        # Images keep their name until they change (uploads are named by their content).
         response.headers["Cache-Control"] = f"public, max-age={IMAGE_MAX_AGE}"
+    elif path == "/admin" or path.startswith("/admin/"):
+        response.headers.update(ADMIN_HEADERS)
+        # Never cached anywhere: not by the browser, not by the CDN.
+        response.headers["Cache-Control"] = "no-store"
     return response
 
 
 for folder in ("logos", "icons"):
     if (PUBLIC_DIR / folder).is_dir():
         app.mount(f"/{folder}", StaticFiles(directory=PUBLIC_DIR / folder), name=folder)
+app.mount("/admin", StaticFiles(directory=Path(__file__).parent / "admin" / "static", html=True), name="admin")
 # Local QA pages for the "lab" scenario; not shipped in the production image.
 if "lab" in SCENARIOS and (PUBLIC_DIR / "lab").is_dir():
     app.mount("/lab", StaticFiles(directory=PUBLIC_DIR / "lab", html=True), name="lab")

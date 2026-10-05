@@ -1,0 +1,241 @@
+"""Admin API (/admin/api): sign-in, the draft, publishing, history, images and accounts."""
+from __future__ import annotations
+
+from typing import Any
+
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
+from pydantic import BaseModel, Field, ValidationError
+
+from .auth import COOKIE, SECURE_COOKIES, SESSION_SECONDS, AdminAccounts, client_address, require_admin
+from .images import ImageError, fetch_store_icon, icon_png, logo_png, save
+from .schema import ID_RE, Draft, problems
+from .store import AdminStore, Conflict, DraftState
+
+router = APIRouter(prefix="/admin/api")
+
+
+def store(request: Request) -> AdminStore:
+    return request.app.state.admin_store
+
+
+def accounts(request: Request) -> AdminAccounts:
+    return request.app.state.admin_accounts
+
+
+def _state_json(state: DraftState) -> dict[str, Any]:
+    return {
+        "draft": state.draft,
+        "live": state.live,
+        "revision": state.revision,
+        "dirty": state.dirty,
+        "updatedBy": state.updated_by,
+        "updatedAt": state.updated_at,
+        "published": state.live_meta,
+    }
+
+
+# --- session ----------------------------------------------------------------------------
+
+
+class Credentials(BaseModel):
+    username: str = Field(max_length=64)
+    password: str = Field(max_length=256)
+
+
+@router.post("/session")
+def sign_in(body: Credentials, request: Request, response: Response) -> dict[str, str]:
+    accounts_ = accounts(request)
+    try:
+        ok = accounts_.verify(body.username, body.password, client_address(request))
+    except PermissionError as locked:
+        raise HTTPException(status_code=429, detail=f"Too many attempts. Try again in {locked.args[0] // 60 + 1} minutes.")
+    if not ok:
+        raise HTTPException(status_code=401, detail="Wrong username or password")
+    username = body.username.strip().lower()
+    response.set_cookie(
+        COOKIE,
+        accounts_.issue(username),
+        max_age=SESSION_SECONDS,
+        httponly=True,
+        secure=SECURE_COOKIES,
+        samesite="strict",
+        path="/",
+    )
+    return {"username": username}
+
+
+@router.get("/session")
+def current(username: str = Depends(require_admin)) -> dict[str, str]:
+    return {"username": username}
+
+
+@router.delete("/session")
+def sign_out(request: Request, response: Response, username: str = Depends(require_admin)) -> dict[str, bool]:
+    accounts(request).end_sessions(username)
+    response.delete_cookie(COOKIE, path="/", secure=SECURE_COOKIES, httponly=True, samesite="strict")
+    return {"ok": True}
+
+
+# --- draft and publishing -----------------------------------------------------------------
+
+
+@router.get("/state")
+def get_state(request: Request, _: str = Depends(require_admin)) -> dict[str, Any]:
+    return _state_json(store(request).state())
+
+
+class SaveDraft(BaseModel):
+    revision: int
+    catalog: dict[str, Any]
+    release: dict[str, Any]
+
+
+@router.put("/draft")
+def save_draft(body: SaveDraft, request: Request, username: str = Depends(require_admin)) -> dict[str, Any]:
+    try:
+        draft = Draft.model_validate({"catalog": body.catalog, "release": body.release})
+    except ValidationError as error:
+        raise HTTPException(status_code=422, detail={"message": "Some fields need attention", "problems": problems(error)})
+    try:
+        return _state_json(store(request).save_draft(draft, body.revision, username))
+    except Conflict as conflict:
+        raise HTTPException(status_code=409, detail=f"Someone else saved meanwhile ({conflict}). Reload to see their changes.")
+
+
+@router.post("/draft/discard")
+def discard(request: Request, _: str = Depends(require_admin)) -> dict[str, Any]:
+    return _state_json(store(request).discard())
+
+
+class Publish(BaseModel):
+    revision: int
+    note: str = Field(default="", max_length=200)
+
+
+@router.post("/publish")
+def publish(body: Publish, request: Request, username: str = Depends(require_admin)) -> dict[str, Any]:
+    try:
+        return _state_json(store(request).publish(body.revision, username, body.note.strip()))
+    except Conflict as conflict:
+        raise HTTPException(status_code=409, detail=f"The draft changed ({conflict}). Review it and publish again.")
+    except ValidationError as error:
+        raise HTTPException(status_code=422, detail={"message": "The draft can't be published", "problems": problems(error)})
+
+
+@router.get("/history")
+def history(request: Request, _: str = Depends(require_admin)) -> list[dict[str, Any]]:
+    return store(request).history()
+
+
+@router.get("/history/{entry_id}")
+def history_entry(entry_id: str, request: Request, _: str = Depends(require_admin)) -> dict[str, Any]:
+    try:
+        entry = store(request).entry(entry_id)
+    except KeyError:
+        entry = None
+    if entry is None:
+        raise HTTPException(status_code=404, detail="No such version")
+    return entry
+
+
+@router.post("/history/{entry_id}/restore")
+def restore(entry_id: str, request: Request, username: str = Depends(require_admin)) -> dict[str, Any]:
+    try:
+        return _state_json(store(request).restore(entry_id, username))
+    except KeyError:
+        raise HTTPException(status_code=404, detail="No such version")
+
+
+# --- images -------------------------------------------------------------------------------
+
+
+def _name(value: str) -> str:
+    if not ID_RE.match(value):
+        raise HTTPException(status_code=422, detail="Set a valid id first")
+    return value
+
+
+async def _body(request: Request) -> bytes:
+    data = await request.body()
+    if not data:
+        raise HTTPException(status_code=422, detail="Choose an image")
+    return data
+
+
+@router.post("/images/logo")
+async def upload_logo(request: Request, name: str = Query(), _: str = Depends(require_admin)) -> dict[str, str]:
+    try:
+        return {"path": save(request.app.state.public_dir, "logos", _name(name), logo_png(await _body(request)))}
+    except ImageError as error:
+        raise HTTPException(status_code=422, detail=str(error))
+
+
+@router.post("/images/icon")
+async def upload_icon(request: Request, name: str = Query(), _: str = Depends(require_admin)) -> dict[str, str]:
+    try:
+        return {"path": save(request.app.state.public_dir, "icons/categories", _name(name), icon_png(await _body(request)))}
+    except ImageError as error:
+        raise HTTPException(status_code=422, detail=str(error))
+
+
+class StoreIcon(BaseModel):
+    name: str
+    package: str = Field(max_length=150)
+
+
+@router.post("/images/logo/from-store")
+def logo_from_store(body: StoreIcon, request: Request, _: str = Depends(require_admin)) -> dict[str, str]:
+    try:
+        png = logo_png(fetch_store_icon(body.package.strip()))
+        return {"path": save(request.app.state.public_dir, "logos", _name(body.name), png)}
+    except ImageError as error:
+        raise HTTPException(status_code=422, detail=str(error))
+
+
+# --- accounts -----------------------------------------------------------------------------
+
+
+@router.get("/admins")
+def list_admins(request: Request, _: str = Depends(require_admin)) -> list[dict[str, Any]]:
+    return [{"username": a.username, "createdAt": a.created_at, "createdBy": a.created_by} for a in accounts(request).list()]
+
+
+@router.post("/admins")
+def add_admin(body: Credentials, request: Request, username: str = Depends(require_admin)) -> dict[str, Any]:
+    try:
+        admin = accounts(request).create(body.username, body.password, created_by=username)
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error))
+    return {"username": admin.username, "createdAt": admin.created_at, "createdBy": admin.created_by}
+
+
+@router.delete("/admins/{target}")
+def remove_admin(target: str, request: Request, username: str = Depends(require_admin)) -> dict[str, bool]:
+    try:
+        accounts(request).delete(target, by=username)
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error))
+    except KeyError:
+        raise HTTPException(status_code=404, detail="No such admin")
+    return {"ok": True}
+
+
+class PasswordChange(BaseModel):
+    current: str = Field(max_length=256)
+    new: str = Field(max_length=256)
+
+
+@router.post("/password")
+def change_password(body: PasswordChange, request: Request, response: Response, username: str = Depends(require_admin)) -> dict[str, bool]:
+    accounts_ = accounts(request)
+    try:
+        if not accounts_.verify(username, body.current, client_address(request)):
+            raise HTTPException(status_code=422, detail="Your current password is wrong")
+        accounts_.set_password(username, body.new)
+    except PermissionError:
+        raise HTTPException(status_code=429, detail="Too many attempts. Try again later.")
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error))
+    # Every other session ended; keep this one.
+    response.set_cookie(COOKIE, accounts_.issue(username), max_age=SESSION_SECONDS, httponly=True, secure=SECURE_COOKIES, samesite="strict", path="/")
+    return {"ok": True}

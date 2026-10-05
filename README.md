@@ -1,8 +1,8 @@
 # Daricheh backend
 
-REST API of the Daricheh Android app (client: `deviran01/super-app-android`). It serves the
-catalog (every service, category and logo) and each store's update policy. Python 3.11,
-FastAPI and uvicorn in Docker; the contract is
+REST API of the Daricheh Android app (client: `deviran01/super-app-android`) and the admin
+dashboard that manages it. It serves the catalog (every service, category and logo) and each
+store's update policy. Python 3.11, FastAPI and uvicorn in Docker; the contract is
 [CONFIG_SPEC.md](https://github.com/deviran01/super-app-android/blob/main/docs/CONFIG_SPEC.md).
 
 | Endpoint | Returns |
@@ -11,6 +11,7 @@ FastAPI and uvicorn in Docker; the contract is
 | `GET /api/v1/app/version` | The update policy for the caller's store: `minimumSupportedVersion` (hard update), `latestVersion` (soft update), `forceUpdate`, `updateUrl` (that store's page), messages, and `update` (`REQUIRED` / `OPTIONAL` / `NONE`) when `appVersion` is sent. |
 | `GET /logos/…`, `GET /icons/…` | Images, cached for 7 days. |
 | `GET /health` | Liveness for Docker. |
+| `/admin/` | The [admin dashboard](#admin-dashboard) (sign-in required). |
 
 Both API endpoints take `platform=android`, `channel` (`bazaar` / `myket` / `direct`) and
 `appVersion` (the app's versionCode), answer with an `ETag` and `Cache-Control: no-cache`, and
@@ -18,8 +19,11 @@ return `304` when `If-None-Match` still matches. The app sends nothing else — 
 or device data.
 
 ```text
-app/main.py                 routes, ETag/304, image caching
+app/main.py                 routes, ETag/304, image caching, security headers
 app/content.py              loads data/ (reloaded when the files change), checks, QA scenarios
+app/admin/                  dashboard: API (routes.py), validation (schema.py), draft/publish/
+                            history (store.py), accounts and sessions (auth.py), images, UI (static/)
+app/cli.py                  admin accounts from the command line
 data/catalog.json           the catalog (12 categories, 29 services, compare groups)
 data/release.json           update rules: defaults + per-store overrides and store links
 public/logos/<id>.png       service logos (official app icons, 256 px); missing ones fall back to monograms
@@ -33,9 +37,44 @@ compose.yaml, Dockerfile    the service (production and local)
 deploy/                     deploy.sh and the host nginx site
 ```
 
+## Admin dashboard
+
+**https://superapp.2z2.ir/admin/** — everything the app shows, without editing JSON:
+
+- **Services**: add, edit, remove, switch on/off, drag to reorder within a category; logo by
+  upload (resized to the app's 256 px square) or straight from the service's Cafe Bazaar
+  listing; names and descriptions in Persian and English; maintenance message; every web
+  behavior the app supports (domains, permissions, popups, cache, keep-alive, user agent…).
+- **Categories**: order, title, color, icon (any glyph image, converted to a tintable icon).
+- **Compare groups**, **Settings** (feature flags, payment domains, links) and **Releases**
+  (soft/hard update versions and the store page, per store).
+- **Draft → Publish**: edits collect in a draft; *Publish* validates it with the app's own
+  rules and makes it live (users get it on their next launch). *Discard* drops the draft.
+- **History**: every published version, who published it and why; any one can be restored
+  into the draft. **Admins**: add or remove accounts, change your password.
+
+Security: scrypt-hashed passwords; signed, `HttpOnly`, `Secure`, `SameSite=Strict` session
+cookies (12 h) that sign-out and password changes revoke; a required request header against
+cross-site requests; 15-minute lockout after 5 wrong passwords; a strict Content Security
+Policy; nothing cached (`no-store`) or indexed. Two admins editing at once can't overwrite
+each other: a save based on an older draft is refused.
+
+**The server owns `data/` now.** The first deploy seeds it from this repository; after that,
+changes are made and published in the dashboard, and `deploy/deploy.sh` never overwrites
+them. `deploy/pull.sh` copies the live catalog, release rules and uploaded images back here
+so git keeps a history.
+
+First admin (or a forgotten password), on the server:
+
+```bash
+cd /srv/superapp
+sudo docker compose exec api python -m app.cli create-admin <username> --generate   # prints a password
+sudo docker compose exec api python -m app.cli set-password <username> --generate
+```
+
 ## Releases: soft and hard updates per store
 
-Edit `data/release.json` and deploy. `default` applies to every build; a store under
+Use the dashboard's **Releases** page (it edits `data/release.json`). `default` applies to every build; a store under
 `channels` overrides any field. Each store's `updateUrl` is its listing:
 
 ```json
@@ -61,13 +100,16 @@ The app's debug and QA builds call `http://127.0.0.1:8080/` (through `adb revers
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -r requirements-dev.txt
-SUPERAPP_SCENARIOS=lab SUPERAPP_DOCS=1 .venv/bin/uvicorn app.main:app --port 8080 --reload
+.venv/bin/python -m app.cli create-admin you                    # once, for the dashboard
+SUPERAPP_DEV=1 SUPERAPP_SCENARIOS=lab SUPERAPP_DOCS=1 .venv/bin/uvicorn app.main:app --port 8080 --reload
 adb reverse tcp:8080 tcp:8080          # let the device reach it
 .venv/bin/pytest                       # tests
 ```
 
-or with Docker: `SUPERAPP_PORT=8080 SUPERAPP_SCENARIOS=lab docker compose up --build`.
-`SUPERAPP_DOCS=1` serves interactive API docs at `/docs` (off in production).
+or with Docker: `SUPERAPP_PORT=8080 SUPERAPP_DEV=1 SUPERAPP_SCENARIOS=lab docker compose up --build`.
+`SUPERAPP_DEV=1` allows the dashboard's session cookie over plain `http://` (local only);
+`SUPERAPP_DOCS=1` serves interactive API docs at `/docs` (off in production). Running locally
+edits this checkout's `data/` like production edits the server's.
 
 ## QA scenarios
 
@@ -117,8 +159,8 @@ everything else on it:
 | Piece | Where | Notes |
 |---|---|---|
 | Container `superapp-api` | `/srv/superapp` (compose project `superapp`) | `python:3.11-slim`, uvicorn as an unprivileged user, loopback `127.0.0.1:8120` only, read-only root FS, all capabilities dropped, 192 MB / 0.5 CPU / 64 PID cap |
-| Content | `/srv/superapp/data`, `/srv/superapp/public` | mounted read-only; replaced by `deploy.sh`, picked up without a restart |
-| Host nginx site | `/etc/nginx/sites-available/superapp.2z2.ir.conf` | copy of `deploy/host-nginx/superapp.2z2.ir.conf`; GET/HEAD only |
+| Content | `/srv/superapp/data`, `/srv/superapp/public` | written by the dashboard (owned by uid 10001); `data/admin/` holds accounts, the draft and history |
+| Host nginx site | `/etc/nginx/sites-available/superapp.2z2.ir.conf` | copy of `deploy/host-nginx/superapp.2z2.ir.conf`; the API is GET/HEAD only, `/admin` also accepts edits and uploads (6 MB) |
 | TLS | Let's Encrypt via webroot `/var/www/letsencrypt` | renews with the host's certbot timer; its own hook reloads nginx |
 | CDN | ArvanCloud proxies the domain | Arvan terminates TLS for users and reaches the origin over HTTPS. It honors `Cache-Control`: API responses are never cached at the edge (`no-cache` + ETag → 304s), images are (7 days) |
 
@@ -129,10 +171,10 @@ echo 'DEPLOY_HOST=user@server' > deploy/.env   # once; git-ignored (this reposit
 deploy/deploy.sh
 ```
 
-It checks `data/` with the API's own rules, uploads the code, then images, then `data/` last
-(a client never gets a catalog whose images aren't there yet), removes images no longer
-used, rebuilds the image when the code changed (content-only deploys need no restart), and
-waits until the container is healthy.
+It uploads the code and the repository's images (never deleting uploaded ones), seeds `data/`
+on the first deploy only, builds the image on your machine (`linux/amd64`; Docker needed —
+PyPI is slow or blocked from the server) and loads it there, then waits until the container
+is healthy. `DEPLOY_BUILD=server deploy/deploy.sh` builds on the server instead. Content changes go through the dashboard, not deploys.
 
 ### One-time host setup (already done; for a rebuild)
 

@@ -1,6 +1,9 @@
 # Deployment target (user@host); never committed — this repository is public.
 deploy/.env
 
+# Admin dashboard state when running locally: accounts, sessions key, draft, history.
+data/admin/
+
 # Python
 __pycache__/
 *.pyc
