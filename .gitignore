@@ -15,5 +15,6 @@ __pycache__/
 .idea/
 .vscode/
 
-# Usage statistics (SQLite) written by a local run.
+# Usage statistics and feedback (SQLite) written by a local run.
 data/stats/
+data/feedback/

@@ -1,7 +1,7 @@
-"""Admin API (/admin/api): sign-in, the draft, publishing, history, images, accounts and usage statistics."""
+"""Admin API (/admin/api): sign-in, the draft, publishing, history, images, accounts, usage statistics and feedback."""
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from fastapi.concurrency import run_in_threadpool
@@ -211,7 +211,7 @@ def logo_from_store(body: StoreIcon, request: Request, _: str = Depends(require_
         raise HTTPException(status_code=422, detail=str(error))
 
 
-# --- accounts -----------------------------------------------------------------------------
+# --- statistics and feedback -----------------------------------------------------------------
 
 
 @router.get("/stats")
@@ -222,6 +222,54 @@ def stats(
     _: str = Depends(require_admin),
 ) -> dict[str, Any]:
     return request.app.state.stats.summary(days, channel)
+
+
+@router.get("/feedback")
+def feedback_page(
+    request: Request,
+    folder: Literal["inbox", "archived", "spam"] = "inbox",
+    before: int | None = Query(None, ge=1),
+    limit: int = Query(30, ge=1, le=100),
+    _: str = Depends(require_admin),
+) -> dict[str, Any]:
+    return request.app.state.feedback.page(folder, before, limit)
+
+
+@router.get("/feedback/counts")
+def feedback_counts(request: Request, _: str = Depends(require_admin)) -> dict[str, int]:
+    return request.app.state.feedback.counts()
+
+
+class FeedbackStatus(BaseModel):
+    status: Literal["new", "read", "archived", "spam"]
+
+
+@router.patch("/feedback/{item_id}")
+def set_feedback_status(item_id: int, body: FeedbackStatus, request: Request, _: str = Depends(require_admin)) -> dict[str, Any]:
+    item = request.app.state.feedback.set_status(item_id, body.status)
+    if item is None:
+        raise HTTPException(status_code=404, detail="No such message")
+    return item
+
+
+@router.delete("/feedback/{item_id}")
+def delete_feedback(item_id: int, request: Request, _: str = Depends(require_admin)) -> dict[str, bool]:
+    if not request.app.state.feedback.delete(item_id):
+        raise HTTPException(status_code=404, detail="No such message")
+    return {"ok": True}
+
+
+@router.post("/feedback/read-all")
+def read_all_feedback(request: Request, _: str = Depends(require_admin)) -> dict[str, int]:
+    return {"updated": request.app.state.feedback.mark_all_read()}
+
+
+@router.post("/feedback/empty-spam")
+def empty_spam(request: Request, _: str = Depends(require_admin)) -> dict[str, int]:
+    return {"deleted": request.app.state.feedback.empty_spam()}
+
+
+# --- accounts -----------------------------------------------------------------------------
 
 
 @router.get("/admins")

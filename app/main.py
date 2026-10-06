@@ -4,13 +4,15 @@
     GET /api/v1/app/version   the update policy for the caller's store: minimum version
                               (hard update), latest version (soft update), store link
     POST /api/v1/events       anonymous daily usage totals from the app (app/stats.py)
+    GET /api/v1/feedback/challenge, POST /api/v1/feedback
+                              a user's anonymous feedback message (app/feedback.py)
     GET /health               liveness for Docker
     /admin                    the admin dashboard (sign-in required; app/admin/)
 
 Both API endpoints take `platform`, `channel` (bazaar | myket | direct) and `appVersion`,
 answer with an ETag and `Cache-Control: no-cache`, and return 304 when the client's
 `If-None-Match` still matches. The app sends nothing else: no user, session or device data.
-Calls to all three are counted per day for the dashboard's Statistics page.
+Calls to these are counted per day for the dashboard's Statistics page.
 """
 from __future__ import annotations
 
@@ -20,18 +22,20 @@ import logging
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from fastapi import FastAPI, Query, Request, Response
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.concurrency import run_in_threadpool
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
-from .admin.auth import AdminAccounts
+from .admin.auth import AdminAccounts, client_address
 from .admin.routes import router as admin_router
 from .admin.store import AdminStore
 from .content import CHANNEL_PATTERN, DATA_DIR, ROOT, Content, ContentStore, resolve_release, update_status
+from .feedback import FeedbackStore, Message, Refused
 from .stats import StatsStore
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
@@ -43,11 +47,12 @@ SCENARIOS = [s.strip() for s in os.environ.get("SUPERAPP_SCENARIOS", "").split("
 PUBLIC_URL = os.environ.get("SUPERAPP_PUBLIC_URL")
 IMAGE_MAX_AGE = 7 * 24 * 3600
 MAX_EVENTS_BYTES = 64 * 1024
+MAX_FEEDBACK_BYTES = 8 * 1024
 MAX_ADMIN_JSON_BYTES = 256 * 1024
 MAX_CACHED_VARIANTS = 64
 # Versions above the highest one in the release rules (+ this margin) are counted as "other".
 VERSION_MARGIN = 10
-API_ENDPOINTS = {"/api/v1/config": "config", "/api/v1/app/version": "version", "/api/v1/events": "events"}
+API_ENDPOINTS = {"/api/v1/config": "config", "/api/v1/app/version": "version", "/api/v1/events": "events", "/api/v1/feedback": "feedback"}
 
 store = ContentStore(scenarios=SCENARIOS)
 
@@ -73,6 +78,7 @@ app.state.admin_store = AdminStore(DATA_DIR)
 app.state.admin_accounts = AdminAccounts(DATA_DIR / "admin")
 app.state.public_dir = PUBLIC_DIR
 app.state.stats = StatsStore(DATA_DIR / "stats" / "stats.db")
+app.state.feedback = FeedbackStore(DATA_DIR / "feedback" / "feedback.db")
 app.include_router(admin_router)
 
 ADMIN_STATIC = Path(__file__).parent / "admin" / "static"
@@ -188,18 +194,26 @@ def _bucketed_version(content: Content, version: int) -> int:
     return version if 0 < version <= content.highest_version + VERSION_MARGIN else 0
 
 
+async def _read_body(request: Request, limit: int) -> bytes | None:
+    """The request body, or None once it grows past [limit] bytes."""
+    body = bytearray()
+    async for chunk in request.stream():
+        body += chunk
+        if len(body) > limit:
+            return None
+    return bytes(body)
+
+
 @app.post("/api/v1/events", status_code=204)
 async def post_events(request: Request) -> Response:
     content = store.get()
     if content.forced_status:
         return Response(status_code=content.forced_status)
-    body = bytearray()
-    async for chunk in request.stream():
-        body += chunk
-        if len(body) > MAX_EVENTS_BYTES:
-            return Response(status_code=413)
+    body = await _read_body(request, MAX_EVENTS_BYTES)
+    if body is None:
+        return Response(status_code=413)
     try:
-        report = UsageReport.model_validate_json(bytes(body))
+        report = UsageReport.model_validate_json(body)
     except ValidationError:
         return Response(status_code=400)
     request.state.stats_channel = report.channel
@@ -212,6 +226,63 @@ async def post_events(request: Request) -> Response:
         max_version=content.highest_version + VERSION_MARGIN,
     )
     return Response(status_code=204)
+
+
+class FeedbackIn(BaseModel):
+    """A feedback message: its kind, the text and the build that sent it — nothing about the user."""
+    model_config = ConfigDict(extra="ignore")
+
+    platform: str = Field(pattern=r"^[a-z]{1,16}$")
+    channel: str = Field(pattern=CHANNEL_PATTERN.pattern)
+    appVersion: int = Field(ge=0, le=1_000_000_000)
+    osVersion: int = Field(default=0, ge=0, le=1000)
+    kind: Literal["problem", "idea", "other"] = "other"
+    # Raw; the length is checked again once normalized (app/feedback.py).
+    text: str = Field(max_length=4000)
+    challenge: str = Field(max_length=200)
+    nonce: str = Field(pattern=r"^\d{1,20}$")
+
+
+def _feedback_enabled(content: Content) -> bool:
+    return content.catalog.get("features", {}).get("feedback", True) is not False
+
+
+@app.get("/api/v1/feedback/challenge")
+def get_feedback_challenge(request: Request, platform: Platform = "android", channel: Channel = "direct", appVersion: AppVersion = None) -> Response:
+    content = store.get()
+    if content.forced_status:
+        return Response(status_code=content.forced_status)
+    if not _feedback_enabled(content):
+        return JSONResponse({"detail": "disabled"}, status_code=403)
+    # One per message: never cached, by anyone.
+    return JSONResponse(request.app.state.feedback.challenge(), headers={"Cache-Control": "no-store"})
+
+
+@app.post("/api/v1/feedback", status_code=202)
+async def post_feedback(request: Request) -> Response:
+    content = store.get()
+    if content.forced_status:
+        return Response(status_code=content.forced_status)
+    if not _feedback_enabled(content):
+        return JSONResponse({"detail": "disabled"}, status_code=403)
+    body = await _read_body(request, MAX_FEEDBACK_BYTES)
+    if body is None:
+        return Response(status_code=413)
+    try:
+        sent = FeedbackIn.model_validate_json(body)
+    except ValidationError:
+        return Response(status_code=400)
+    channel = sent.channel if sent.channel in content.channels else "other"
+    version = _bucketed_version(content, sent.appVersion)
+    request.state.stats_channel = channel
+    request.state.stats_version = version
+    message = Message(sent.kind, sent.text, sent.challenge, sent.nonce, channel, version, sent.osVersion)
+    try:
+        await run_in_threadpool(request.app.state.feedback.submit, message, client_address(request))
+    except Refused as refused:
+        headers = {"Retry-After": str(refused.retry_after)} if refused.retry_after else None
+        return JSONResponse({"detail": refused.reason}, status_code=refused.status, headers=headers)
+    return Response(status_code=202)
 
 
 @app.get("/health", include_in_schema=False)

@@ -5,6 +5,7 @@ import { changes, discard, loadState, publish, state, subscribe } from "./state.
 import { confirm, dialog, showError, toast } from "./ui.js";
 import * as overview from "./pages/overview.js";
 import * as statistics from "./pages/statistics.js";
+import * as feedback from "./pages/feedback.js";
 import * as services from "./pages/services.js";
 import * as categories from "./pages/categories.js";
 import * as compare from "./pages/compare.js";
@@ -16,6 +17,7 @@ import * as admins from "./pages/admins.js";
 const PAGES = [
   ["overview", overview, "overview"],
   ["statistics", statistics, "chart"],
+  ["feedback", feedback, "message"],
   ["services", services, "apps"],
   ["categories", categories, "categories"],
   ["compare", compare, "compare"],
@@ -73,7 +75,8 @@ whenSignedOut(() => showLogin("Your session ended. Sign in again."));
 function renderShell() {
   const nav = h("nav", { class: "sidebar", "aria-label": "Sections" },
     h("div", { class: "brand" }, h("img", { src: MARK, alt: "" }), h("div", {}, "Anar", h("small", { text: "Admin" }))),
-    PAGES.map(([key, page, iconName]) => h("a", { class: "nav-link", href: `#/${key}`, dataset: { page: key }, on: { click: () => shell.classList.remove("nav-open") } }, icon(iconName), page.title)),
+    PAGES.map(([key, page, iconName]) => h("a", { class: "nav-link", href: `#/${key}`, dataset: { page: key }, on: { click: () => shell.classList.remove("nav-open") } },
+      icon(iconName), page.title, key === "feedback" && h("span", { class: "count accent", id: "feedback-badge", hidden: true }))),
     h("div", { class: "nav-spacer" }),
     h("div", { class: "account" }, h("div", { class: "avatar", text: (state.user || "?").slice(0, 1) }), h("div", { class: "grow", style: { flex: 1, minWidth: 0 } }, h("div", { class: "name", text: state.user }), h("div", { class: "hint", text: "Admin" })),
       h("button", { class: "btn ghost icon", "aria-label": "Sign out", title: "Sign out", on: { click: signOut } }, icon("logout"))));
@@ -161,13 +164,37 @@ async function start() {
     window.addEventListener("hashchange", () => renderPage().catch(showError));
     subscribe(() => {
       renderDraftBar();
-      // History, Admins and Statistics load their own data; the others re-render from the draft.
+      // History, Admins, Statistics and Feedback load their own data; the others re-render from the draft.
       const [key] = currentPage();
-      if (!["history", "admins", "statistics"].includes(key)) renderPage().catch(showError);
+      if (!["history", "admins", "statistics", "feedback"].includes(key)) renderPage().catch(showError);
     });
-    // Another admin may publish meanwhile: refresh when the tab comes back.
-    document.addEventListener("visibilitychange", () => { if (!document.hidden && state.user) loadState({ quiet: true }).catch(() => {}); });
+    // Another admin may publish meanwhile, and new feedback may arrive: refresh when the tab comes back.
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden || !state.user) return;
+      loadState({ quiet: true }).catch(() => {});
+      refreshFeedbackBadge();
+    });
+    document.addEventListener("feedback-counts", (event) => showFeedbackBadge(event.detail));
   }
+  refreshFeedbackBadge();
+}
+
+// --- unread feedback ----------------------------------------------------------------------
+
+async function refreshFeedbackBadge() {
+  try {
+    showFeedbackBadge(await api.get("/feedback/counts"));
+  } catch {
+    // Not worth an error toast: the badge shows up on the next refresh.
+  }
+}
+
+function showFeedbackBadge(counts) {
+  const badge = document.getElementById("feedback-badge");
+  if (!badge) return;
+  badge.hidden = !counts.unread;
+  badge.textContent = counts.unread > 99 ? "99+" : String(counts.unread);
+  badge.title = `${counts.unread} unread`;
 }
 
 (async () => {

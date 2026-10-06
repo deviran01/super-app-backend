@@ -12,8 +12,9 @@ const FEATURES = [
   ["compareMode", "Compare & choose", "Compare groups on Home and in the browser."],
   ["downloads", "Downloads", "Let services download files."],
   ["storageManager", "Storage", "The storage screen in Settings."],
+  ["feedback", "Feedback", "Users can send short anonymous messages from Settings (read them under Feedback)."],
 ];
-const FEATURE_DEFAULTS = { search: true, favorites: true, multiProfile: false, compareMode: true, downloads: true, storageManager: true };
+const FEATURE_DEFAULTS = { search: true, favorites: true, multiProfile: false, compareMode: true, downloads: true, storageManager: true, feedback: true };
 
 export function render(root) {
   const { catalog } = state.draft;

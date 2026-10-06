@@ -23,7 +23,7 @@ const ERRORS = {
   insecure_connection: "Certificate error", unsupported_url: "Unsupported link", crashed: "Page crashed",
   web_view_unavailable: "WebView unavailable", generic: "Other error",
 };
-const ENDPOINTS = { config: "Catalog", version: "Update policy", events: "Usage reports" };
+const ENDPOINTS = { config: "Catalog", version: "Update policy", events: "Usage reports", feedback: "Feedback" };
 const STATUSES = { "2xx": "OK", "304": "Not modified", "4xx": "Rejected", "5xx": "Server error" };
 const SCOPES = { cache: "Cache only", service: "One service", all: "Everything" };
 

@@ -314,6 +314,25 @@ select.input.small-select { width: auto; min-height: 36px; padding-block: 6px; }
 .bar-cell .bar-track { display: inline-block; vertical-align: middle; width: calc(100% - 44px); margin-inline-end: 8px; }
 @media (max-width: 640px) { .page-head .seg { order: 3; } .card-head { flex-wrap: wrap; } }
 
+/* --- feedback ----------------------------------------------------------------------- */
+
+.count {
+  display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
+  font-size: 11px; font-weight: 700; line-height: 1; background: var(--surface-3); color: var(--text-2);
+}
+.count.accent { background: var(--accent); color: var(--accent-ink); }
+.count[hidden] { display: none; }
+.nav-link .count { margin-inline-start: auto; }
+.seg .btn .count { margin-inline-start: 2px; }
+.messages { gap: 10px; }
+.message { display: grid; gap: 10px; padding: 14px 16px; }
+.message.unread { border-inline-start: 3px solid var(--accent); }
+.message-head, .message-foot { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.message-head .grow, .message-foot .grow { flex: 1; }
+.message-text { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 15px; line-height: 1.75; unicode-bidi: plaintext; }
+.message-foot .btn.small { min-height: 28px; }
+@media (max-width: 640px) { .message-foot .hint { flex-basis: 100%; } .message-foot .grow { display: none; } }
+
 @keyframes fade { from { opacity: 0; } }
 @keyframes slide { from { transform: translateX(24px); opacity: 0; } }
 @keyframes pop { from { transform: translate(-50%, -48%) scale(.98); opacity: 0; } }

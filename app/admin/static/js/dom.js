@@ -62,6 +62,10 @@ const ICONS = {
   key: "M15 9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-3 3v9m0-4h3m-3 3h2",
   chart: "M4 20V10m6 10V4m6 16v-7m4 7H3",
   refresh: "M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5",
+  message: "M5 5h14a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-8l-4 3v-3H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm3 5h8m-8 3h5",
+  inbox: "M4 13h4l1.5 2.5h5L16 13h4M5.5 5h13L20 13v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-5l1.5-8Z",
+  archive: "M4 5h16v4H4zM5 9v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M10 13h4",
+  spam: "M12 3 4.5 6v5.5c0 4.4 3.1 8.2 7.5 9.5 4.4-1.3 7.5-5.1 7.5-9.5V6L12 3Zm0 5.5v4m0 3h.01",
 };
 
 export function icon(name) {
