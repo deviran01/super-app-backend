@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "configVersion": "2026-10-05.1",
+  "configVersion": "2026-10-06.162711",
   "refreshIntervalSeconds": 3600,
   "features": {
     "search": true,
@@ -54,8 +54,8 @@
     {
       "id": "transport",
       "title": {
-        "en": "Transportation",
-        "fa": "حمل‌ونقل"
+        "fa": "حمل‌ونقل",
+        "en": "Transportation"
       },
       "icon": "icons/categories/transport.png",
       "color": "#2F9E44",
@@ -65,8 +65,8 @@
     {
       "id": "cars",
       "title": {
-        "en": "Cars",
-        "fa": "خودرو"
+        "fa": "خودرو",
+        "en": "Cars"
       },
       "icon": "icons/categories/cars.png",
       "color": "#F08C00",
@@ -76,8 +76,8 @@
     {
       "id": "food",
       "title": {
-        "en": "Food",
-        "fa": "غذا"
+        "fa": "غذا",
+        "en": "Food"
       },
       "icon": "icons/categories/food.png",
       "color": "#E8590C",
@@ -87,8 +87,8 @@
     {
       "id": "shopping",
       "title": {
-        "en": "Shopping",
-        "fa": "خرید"
+        "fa": "خرید",
+        "en": "Shopping"
       },
       "icon": "icons/categories/shopping.png",
       "color": "#D6336C",
@@ -98,8 +98,8 @@
     {
       "id": "classifieds",
       "title": {
-        "en": "Classifieds",
-        "fa": "نیازمندی‌ها"
+        "fa": "نیازمندی‌ها",
+        "en": "Classifieds"
       },
       "icon": "icons/categories/classifieds.png",
       "color": "#7048E8",
@@ -109,8 +109,8 @@
     {
       "id": "travel",
       "title": {
-        "en": "Travel",
-        "fa": "سفر"
+        "fa": "سفر",
+        "en": "Travel"
       },
       "icon": "icons/categories/travel.png",
       "color": "#1C7ED6",
@@ -120,8 +120,8 @@
     {
       "id": "maps",
       "title": {
-        "en": "Maps",
-        "fa": "نقشه و مسیریابی"
+        "fa": "نقشه و مسیریابی",
+        "en": "Maps"
       },
       "icon": "icons/categories/maps.png",
       "color": "#0CA678",
@@ -131,8 +131,8 @@
     {
       "id": "entertainment",
       "title": {
-        "en": "Entertainment",
-        "fa": "سرگرمی"
+        "fa": "سرگرمی",
+        "en": "Entertainment"
       },
       "icon": "icons/categories/entertainment.png",
       "color": "#AE3EC9",
@@ -142,8 +142,8 @@
     {
       "id": "music",
       "title": {
-        "en": "Music & audio",
-        "fa": "موسیقی و صوت"
+        "fa": "موسیقی و صوت",
+        "en": "Music & audio"
       },
       "icon": "icons/categories/music.png",
       "color": "#E64980",
@@ -153,8 +153,8 @@
     {
       "id": "books",
       "title": {
-        "en": "Books",
-        "fa": "کتاب"
+        "fa": "کتاب",
+        "en": "Books"
       },
       "icon": "icons/categories/books.png",
       "color": "#A0522D",
@@ -164,8 +164,8 @@
     {
       "id": "education",
       "title": {
-        "en": "Education",
-        "fa": "آموزش"
+        "fa": "آموزش",
+        "en": "Education"
       },
       "icon": "icons/categories/education.png",
       "color": "#3B5BDB",
@@ -175,8 +175,8 @@
     {
       "id": "jobs",
       "title": {
-        "en": "Jobs",
-        "fa": "کاریابی"
+        "fa": "کاریابی",
+        "en": "Jobs"
       },
       "icon": "icons/categories/jobs.png",
       "color": "#5C940D",
@@ -186,8 +186,8 @@
     {
       "id": "health",
       "title": {
-        "en": "Health",
-        "fa": "سلامت"
+        "fa": "سلامت",
+        "en": "Health"
       },
       "icon": "icons/categories/health.png",
       "color": "#F03E3E",
@@ -197,8 +197,8 @@
     {
       "id": "insurance",
       "title": {
-        "en": "Insurance",
-        "fa": "بیمه"
+        "fa": "بیمه",
+        "en": "Insurance"
       },
       "icon": "icons/categories/insurance.png",
       "color": "#0B7285",
@@ -208,8 +208,8 @@
     {
       "id": "finance",
       "title": {
-        "en": "Finance",
-        "fa": "مالی"
+        "fa": "مالی",
+        "en": "Finance"
       },
       "icon": "icons/categories/finance.png",
       "color": "#1098AD",
@@ -219,8 +219,8 @@
     {
       "id": "utilities",
       "title": {
-        "en": "Telecom & bills",
-        "fa": "اپراتور و قبوض"
+        "fa": "اپراتور و قبوض",
+        "en": "Telecom & bills"
       },
       "icon": "icons/categories/utilities.png",
       "color": "#4C6EF5",
@@ -230,8 +230,8 @@
     {
       "id": "government",
       "title": {
-        "en": "Government",
-        "fa": "خدمات دولتی"
+        "fa": "خدمات دولتی",
+        "en": "Government"
       },
       "icon": "icons/categories/government.png",
       "color": "#495057",
@@ -241,8 +241,8 @@
     {
       "id": "messaging",
       "title": {
-        "en": "Messaging",
-        "fa": "پیام‌رسان"
+        "fa": "پیام‌رسان",
+        "en": "Messaging"
       },
       "icon": "icons/categories/messaging.png",
       "color": "#15AABF",
@@ -254,12 +254,12 @@
     {
       "id": "snapp",
       "name": {
-        "en": "Snapp",
-        "fa": "اسنپ"
+        "fa": "اسنپ",
+        "en": "Snapp"
       },
       "description": {
-        "en": "Cars, bikes and couriers on demand",
-        "fa": "درخواست خودرو، موتور و پیک"
+        "fa": "درخواست خودرو، موتور و پیک",
+        "en": "Cars, bikes and couriers on demand"
       },
       "categoryId": "transport",
       "url": "https://app.snapp.taxi/",
@@ -269,6 +269,14 @@
       "order": 10,
       "featured": true,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "snap",
+        "taxi",
+        "ride",
+        "تاکسی",
+        "تاکسی اینترنتی",
+        "ماشین"
+      ],
       "web": {
         "allowedDomains": [
           "snapp.taxi",
@@ -285,29 +293,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "HIGH",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "snap",
-        "taxi",
-        "ride",
-        "تاکسی",
-        "تاکسی اینترنتی",
-        "ماشین"
-      ]
+      }
     },
     {
       "id": "tapsi",
       "name": {
-        "en": "Tapsi",
-        "fa": "تپسی"
+        "fa": "تپسی",
+        "en": "Tapsi"
       },
       "description": {
-        "en": "Ride hailing across Iran",
-        "fa": "تاکسی اینترنتی در سراسر ایران"
+        "fa": "تاکسی اینترنتی در سراسر ایران",
+        "en": "Ride hailing across Iran"
       },
       "categoryId": "transport",
       "url": "https://app.tapsi.cab/",
@@ -317,6 +319,13 @@
       "order": 20,
       "featured": true,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "tap30",
+        "taxi",
+        "ride",
+        "تاکسی",
+        "تپ سی"
+      ],
       "web": {
         "allowedDomains": [
           "tapsi.cab",
@@ -333,28 +342,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "HIGH",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "tap30",
-        "taxi",
-        "ride",
-        "تاکسی",
-        "تپ سی"
-      ]
+      }
     },
     {
       "id": "snappbox",
       "name": {
-        "en": "Snapp Box",
-        "fa": "اسنپ‌باکس"
+        "fa": "اسنپ‌باکس",
+        "en": "Snapp Box"
       },
       "description": {
-        "en": "Parcel delivery",
-        "fa": "ارسال مرسوله"
+        "fa": "ارسال مرسوله",
+        "en": "Parcel delivery"
       },
       "categoryId": "transport",
       "url": "https://app.snapp-box.com/",
@@ -364,6 +368,7 @@
       "order": 30,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [],
       "web": {
         "allowedDomains": [
           "snapp-box.com"
@@ -379,6 +384,8 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
@@ -388,12 +395,12 @@
     {
       "id": "snappfood",
       "name": {
-        "en": "SnappFood",
-        "fa": "اسنپ‌فود"
+        "fa": "اسنپ‌فود",
+        "en": "SnappFood"
       },
       "description": {
-        "en": "Restaurants and groceries delivered",
-        "fa": "سفارش غذا و سوپرمارکت"
+        "fa": "سفارش غذا و سوپرمارکت",
+        "en": "Restaurants and groceries delivered"
       },
       "categoryId": "food",
       "url": "https://snappfood.ir/",
@@ -403,6 +410,14 @@
       "order": 40,
       "featured": true,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "food",
+        "restaurant",
+        "delivery",
+        "رستوران",
+        "غذا",
+        "زودفود"
+      ],
       "web": {
         "allowedDomains": [
           "snappfood.ir"
@@ -418,29 +433,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "food",
-        "restaurant",
-        "delivery",
-        "رستوران",
-        "غذا",
-        "زودفود"
-      ]
+      }
     },
     {
       "id": "tapsifood",
       "name": {
-        "en": "Tapsi Food",
-        "fa": "تپسی‌فود"
+        "fa": "تپسی‌فود",
+        "en": "Tapsi Food"
       },
       "description": {
-        "en": "Food delivery from nearby restaurants",
-        "fa": "سفارش غذا از رستوران‌های نزدیک"
+        "fa": "سفارش غذا از رستوران‌های نزدیک",
+        "en": "Food delivery from nearby restaurants"
       },
       "categoryId": "food",
       "url": "https://tapsi.food/",
@@ -450,6 +459,11 @@
       "order": 50,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "food",
+        "رستوران",
+        "غذا"
+      ],
       "web": {
         "allowedDomains": [
           "tapsi.food"
@@ -465,26 +479,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "food",
-        "رستوران",
-        "غذا"
-      ]
+      }
     },
     {
       "id": "digikala",
       "name": {
-        "en": "Digikala",
-        "fa": "دیجی‌کالا"
+        "fa": "دیجی‌کالا",
+        "en": "Digikala"
       },
       "description": {
-        "en": "Iran's largest online store",
-        "fa": "بزرگ‌ترین فروشگاه اینترنتی ایران"
+        "fa": "بزرگ‌ترین فروشگاه اینترنتی ایران",
+        "en": "Iran's largest online store"
       },
       "categoryId": "shopping",
       "url": "https://www.digikala.com/",
@@ -494,6 +505,14 @@
       "order": 60,
       "featured": true,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "digi",
+        "shop",
+        "store",
+        "دیجی",
+        "فروشگاه",
+        "خرید"
+      ],
       "web": {
         "allowedDomains": [
           "digikala.com"
@@ -509,29 +528,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "digi",
-        "shop",
-        "store",
-        "دیجی",
-        "فروشگاه",
-        "خرید"
-      ]
+      }
     },
     {
       "id": "torob",
       "name": {
-        "en": "Torob",
-        "fa": "ترب"
+        "fa": "ترب",
+        "en": "Torob"
       },
       "description": {
-        "en": "Compare prices before you buy",
-        "fa": "مقایسه قیمت پیش از خرید"
+        "fa": "مقایسه قیمت پیش از خرید",
+        "en": "Compare prices before you buy"
       },
       "categoryId": "shopping",
       "url": "https://torob.com/",
@@ -541,6 +554,12 @@
       "order": 70,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "price",
+        "compare",
+        "قیمت",
+        "مقایسه"
+      ],
       "web": {
         "allowedDomains": [
           "torob.com"
@@ -556,27 +575,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "price",
-        "compare",
-        "قیمت",
-        "مقایسه"
-      ]
+      }
     },
     {
       "id": "basalam",
       "name": {
-        "en": "Basalam",
-        "fa": "باسلام"
+        "fa": "باسلام",
+        "en": "Basalam"
       },
       "description": {
-        "en": "Marketplace of local sellers",
-        "fa": "بازار فروشندگان محلی"
+        "fa": "بازار فروشندگان محلی",
+        "en": "Marketplace of local sellers"
       },
       "categoryId": "shopping",
       "url": "https://basalam.com/",
@@ -586,6 +601,11 @@
       "order": 80,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "handmade",
+        "بازار",
+        "محلی"
+      ],
       "web": {
         "allowedDomains": [
           "basalam.com"
@@ -601,26 +621,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "handmade",
-        "بازار",
-        "محلی"
-      ]
+      }
     },
     {
       "id": "digistyle",
       "name": {
-        "en": "Digistyle",
-        "fa": "دیجی‌استایل"
+        "fa": "دیجی‌استایل",
+        "en": "Digistyle"
       },
       "description": {
-        "en": "Fashion and clothing",
-        "fa": "پوشاک و مد"
+        "fa": "پوشاک و مد",
+        "en": "Fashion and clothing"
       },
       "categoryId": "shopping",
       "url": "https://www.digistyle.com/",
@@ -630,6 +647,12 @@
       "order": 90,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "fashion",
+        "clothes",
+        "لباس",
+        "پوشاک"
+      ],
       "web": {
         "allowedDomains": [
           "digistyle.com"
@@ -645,27 +668,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "fashion",
-        "clothes",
-        "لباس",
-        "پوشاک"
-      ]
+      }
     },
     {
       "id": "divar",
       "name": {
-        "en": "Divar",
-        "fa": "دیوار"
+        "fa": "دیوار",
+        "en": "Divar"
       },
       "description": {
-        "en": "Buy and sell anything locally",
-        "fa": "خرید و فروش بی‌واسطه"
+        "fa": "خرید و فروش بی‌واسطه",
+        "en": "Buy and sell anything locally"
       },
       "categoryId": "classifieds",
       "url": "https://divar.ir/",
@@ -675,6 +694,12 @@
       "order": 100,
       "featured": true,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "classifieds",
+        "ads",
+        "آگهی",
+        "نیازمندی"
+      ],
       "web": {
         "allowedDomains": [
           "divar.ir"
@@ -690,27 +715,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "classifieds",
-        "ads",
-        "آگهی",
-        "نیازمندی"
-      ]
+      }
     },
     {
       "id": "sheypoor",
       "name": {
-        "en": "Sheypoor",
-        "fa": "شیپور"
+        "fa": "شیپور",
+        "en": "Sheypoor"
       },
       "description": {
-        "en": "Classified ads",
-        "fa": "آگهی‌های نیازمندی"
+        "fa": "آگهی‌های نیازمندی",
+        "en": "Classified ads"
       },
       "categoryId": "classifieds",
       "url": "https://www.sheypoor.com/",
@@ -720,6 +741,10 @@
       "order": 110,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "ads",
+        "آگهی"
+      ],
       "web": {
         "allowedDomains": [
           "sheypoor.com"
@@ -735,25 +760,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "ads",
-        "آگهی"
-      ]
+      }
     },
     {
       "id": "alibaba",
       "name": {
-        "en": "Alibaba",
-        "fa": "علی‌بابا"
+        "fa": "علی‌بابا",
+        "en": "Alibaba"
       },
       "description": {
-        "en": "Flights, trains, buses and hotels",
-        "fa": "بلیط هواپیما، قطار، اتوبوس و هتل"
+        "fa": "بلیط هواپیما، قطار، اتوبوس و هتل",
+        "en": "Flights, trains, buses and hotels"
       },
       "categoryId": "travel",
       "url": "https://www.alibaba.ir/",
@@ -763,6 +786,14 @@
       "order": 120,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "flight",
+        "ticket",
+        "hotel",
+        "بلیط",
+        "پرواز",
+        "هتل"
+      ],
       "web": {
         "allowedDomains": [
           "alibaba.ir"
@@ -778,29 +809,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "flight",
-        "ticket",
-        "hotel",
-        "بلیط",
-        "پرواز",
-        "هتل"
-      ]
+      }
     },
     {
       "id": "snapptrip",
       "name": {
-        "en": "SnappTrip",
-        "fa": "اسنپ‌تریپ"
+        "fa": "اسنپ‌تریپ",
+        "en": "SnappTrip"
       },
       "description": {
-        "en": "Hotels and flights",
-        "fa": "رزرو هتل و بلیط"
+        "fa": "رزرو هتل و بلیط",
+        "en": "Hotels and flights"
       },
       "categoryId": "travel",
       "url": "https://www.snapptrip.com/",
@@ -810,6 +835,12 @@
       "order": 130,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "hotel",
+        "flight",
+        "هتل",
+        "بلیط"
+      ],
       "web": {
         "allowedDomains": [
           "snapptrip.com"
@@ -825,27 +856,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "hotel",
-        "flight",
-        "هتل",
-        "بلیط"
-      ]
+      }
     },
     {
       "id": "jabama",
       "name": {
-        "en": "Jabama",
-        "fa": "جاباما"
+        "fa": "جاباما",
+        "en": "Jabama"
       },
       "description": {
-        "en": "Villas and stays",
-        "fa": "اجاره ویلا و اقامتگاه"
+        "fa": "اجاره ویلا و اقامتگاه",
+        "en": "Villas and stays"
       },
       "categoryId": "travel",
       "url": "https://www.jabama.com/",
@@ -855,6 +882,12 @@
       "order": 140,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "villa",
+        "stay",
+        "ویلا",
+        "اقامتگاه"
+      ],
       "web": {
         "allowedDomains": [
           "jabama.com"
@@ -870,27 +903,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "villa",
-        "stay",
-        "ویلا",
-        "اقامتگاه"
-      ]
+      }
     },
     {
       "id": "balad",
       "name": {
-        "en": "Balad",
-        "fa": "بلد"
+        "fa": "بلد",
+        "en": "Balad"
       },
       "description": {
-        "en": "Maps, places and live traffic",
-        "fa": "نقشه، مکان‌ها و ترافیک زنده"
+        "fa": "نقشه، مکان‌ها و ترافیک زنده",
+        "en": "Maps, places and live traffic"
       },
       "categoryId": "maps",
       "url": "https://balad.ir/",
@@ -900,6 +929,14 @@
       "order": 150,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "map",
+        "navigation",
+        "traffic",
+        "نقشه",
+        "مسیریاب",
+        "ترافیک"
+      ],
       "web": {
         "allowedDomains": [
           "balad.ir"
@@ -915,29 +952,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "map",
-        "navigation",
-        "traffic",
-        "نقشه",
-        "مسیریاب",
-        "ترافیک"
-      ]
+      }
     },
     {
       "id": "neshan",
       "name": {
-        "en": "Neshan",
-        "fa": "نشان"
+        "fa": "نشان",
+        "en": "Neshan"
       },
       "description": {
-        "en": "Maps and navigation",
-        "fa": "نقشه و مسیریابی"
+        "fa": "نقشه و مسیریابی",
+        "en": "Maps and navigation"
       },
       "categoryId": "maps",
       "url": "https://neshan.org/maps",
@@ -947,6 +978,12 @@
       "order": 160,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "map",
+        "navigation",
+        "نقشه",
+        "مسیریاب"
+      ],
       "web": {
         "allowedDomains": [
           "neshan.org"
@@ -962,27 +999,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "map",
-        "navigation",
-        "نقشه",
-        "مسیریاب"
-      ]
+      }
     },
     {
       "id": "filimo",
       "name": {
-        "en": "Filimo",
-        "fa": "فیلیمو"
+        "fa": "فیلیمو",
+        "en": "Filimo"
       },
       "description": {
-        "en": "Movies and series",
-        "fa": "فیلم و سریال"
+        "fa": "فیلم و سریال",
+        "en": "Movies and series"
       },
       "categoryId": "entertainment",
       "url": "https://www.filimo.com/",
@@ -992,6 +1025,13 @@
       "order": 170,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "movie",
+        "series",
+        "vod",
+        "فیلم",
+        "سریال"
+      ],
       "web": {
         "allowedDomains": [
           "filimo.com"
@@ -1007,28 +1047,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "movie",
-        "series",
-        "vod",
-        "فیلم",
-        "سریال"
-      ]
+      }
     },
     {
       "id": "namava",
       "name": {
-        "en": "Namava",
-        "fa": "نماوا"
+        "fa": "نماوا",
+        "en": "Namava"
       },
       "description": {
-        "en": "Stream films and shows",
-        "fa": "تماشای آنلاین فیلم و سریال"
+        "fa": "تماشای آنلاین فیلم و سریال",
+        "en": "Stream films and shows"
       },
       "categoryId": "entertainment",
       "url": "https://www.namava.ir/",
@@ -1038,6 +1073,13 @@
       "order": 180,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "movie",
+        "series",
+        "vod",
+        "فیلم",
+        "سریال"
+      ],
       "web": {
         "allowedDomains": [
           "namava.ir"
@@ -1053,28 +1095,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "movie",
-        "series",
-        "vod",
-        "فیلم",
-        "سریال"
-      ]
+      }
     },
     {
       "id": "aparat",
       "name": {
-        "en": "Aparat",
-        "fa": "آپارات"
+        "fa": "آپارات",
+        "en": "Aparat"
       },
       "description": {
-        "en": "Videos and live streams",
-        "fa": "ویدیو و پخش زنده"
+        "fa": "ویدیو و پخش زنده",
+        "en": "Videos and live streams"
       },
       "categoryId": "entertainment",
       "url": "https://www.aparat.com/",
@@ -1084,6 +1121,11 @@
       "order": 190,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "video",
+        "live",
+        "ویدیو"
+      ],
       "web": {
         "allowedDomains": [
           "aparat.com"
@@ -1099,26 +1141,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "video",
-        "live",
-        "ویدیو"
-      ]
+      }
     },
     {
       "id": "paziresh24",
       "name": {
-        "en": "Paziresh24",
-        "fa": "پذیرش۲۴"
+        "fa": "پذیرش۲۴",
+        "en": "Paziresh24"
       },
       "description": {
-        "en": "Book doctor appointments",
-        "fa": "نوبت‌دهی پزشک"
+        "fa": "نوبت‌دهی پزشک",
+        "en": "Book doctor appointments"
       },
       "categoryId": "health",
       "url": "https://www.paziresh24.com/",
@@ -1128,6 +1167,13 @@
       "order": 200,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "doctor",
+        "appointment",
+        "پزشک",
+        "نوبت",
+        "دکتر"
+      ],
       "web": {
         "allowedDomains": [
           "paziresh24.com"
@@ -1143,28 +1189,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "doctor",
-        "appointment",
-        "پزشک",
-        "نوبت",
-        "دکتر"
-      ]
+      }
     },
     {
       "id": "doctoreto",
       "name": {
-        "en": "Doctoreto",
-        "fa": "دکترتو"
+        "fa": "دکترتو",
+        "en": "Doctoreto"
       },
       "description": {
-        "en": "Online consultations",
-        "fa": "مشاوره آنلاین پزشکی"
+        "fa": "مشاوره آنلاین پزشکی",
+        "en": "Online consultations"
       },
       "categoryId": "health",
       "url": "https://doctoreto.com/",
@@ -1174,6 +1215,12 @@
       "order": 210,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "doctor",
+        "consult",
+        "پزشک",
+        "مشاوره"
+      ],
       "web": {
         "allowedDomains": [
           "doctoreto.com"
@@ -1189,27 +1236,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "doctor",
-        "consult",
-        "پزشک",
-        "مشاوره"
-      ]
+      }
     },
     {
       "id": "nobitex",
       "name": {
-        "en": "Nobitex",
-        "fa": "نوبیتکس"
+        "fa": "نوبیتکس",
+        "en": "Nobitex"
       },
       "description": {
-        "en": "Crypto exchange",
-        "fa": "بازار رمزارز"
+        "fa": "بازار رمزارز",
+        "en": "Crypto exchange"
       },
       "categoryId": "finance",
       "url": "https://nobitex.ir/",
@@ -1219,6 +1262,12 @@
       "order": 220,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "crypto",
+        "bitcoin",
+        "رمزارز",
+        "بیت کوین"
+      ],
       "web": {
         "allowedDomains": [
           "nobitex.ir"
@@ -1234,27 +1283,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "crypto",
-        "bitcoin",
-        "رمزارز",
-        "بیت کوین"
-      ]
+      }
     },
     {
       "id": "easytrader",
       "name": {
-        "en": "EasyTrader",
-        "fa": "ایزی‌تریدر"
+        "fa": "ایزی‌تریدر",
+        "en": "EasyTrader"
       },
       "description": {
-        "en": "Stock trading by Mofid",
-        "fa": "معاملات بورس مفید"
+        "fa": "معاملات بورس مفید",
+        "en": "Stock trading by Mofid"
       },
       "categoryId": "finance",
       "url": "https://easytrader.ir/",
@@ -1264,6 +1309,13 @@
       "order": 230,
       "featured": false,
       "compatibility": "EXPERIMENTAL",
+      "keywords": [
+        "stock",
+        "bourse",
+        "بورس",
+        "سهام",
+        "مفید"
+      ],
       "web": {
         "allowedDomains": [
           "easytrader.ir",
@@ -1280,28 +1332,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "stock",
-        "bourse",
-        "بورس",
-        "سهام",
-        "مفید"
-      ]
+      }
     },
     {
       "id": "myirancell",
       "name": {
-        "en": "My Irancell",
-        "fa": "ایرانسل من"
+        "fa": "ایرانسل من",
+        "en": "My Irancell"
       },
       "description": {
-        "en": "Plans, top-ups and bills",
-        "fa": "بسته، شارژ و قبض"
+        "fa": "بسته، شارژ و قبض",
+        "en": "Plans, top-ups and bills"
       },
       "categoryId": "utilities",
       "url": "https://my.irancell.ir/",
@@ -1311,6 +1358,14 @@
       "order": 240,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "irancell",
+        "sim",
+        "charge",
+        "بسته",
+        "شارژ",
+        "ایرانسل"
+      ],
       "web": {
         "allowedDomains": [
           "irancell.ir"
@@ -1326,29 +1381,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "irancell",
-        "sim",
-        "charge",
-        "بسته",
-        "شارژ",
-        "ایرانسل"
-      ]
+      }
     },
     {
       "id": "hamrahman",
       "name": {
-        "en": "Hamrah-e Man",
-        "fa": "همراه من"
+        "fa": "همراه من",
+        "en": "Hamrah-e Man"
       },
       "description": {
-        "en": "MCI services and bills",
-        "fa": "خدمات و قبض همراه اول"
+        "fa": "خدمات و قبض همراه اول",
+        "en": "MCI services and bills"
       },
       "categoryId": "utilities",
       "url": "https://my.mci.ir/",
@@ -1358,6 +1407,13 @@
       "order": 250,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "mci",
+        "hamrah aval",
+        "همراه اول",
+        "شارژ",
+        "قبض"
+      ],
       "web": {
         "allowedDomains": [
           "mci.ir"
@@ -1373,28 +1429,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "mci",
-        "hamrah aval",
-        "همراه اول",
-        "شارژ",
-        "قبض"
-      ]
+      }
     },
     {
       "id": "mygov",
       "name": {
-        "en": "My Gov",
-        "fa": "دولت من"
+        "fa": "دولت من",
+        "en": "My Gov"
       },
       "description": {
-        "en": "Government e-services",
-        "fa": "خدمات الکترونیک دولت"
+        "fa": "خدمات الکترونیک دولت",
+        "en": "Government e-services"
       },
       "categoryId": "government",
       "url": "https://my.gov.ir/",
@@ -1404,6 +1455,11 @@
       "order": 260,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "government",
+        "دولت",
+        "یارانه"
+      ],
       "web": {
         "allowedDomains": [
           "my.gov.ir"
@@ -1419,26 +1475,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "government",
-        "دولت",
-        "یارانه"
-      ]
+      }
     },
     {
       "id": "bale",
       "name": {
-        "en": "Bale",
-        "fa": "بله"
+        "fa": "بله",
+        "en": "Bale"
       },
       "description": {
-        "en": "Messenger and banking",
-        "fa": "پیام‌رسان و خدمات بانکی"
+        "fa": "پیام‌رسان و خدمات بانکی",
+        "en": "Messenger and banking"
       },
       "categoryId": "messaging",
       "url": "https://web.bale.ai/",
@@ -1448,6 +1501,12 @@
       "order": 270,
       "featured": false,
       "compatibility": "EXPERIMENTAL",
+      "keywords": [
+        "chat",
+        "messenger",
+        "پیام",
+        "بله"
+      ],
       "web": {
         "allowedDomains": [
           "bale.ai"
@@ -1463,27 +1522,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "chat",
-        "messenger",
-        "پیام",
-        "بله"
-      ]
+      }
     },
     {
       "id": "eitaa",
       "name": {
-        "en": "Eitaa",
-        "fa": "ایتا"
+        "fa": "ایتا",
+        "en": "Eitaa"
       },
       "description": {
-        "en": "Messenger",
-        "fa": "پیام‌رسان"
+        "fa": "پیام‌رسان",
+        "en": "Messenger"
       },
       "categoryId": "messaging",
       "url": "https://web.eitaa.com/",
@@ -1493,6 +1548,11 @@
       "order": 280,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "chat",
+        "messenger",
+        "پیام"
+      ],
       "web": {
         "allowedDomains": [
           "eitaa.com"
@@ -1508,26 +1568,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "chat",
-        "messenger",
-        "پیام"
-      ]
+      }
     },
     {
       "id": "rubika",
       "name": {
-        "en": "Rubika",
-        "fa": "روبیکا"
+        "fa": "روبیکا",
+        "en": "Rubika"
       },
       "description": {
-        "en": "Messenger and media",
-        "fa": "پیام‌رسان و رسانه"
+        "fa": "پیام‌رسان و رسانه",
+        "en": "Messenger and media"
       },
       "categoryId": "messaging",
       "url": "https://web.rubika.ir/",
@@ -1537,6 +1594,11 @@
       "order": 290,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "chat",
+        "messenger",
+        "پیام"
+      ],
       "web": {
         "allowedDomains": [
           "rubika.ir"
@@ -1552,26 +1614,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "chat",
-        "messenger",
-        "پیام"
-      ]
+      }
     },
     {
       "id": "bama",
       "name": {
-        "en": "Bama",
-        "fa": "باما"
+        "fa": "باما",
+        "en": "Bama"
       },
       "description": {
-        "en": "Car ads and today's prices",
-        "fa": "آگهی خودرو و قیمت روز"
+        "fa": "آگهی خودرو و قیمت روز",
+        "en": "Car ads and today's prices"
       },
       "categoryId": "cars",
       "url": "https://bama.ir/",
@@ -1581,6 +1640,14 @@
       "order": 300,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "car",
+        "price",
+        "ماشین",
+        "خودرو",
+        "قیمت خودرو",
+        "خرید ماشین"
+      ],
       "web": {
         "allowedDomains": [
           "bama.ir"
@@ -1596,29 +1663,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "car",
-        "price",
-        "ماشین",
-        "خودرو",
-        "قیمت خودرو",
-        "خرید ماشین"
-      ]
+      }
     },
     {
       "id": "karnameh",
       "name": {
-        "en": "Karnameh",
-        "fa": "کارنامه"
+        "fa": "کارنامه",
+        "en": "Karnameh"
       },
       "description": {
-        "en": "Inspected used cars and car services",
-        "fa": "خرید و فروش خودروی کارشناسی‌شده"
+        "fa": "خرید و فروش خودروی کارشناسی‌شده",
+        "en": "Inspected used cars and car services"
       },
       "categoryId": "cars",
       "url": "https://karnameh.com/",
@@ -1628,6 +1689,13 @@
       "order": 310,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "car",
+        "inspection",
+        "ماشین",
+        "خودرو",
+        "کارشناسی"
+      ],
       "web": {
         "allowedDomains": [
           "karnameh.com"
@@ -1643,28 +1711,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "car",
-        "inspection",
-        "ماشین",
-        "خودرو",
-        "کارشناسی"
-      ]
+      }
     },
     {
       "id": "khodro45",
       "name": {
-        "en": "Khodro45",
-        "fa": "خودرو۴۵"
+        "fa": "خودرو۴۵",
+        "en": "Khodro45"
       },
       "description": {
-        "en": "Sell your car quickly at a fair price",
-        "fa": "فروش فوری خودرو با قیمت منصفانه"
+        "fa": "فروش فوری خودرو با قیمت منصفانه",
+        "en": "Sell your car quickly at a fair price"
       },
       "categoryId": "cars",
       "url": "https://khodro45.com/",
@@ -1674,6 +1737,14 @@
       "order": 320,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "car",
+        "sell",
+        "ماشین",
+        "خودرو",
+        "فروش خودرو",
+        "خودرو 45"
+      ],
       "web": {
         "allowedDomains": [
           "khodro45.com"
@@ -1689,29 +1760,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "car",
-        "sell",
-        "ماشین",
-        "خودرو",
-        "فروش خودرو",
-        "خودرو 45"
-      ]
+      }
     },
     {
       "id": "hamrahmechanic",
       "name": {
-        "en": "Hamrah Mechanic",
-        "fa": "همراه مکانیک"
+        "fa": "همراه مکانیک",
+        "en": "Hamrah Mechanic"
       },
       "description": {
-        "en": "Car repairs and service at your door",
-        "fa": "خدمات و تعمیر خودرو در محل"
+        "fa": "خدمات و تعمیر خودرو در محل",
+        "en": "Car repairs and service at your door"
       },
       "categoryId": "cars",
       "url": "https://www.hamrah-mechanic.com/",
@@ -1721,6 +1786,15 @@
       "order": 330,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "mechanic",
+        "repair",
+        "battery",
+        "مکانیک",
+        "تعمیر",
+        "باتری",
+        "امداد خودرو"
+      ],
       "web": {
         "allowedDomains": [
           "hamrah-mechanic.com"
@@ -1736,30 +1810,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "mechanic",
-        "repair",
-        "battery",
-        "مکانیک",
-        "تعمیر",
-        "باتری",
-        "امداد خودرو"
-      ]
+      }
     },
     {
       "id": "beeptunes",
       "name": {
-        "en": "Beeptunes",
-        "fa": "بیپ‌تونز"
+        "fa": "بیپ‌تونز",
+        "en": "Beeptunes"
       },
       "description": {
-        "en": "Legal Iranian music store",
-        "fa": "فروشگاه قانونی موسیقی ایرانی"
+        "fa": "فروشگاه قانونی موسیقی ایرانی",
+        "en": "Legal Iranian music store"
       },
       "categoryId": "music",
       "url": "https://beeptunes.com/",
@@ -1769,6 +1836,15 @@
       "order": 340,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "music",
+        "song",
+        "album",
+        "موسیقی",
+        "آهنگ",
+        "آلبوم",
+        "بیپ تونز"
+      ],
       "web": {
         "allowedDomains": [
           "beeptunes.com"
@@ -1784,30 +1860,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "HIGH",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "music",
-        "song",
-        "album",
-        "موسیقی",
-        "آهنگ",
-        "آلبوم",
-        "بیپ تونز"
-      ]
+      }
     },
     {
       "id": "melodify",
       "name": {
-        "en": "Melodify",
-        "fa": "ملودیفای"
+        "fa": "ملودیفای",
+        "en": "Melodify"
       },
       "description": {
-        "en": "Stream music and playlists",
-        "fa": "پخش آنلاین آهنگ و پلی‌لیست"
+        "fa": "پخش آنلاین آهنگ و پلی‌لیست",
+        "en": "Stream music and playlists"
       },
       "categoryId": "music",
       "url": "https://desktop.melodify.app/",
@@ -1817,6 +1886,14 @@
       "order": 350,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "music",
+        "song",
+        "playlist",
+        "موسیقی",
+        "آهنگ",
+        "پلی لیست"
+      ],
       "web": {
         "allowedDomains": [
           "melodify.app"
@@ -1832,29 +1909,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "HIGH",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "music",
-        "song",
-        "playlist",
-        "موسیقی",
-        "آهنگ",
-        "پلی لیست"
-      ]
+      }
     },
     {
       "id": "navaar",
       "name": {
-        "en": "Navaar",
-        "fa": "نوار"
+        "fa": "نوار",
+        "en": "Navaar"
       },
       "description": {
-        "en": "Audiobooks and podcasts",
-        "fa": "کتاب صوتی و پادکست"
+        "fa": "کتاب صوتی و پادکست",
+        "en": "Audiobooks and podcasts"
       },
       "categoryId": "music",
       "url": "https://www.navaar.ir/",
@@ -1864,6 +1935,12 @@
       "order": 360,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "audiobook",
+        "podcast",
+        "کتاب صوتی",
+        "پادکست"
+      ],
       "web": {
         "allowedDomains": [
           "navaar.ir"
@@ -1879,27 +1956,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "HIGH",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "audiobook",
-        "podcast",
-        "کتاب صوتی",
-        "پادکست"
-      ]
+      }
     },
     {
       "id": "fidibo",
       "name": {
-        "en": "Fidibo",
-        "fa": "فیدیبو"
+        "fa": "فیدیبو",
+        "en": "Fidibo"
       },
       "description": {
-        "en": "E-books and audiobooks",
-        "fa": "کتاب الکترونیکی و صوتی"
+        "fa": "کتاب الکترونیکی و صوتی",
+        "en": "E-books and audiobooks"
       },
       "categoryId": "books",
       "url": "https://fidibo.com/",
@@ -1909,6 +1982,13 @@
       "order": 370,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "book",
+        "ebook",
+        "audiobook",
+        "کتاب",
+        "کتاب صوتی"
+      ],
       "web": {
         "allowedDomains": [
           "fidibo.com"
@@ -1924,28 +2004,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "book",
-        "ebook",
-        "audiobook",
-        "کتاب",
-        "کتاب صوتی"
-      ]
+      }
     },
     {
       "id": "taaghche",
       "name": {
-        "en": "Taaghche",
-        "fa": "طاقچه"
+        "fa": "طاقچه",
+        "en": "Taaghche"
       },
       "description": {
-        "en": "Read and listen to books",
-        "fa": "خواندن و شنیدن کتاب"
+        "fa": "خواندن و شنیدن کتاب",
+        "en": "Read and listen to books"
       },
       "categoryId": "books",
       "url": "https://taaghche.com/",
@@ -1955,6 +2030,14 @@
       "order": 380,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "book",
+        "ebook",
+        "audiobook",
+        "کتاب",
+        "کتاب صوتی",
+        "طاقچه"
+      ],
       "web": {
         "allowedDomains": [
           "taaghche.com"
@@ -1970,29 +2053,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "book",
-        "ebook",
-        "audiobook",
-        "کتاب",
-        "کتاب صوتی",
-        "طاقچه"
-      ]
+      }
     },
     {
       "id": "ketabrah",
       "name": {
-        "en": "Ketabrah",
-        "fa": "کتابراه"
+        "fa": "کتابراه",
+        "en": "Ketabrah"
       },
       "description": {
-        "en": "E-books and audiobooks",
-        "fa": "کتاب الکترونیکی و صوتی"
+        "fa": "کتاب الکترونیکی و صوتی",
+        "en": "E-books and audiobooks"
       },
       "categoryId": "books",
       "url": "https://ketabrah.com/",
@@ -2002,6 +2079,12 @@
       "order": 390,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "book",
+        "ebook",
+        "کتاب",
+        "کتاب راه"
+      ],
       "web": {
         "allowedDomains": [
           "ketabrah.com",
@@ -2018,27 +2101,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "book",
-        "ebook",
-        "کتاب",
-        "کتاب راه"
-      ]
+      }
     },
     {
       "id": "faradars",
       "name": {
-        "en": "Faradars",
-        "fa": "فرادرس"
+        "fa": "فرادرس",
+        "en": "Faradars"
       },
       "description": {
-        "en": "Video courses in every field",
-        "fa": "آموزش ویدیویی در همه زمینه‌ها"
+        "fa": "آموزش ویدیویی در همه زمینه‌ها",
+        "en": "Video courses in every field"
       },
       "categoryId": "education",
       "url": "https://faradars.org/",
@@ -2048,6 +2127,13 @@
       "order": 400,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "course",
+        "learn",
+        "آموزش",
+        "دوره",
+        "فرادرس"
+      ],
       "web": {
         "allowedDomains": [
           "faradars.org"
@@ -2063,28 +2149,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "course",
-        "learn",
-        "آموزش",
-        "دوره",
-        "فرادرس"
-      ]
+      }
     },
     {
       "id": "maktabkhooneh",
       "name": {
-        "en": "Maktabkhooneh",
-        "fa": "مکتب‌خونه"
+        "fa": "مکتب‌خونه",
+        "en": "Maktabkhooneh"
       },
       "description": {
-        "en": "Online courses with certificates",
-        "fa": "دوره‌های آنلاین با گواهی"
+        "fa": "دوره‌های آنلاین با گواهی",
+        "en": "Online courses with certificates"
       },
       "categoryId": "education",
       "url": "https://maktabkhooneh.org/",
@@ -2094,6 +2175,14 @@
       "order": 410,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "course",
+        "learn",
+        "mooc",
+        "آموزش",
+        "دوره",
+        "مکتب خونه"
+      ],
       "web": {
         "allowedDomains": [
           "maktabkhooneh.org"
@@ -2109,29 +2198,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "course",
-        "learn",
-        "mooc",
-        "آموزش",
-        "دوره",
-        "مکتب خونه"
-      ]
+      }
     },
     {
       "id": "quera",
       "name": {
-        "en": "Quera",
-        "fa": "کوئرا"
+        "fa": "کوئرا",
+        "en": "Quera"
       },
       "description": {
-        "en": "Programming courses, contests and jobs",
-        "fa": "آموزش برنامه‌نویسی، مسابقه و استخدام"
+        "fa": "آموزش برنامه‌نویسی، مسابقه و استخدام",
+        "en": "Programming courses, contests and jobs"
       },
       "categoryId": "education",
       "url": "https://quera.org/",
@@ -2141,6 +2224,13 @@
       "order": 420,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "programming",
+        "coding",
+        "برنامه نویسی",
+        "کدنویسی",
+        "آموزش"
+      ],
       "web": {
         "allowedDomains": [
           "quera.org",
@@ -2157,28 +2247,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "programming",
-        "coding",
-        "برنامه نویسی",
-        "کدنویسی",
-        "آموزش"
-      ]
+      }
     },
     {
       "id": "jobinja",
       "name": {
-        "en": "Jobinja",
-        "fa": "جابینجا"
+        "fa": "جابینجا",
+        "en": "Jobinja"
       },
       "description": {
-        "en": "Job listings and hiring",
-        "fa": "آگهی استخدام و کاریابی"
+        "fa": "آگهی استخدام و کاریابی",
+        "en": "Job listings and hiring"
       },
       "categoryId": "jobs",
       "url": "https://jobinja.ir/",
@@ -2188,6 +2273,15 @@
       "order": 430,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "job",
+        "hiring",
+        "resume",
+        "استخدام",
+        "کار",
+        "رزومه",
+        "کاریابی"
+      ],
       "web": {
         "allowedDomains": [
           "jobinja.ir"
@@ -2203,30 +2297,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "job",
-        "hiring",
-        "resume",
-        "استخدام",
-        "کار",
-        "رزومه",
-        "کاریابی"
-      ]
+      }
     },
     {
       "id": "jobvision",
       "name": {
-        "en": "Jobvision",
-        "fa": "جاب‌ویژن"
+        "fa": "جاب‌ویژن",
+        "en": "Jobvision"
       },
       "description": {
-        "en": "Jobs and a resume builder",
-        "fa": "آگهی استخدام و رزومه‌ساز"
+        "fa": "آگهی استخدام و رزومه‌ساز",
+        "en": "Jobs and a resume builder"
       },
       "categoryId": "jobs",
       "url": "https://jobvision.ir/",
@@ -2236,6 +2323,15 @@
       "order": 440,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "job",
+        "hiring",
+        "resume",
+        "استخدام",
+        "کار",
+        "رزومه",
+        "جاب ویژن"
+      ],
       "web": {
         "allowedDomains": [
           "jobvision.ir"
@@ -2251,30 +2347,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "job",
-        "hiring",
-        "resume",
-        "استخدام",
-        "کار",
-        "رزومه",
-        "جاب ویژن"
-      ]
+      }
     },
     {
       "id": "irantalent",
       "name": {
-        "en": "IranTalent",
-        "fa": "ایران تلنت"
+        "fa": "ایران تلنت",
+        "en": "IranTalent"
       },
       "description": {
-        "en": "Jobs at leading companies",
-        "fa": "استخدام در شرکت‌های معتبر"
+        "fa": "استخدام در شرکت‌های معتبر",
+        "en": "Jobs at leading companies"
       },
       "categoryId": "jobs",
       "url": "https://www.irantalent.com/",
@@ -2284,6 +2373,14 @@
       "order": 450,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "job",
+        "hiring",
+        "career",
+        "استخدام",
+        "کار",
+        "ایران تلنت"
+      ],
       "web": {
         "allowedDomains": [
           "irantalent.com"
@@ -2299,29 +2396,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "job",
-        "hiring",
-        "career",
-        "استخدام",
-        "کار",
-        "ایران تلنت"
-      ]
+      }
     },
     {
       "id": "ponisha",
       "name": {
-        "en": "Ponisha",
-        "fa": "پونیشا"
+        "fa": "پونیشا",
+        "en": "Ponisha"
       },
       "description": {
-        "en": "Freelance projects",
-        "fa": "پروژه‌های فریلنسری"
+        "fa": "پروژه‌های فریلنسری",
+        "en": "Freelance projects"
       },
       "categoryId": "jobs",
       "url": "https://ponisha.ir/",
@@ -2331,6 +2422,14 @@
       "order": 460,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "freelance",
+        "project",
+        "remote",
+        "فریلنسر",
+        "دورکاری",
+        "پروژه"
+      ],
       "web": {
         "allowedDomains": [
           "ponisha.ir"
@@ -2346,29 +2445,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "freelance",
-        "project",
-        "remote",
-        "فریلنسر",
-        "دورکاری",
-        "پروژه"
-      ]
+      }
     },
     {
       "id": "karlancer",
       "name": {
-        "en": "Karlancer",
-        "fa": "کارلنسر"
+        "fa": "کارلنسر",
+        "en": "Karlancer"
       },
       "description": {
-        "en": "Freelance and remote work",
-        "fa": "فریلنسری و دورکاری"
+        "fa": "فریلنسری و دورکاری",
+        "en": "Freelance and remote work"
       },
       "categoryId": "jobs",
       "url": "https://www.karlancer.com/",
@@ -2378,6 +2471,14 @@
       "order": 470,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "freelance",
+        "project",
+        "remote",
+        "فریلنسر",
+        "دورکاری",
+        "پروژه"
+      ],
       "web": {
         "allowedDomains": [
           "karlancer.com"
@@ -2393,29 +2494,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "freelance",
-        "project",
-        "remote",
-        "فریلنسر",
-        "دورکاری",
-        "پروژه"
-      ]
+      }
     },
     {
       "id": "bimebazar",
       "name": {
-        "en": "BimeBazar",
-        "fa": "بیمه‌بازار"
+        "fa": "بیمه‌بازار",
+        "en": "BimeBazar"
       },
       "description": {
-        "en": "Compare and buy insurance",
-        "fa": "مقایسه و خرید آنلاین بیمه"
+        "fa": "مقایسه و خرید آنلاین بیمه",
+        "en": "Compare and buy insurance"
       },
       "categoryId": "insurance",
       "url": "https://bimebazar.com/",
@@ -2425,6 +2520,13 @@
       "order": 480,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "insurance",
+        "car insurance",
+        "بیمه",
+        "بیمه بدنه",
+        "بیمه شخص ثالث"
+      ],
       "web": {
         "allowedDomains": [
           "bimebazar.com"
@@ -2440,28 +2542,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "insurance",
-        "car insurance",
-        "بیمه",
-        "بیمه بدنه",
-        "بیمه شخص ثالث"
-      ]
+      }
     },
     {
       "id": "azki",
       "name": {
-        "en": "Azki",
-        "fa": "ازکی"
+        "fa": "ازکی",
+        "en": "Azki"
       },
       "description": {
-        "en": "Insurance and car loans, compared",
-        "fa": "مقایسه و خرید بیمه و وام خودرو"
+        "fa": "مقایسه و خرید بیمه و وام خودرو",
+        "en": "Insurance and car loans, compared"
       },
       "categoryId": "insurance",
       "url": "https://www.azki.com/",
@@ -2471,6 +2568,14 @@
       "order": 490,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "insurance",
+        "loan",
+        "بیمه",
+        "وام",
+        "بیمه شخص ثالث",
+        "بیمیتو"
+      ],
       "web": {
         "allowedDomains": [
           "azki.com"
@@ -2486,29 +2591,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "insurance",
-        "loan",
-        "بیمه",
-        "وام",
-        "بیمه شخص ثالث",
-        "بیمیتو"
-      ]
+      }
     },
     {
       "id": "bimeh",
       "name": {
-        "en": "Bimeh.com",
-        "fa": "بیمه دات کام"
+        "fa": "بیمه دات کام",
+        "en": "Bimeh.com"
       },
       "description": {
-        "en": "Buy insurance online",
-        "fa": "خرید آنلاین بیمه"
+        "fa": "خرید آنلاین بیمه",
+        "en": "Buy insurance online"
       },
       "categoryId": "insurance",
       "url": "https://bimeh.com/",
@@ -2518,6 +2617,12 @@
       "order": 500,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "insurance",
+        "بیمه",
+        "بیمه درمان",
+        "بیمه شخص ثالث"
+      ],
       "web": {
         "allowedDomains": [
           "bimeh.com"
@@ -2533,27 +2638,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "insurance",
-        "بیمه",
-        "بیمه درمان",
-        "بیمه شخص ثالث"
-      ]
+      }
     },
     {
       "id": "kilid",
       "name": {
-        "en": "Kilid",
-        "fa": "کیلید"
+        "fa": "کیلید",
+        "en": "Kilid"
       },
       "description": {
-        "en": "Homes for sale and rent",
-        "fa": "خرید، فروش و اجاره ملک"
+        "fa": "خرید، فروش و اجاره ملک",
+        "en": "Homes for sale and rent"
       },
       "categoryId": "classifieds",
       "url": "https://kilid.com/",
@@ -2563,6 +2664,15 @@
       "order": 510,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "home",
+        "rent",
+        "real estate",
+        "خانه",
+        "اجاره",
+        "ملک",
+        "آپارتمان"
+      ],
       "web": {
         "allowedDomains": [
           "kilid.com"
@@ -2578,30 +2688,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "home",
-        "rent",
-        "real estate",
-        "خانه",
-        "اجاره",
-        "ملک",
-        "آپارتمان"
-      ]
+      }
     },
     {
       "id": "snappdoctor",
       "name": {
-        "en": "Snapp Doctor",
-        "fa": "اسنپ‌دکتر"
+        "fa": "اسنپ‌دکتر",
+        "en": "Snapp Doctor"
       },
       "description": {
-        "en": "Talk to a doctor online",
-        "fa": "مشاوره آنلاین با پزشک"
+        "fa": "مشاوره آنلاین با پزشک",
+        "en": "Talk to a doctor online"
       },
       "categoryId": "health",
       "url": "https://snapp.doctor/",
@@ -2611,6 +2714,13 @@
       "order": 520,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "doctor",
+        "consult",
+        "پزشک",
+        "مشاوره",
+        "دکتر"
+      ],
       "web": {
         "allowedDomains": [
           "snapp.doctor"
@@ -2626,28 +2736,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "doctor",
-        "consult",
-        "پزشک",
-        "مشاوره",
-        "دکتر"
-      ]
+      }
     },
     {
       "id": "mrbilit",
       "name": {
-        "en": "MrBilit",
-        "fa": "مستربلیط"
+        "fa": "مستربلیط",
+        "en": "MrBilit"
       },
       "description": {
-        "en": "Train, bus and flight tickets",
-        "fa": "بلیط قطار، اتوبوس و هواپیما"
+        "fa": "بلیط قطار، اتوبوس و هواپیما",
+        "en": "Train, bus and flight tickets"
       },
       "categoryId": "travel",
       "url": "https://mrbilit.com/",
@@ -2657,6 +2762,16 @@
       "order": 530,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "ticket",
+        "train",
+        "bus",
+        "flight",
+        "بلیط",
+        "قطار",
+        "اتوبوس",
+        "مستر بلیط"
+      ],
       "web": {
         "allowedDomains": [
           "mrbilit.com",
@@ -2673,31 +2788,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "ticket",
-        "train",
-        "bus",
-        "flight",
-        "بلیط",
-        "قطار",
-        "اتوبوس",
-        "مستر بلیط"
-      ]
+      }
     },
     {
       "id": "flytoday",
       "name": {
-        "en": "Flytoday",
-        "fa": "فلای‌تودی"
+        "fa": "فلای‌تودی",
+        "en": "Flytoday"
       },
       "description": {
-        "en": "Flights, hotels and trains",
-        "fa": "بلیط هواپیما، هتل و قطار"
+        "fa": "بلیط هواپیما، هتل و قطار",
+        "en": "Flights, hotels and trains"
       },
       "categoryId": "travel",
       "url": "https://www.flytoday.ir/",
@@ -2707,6 +2814,15 @@
       "order": 540,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "flight",
+        "hotel",
+        "ticket",
+        "پرواز",
+        "بلیط",
+        "هتل",
+        "فلای تودی"
+      ],
       "web": {
         "allowedDomains": [
           "flytoday.ir"
@@ -2722,30 +2838,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "flight",
-        "hotel",
-        "ticket",
-        "پرواز",
-        "بلیط",
-        "هتل",
-        "فلای تودی"
-      ]
+      }
     },
     {
       "id": "otaghak",
       "name": {
-        "en": "Otaghak",
-        "fa": "اتاقک"
+        "fa": "اتاقک",
+        "en": "Otaghak"
       },
       "description": {
-        "en": "Villas and holiday homes",
-        "fa": "اجاره ویلا و اقامتگاه"
+        "fa": "اجاره ویلا و اقامتگاه",
+        "en": "Villas and holiday homes"
       },
       "categoryId": "travel",
       "url": "https://www.otaghak.com/",
@@ -2755,6 +2864,14 @@
       "order": 550,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "villa",
+        "stay",
+        "rent",
+        "ویلا",
+        "اقامتگاه",
+        "سوئیت"
+      ],
       "web": {
         "allowedDomains": [
           "otaghak.com"
@@ -2770,29 +2887,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "villa",
-        "stay",
-        "rent",
-        "ویلا",
-        "اقامتگاه",
-        "سوئیت"
-      ]
+      }
     },
     {
       "id": "filmnet",
       "name": {
-        "en": "Filmnet",
-        "fa": "فیلم‌نت"
+        "fa": "فیلم‌نت",
+        "en": "Filmnet"
       },
       "description": {
-        "en": "Movies and series",
-        "fa": "فیلم و سریال"
+        "fa": "فیلم و سریال",
+        "en": "Movies and series"
       },
       "categoryId": "entertainment",
       "url": "https://filmnet.ir/",
@@ -2802,6 +2913,14 @@
       "order": 560,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "movie",
+        "series",
+        "vod",
+        "فیلم",
+        "سریال",
+        "فیلم نت"
+      ],
       "web": {
         "allowedDomains": [
           "filmnet.ir"
@@ -2817,29 +2936,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "movie",
-        "series",
-        "vod",
-        "فیلم",
-        "سریال",
-        "فیلم نت"
-      ]
+      }
     },
     {
       "id": "cinematicket",
       "name": {
-        "en": "Cinema Ticket",
-        "fa": "سینماتیکت"
+        "fa": "سینماتیکت",
+        "en": "Cinema Ticket"
       },
       "description": {
-        "en": "Cinema and theatre tickets",
-        "fa": "بلیط سینما و تئاتر"
+        "fa": "بلیط سینما و تئاتر",
+        "en": "Cinema and theatre tickets"
       },
       "categoryId": "entertainment",
       "url": "https://cinematicket.org/",
@@ -2849,6 +2962,14 @@
       "order": 570,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "cinema",
+        "ticket",
+        "theatre",
+        "سینما",
+        "بلیط",
+        "تئاتر"
+      ],
       "web": {
         "allowedDomains": [
           "cinematicket.org"
@@ -2864,29 +2985,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "cinema",
-        "ticket",
-        "theatre",
-        "سینما",
-        "بلیط",
-        "تئاتر"
-      ]
+      }
     },
     {
       "id": "tiwall",
       "name": {
-        "en": "Tiwall",
-        "fa": "تیوال"
+        "fa": "تیوال",
+        "en": "Tiwall"
       },
       "description": {
-        "en": "Theatre, concert and event tickets",
-        "fa": "بلیط تئاتر، کنسرت و رویداد"
+        "fa": "بلیط تئاتر، کنسرت و رویداد",
+        "en": "Theatre, concert and event tickets"
       },
       "categoryId": "entertainment",
       "url": "https://www.tiwall.com/",
@@ -2896,6 +3011,14 @@
       "order": 580,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "theatre",
+        "concert",
+        "ticket",
+        "تئاتر",
+        "کنسرت",
+        "بلیط"
+      ],
       "web": {
         "allowedDomains": [
           "tiwall.com"
@@ -2911,29 +3034,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "theatre",
-        "concert",
-        "ticket",
-        "تئاتر",
-        "کنسرت",
-        "بلیط"
-      ]
+      }
     },
     {
       "id": "milli",
       "name": {
-        "en": "Milli",
-        "fa": "میلی"
+        "fa": "میلی",
+        "en": "Milli"
       },
       "description": {
-        "en": "Buy, sell and save gold",
-        "fa": "خرید، فروش و پس‌انداز طلا"
+        "fa": "خرید، فروش و پس‌انداز طلا",
+        "en": "Buy, sell and save gold"
       },
       "categoryId": "finance",
       "url": "https://milli.gold/",
@@ -2943,6 +3060,13 @@
       "order": 590,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "gold",
+        "invest",
+        "طلا",
+        "طلای آب شده",
+        "سرمایه گذاری"
+      ],
       "web": {
         "allowedDomains": [
           "milli.gold"
@@ -2958,28 +3082,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "gold",
-        "invest",
-        "طلا",
-        "طلای آب شده",
-        "سرمایه گذاری"
-      ]
+      }
     },
     {
       "id": "technolife",
       "name": {
-        "en": "Technolife",
-        "fa": "تکنولایف"
+        "fa": "تکنولایف",
+        "en": "Technolife"
       },
       "description": {
-        "en": "Phones, laptops and electronics",
-        "fa": "موبایل، لپ‌تاپ و کالای دیجیتال"
+        "fa": "موبایل، لپ‌تاپ و کالای دیجیتال",
+        "en": "Phones, laptops and electronics"
       },
       "categoryId": "shopping",
       "url": "https://www.technolife.com/",
@@ -2989,6 +3108,14 @@
       "order": 600,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "mobile",
+        "laptop",
+        "electronics",
+        "موبایل",
+        "لپ تاپ",
+        "گوشی"
+      ],
       "web": {
         "allowedDomains": [
           "technolife.com",
@@ -3005,29 +3132,23 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "mobile",
-        "laptop",
-        "electronics",
-        "موبایل",
-        "لپ تاپ",
-        "گوشی"
-      ]
+      }
     },
     {
       "id": "banimode",
       "name": {
-        "en": "Banimode",
-        "fa": "بانی‌مد"
+        "fa": "بانی‌مد",
+        "en": "Banimode"
       },
       "description": {
-        "en": "Fashion and clothing",
-        "fa": "پوشاک و مد"
+        "fa": "پوشاک و مد",
+        "en": "Fashion and clothing"
       },
       "categoryId": "shopping",
       "url": "https://www.banimode.com/",
@@ -3037,6 +3158,14 @@
       "order": 610,
       "featured": false,
       "compatibility": "SUPPORTED",
+      "keywords": [
+        "fashion",
+        "clothes",
+        "shoes",
+        "لباس",
+        "پوشاک",
+        "کفش"
+      ],
       "web": {
         "allowedDomains": [
           "banimode.com"
@@ -3052,27 +3181,21 @@
         "downloads": true,
         "popupPolicy": "NEW_TAB",
         "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
         "thirdPartyCookies": true,
         "cacheMode": "DEFAULT",
         "keepAlive": "LOW",
         "restoreLastUrl": true
-      },
-      "keywords": [
-        "fashion",
-        "clothes",
-        "shoes",
-        "لباس",
-        "پوشاک",
-        "کفش"
-      ]
+      }
     }
   ],
   "compareGroups": [
     {
       "id": "ride-hailing",
       "title": {
-        "en": "Ride hailing",
-        "fa": "تاکسی اینترنتی"
+        "fa": "تاکسی اینترنتی",
+        "en": "Ride hailing"
       },
       "serviceIds": [
         "snapp",
@@ -3082,8 +3205,8 @@
     {
       "id": "food-delivery",
       "title": {
-        "en": "Food delivery",
-        "fa": "سفارش غذا"
+        "fa": "سفارش غذا",
+        "en": "Food delivery"
       },
       "serviceIds": [
         "snappfood",
@@ -3093,8 +3216,8 @@
     {
       "id": "maps",
       "title": {
-        "en": "Maps",
-        "fa": "نقشه"
+        "fa": "نقشه",
+        "en": "Maps"
       },
       "serviceIds": [
         "balad",
@@ -3104,8 +3227,8 @@
     {
       "id": "travel",
       "title": {
-        "en": "Travel booking",
-        "fa": "رزرو سفر"
+        "fa": "رزرو سفر",
+        "en": "Travel booking"
       },
       "serviceIds": [
         "alibaba",
@@ -3117,8 +3240,8 @@
     {
       "id": "streaming",
       "title": {
-        "en": "Streaming",
-        "fa": "فیلم و سریال"
+        "fa": "فیلم و سریال",
+        "en": "Streaming"
       },
       "serviceIds": [
         "filimo",
@@ -3129,8 +3252,8 @@
     {
       "id": "shopping",
       "title": {
-        "en": "Shopping",
-        "fa": "خرید"
+        "fa": "خرید",
+        "en": "Shopping"
       },
       "serviceIds": [
         "digikala",
@@ -3141,8 +3264,8 @@
     {
       "id": "stays",
       "title": {
-        "en": "Villas and stays",
-        "fa": "ویلا و اقامتگاه"
+        "fa": "ویلا و اقامتگاه",
+        "en": "Villas and stays"
       },
       "serviceIds": [
         "jabama",
@@ -3152,8 +3275,8 @@
     {
       "id": "car-market",
       "title": {
-        "en": "Buy and sell cars",
-        "fa": "خرید و فروش خودرو"
+        "fa": "خرید و فروش خودرو",
+        "en": "Buy and sell cars"
       },
       "serviceIds": [
         "bama",
@@ -3164,8 +3287,8 @@
     {
       "id": "ebooks",
       "title": {
-        "en": "Books",
-        "fa": "کتاب الکترونیکی"
+        "fa": "کتاب الکترونیکی",
+        "en": "Books"
       },
       "serviceIds": [
         "fidibo",
@@ -3176,8 +3299,8 @@
     {
       "id": "courses",
       "title": {
-        "en": "Online courses",
-        "fa": "آموزش آنلاین"
+        "fa": "آموزش آنلاین",
+        "en": "Online courses"
       },
       "serviceIds": [
         "faradars",
@@ -3187,8 +3310,8 @@
     {
       "id": "job-search",
       "title": {
-        "en": "Job search",
-        "fa": "کاریابی"
+        "fa": "کاریابی",
+        "en": "Job search"
       },
       "serviceIds": [
         "jobinja",
@@ -3199,8 +3322,8 @@
     {
       "id": "freelance",
       "title": {
-        "en": "Freelancing",
-        "fa": "فریلنسری"
+        "fa": "فریلنسری",
+        "en": "Freelancing"
       },
       "serviceIds": [
         "ponisha",
@@ -3210,8 +3333,8 @@
     {
       "id": "insurance",
       "title": {
-        "en": "Insurance",
-        "fa": "خرید بیمه"
+        "fa": "خرید بیمه",
+        "en": "Insurance"
       },
       "serviceIds": [
         "bimebazar",
@@ -3222,8 +3345,8 @@
     {
       "id": "event-tickets",
       "title": {
-        "en": "Event tickets",
-        "fa": "بلیط سینما و تئاتر"
+        "fa": "بلیط سینما و تئاتر",
+        "en": "Event tickets"
       },
       "serviceIds": [
         "cinematicket",

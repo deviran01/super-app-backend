@@ -147,8 +147,9 @@ def site_icon_candidates(page_url):
             manifest = json.loads(get(manifest_url)[0].decode("utf-8-sig", "ignore"))
             for icon in manifest.get("icons", []):
                 size = max((int(n) for n in re.findall(r"(\d+)x\d+", icon.get("sizes", ""))), default=0)
-                if "maskable" not in icon.get("purpose", ""):
-                    found.append((size, urljoin(manifest_url, icon["src"])))
+                # Maskable icons are full-bleed squares: fine as a last resort (IranTalent has no other).
+                maskable = "maskable" in icon.get("purpose", "")
+                found.append((size // 2 if maskable else size, urljoin(manifest_url, icon["src"])))
         except Exception as error:  # noqa: BLE001 - best effort
             print(f"  manifest failed: {error}")
     found.append((180, urljoin(final_url, "/apple-touch-icon.png")))

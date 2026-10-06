@@ -1,27 +1,28 @@
 {
   "default": {
-    "minimumSupportedVersion": 1,
-    "latestVersion": 1,
-    "forceUpdate": false,
+    "minimumSupportedVersion": 2,
+    "latestVersion": 2,
+    "forceUpdate": true,
     "message": {
-      "en": "This version is no longer supported. Update to keep using your services.",
-      "fa": "این نسخه دیگر پشتیبانی نمی‌شود. برای ادامه استفاده، برنامه را به‌روز کنید."
+      "fa": "این نسخه دیگر پشتیبانی نمی‌شود. برای ادامه استفاده، برنامه را به‌روز کنید.",
+      "en": "This version is no longer supported. Update to keep using your services."
     },
     "optionalMessage": {
-      "en": "A new version with faster switching between services is ready.",
-      "fa": "نسخه جدید با جابه‌جایی سریع‌تر بین سرویس‌ها آماده است."
+      "fa": "نسخه جدید با جابه‌جایی سریع‌تر بین سرویس‌ها آماده است.",
+      "en": "A new version with faster switching between services is ready."
     }
   },
   "channels": {
     "bazaar": {
-      "updateUrl": "https://cafebazaar.ir/app/io.celin.super.app",
-      "minimumSupportedVersion": 1,
-      "latestVersion": 1
+      "minimumSupportedVersion": 2,
+      "latestVersion": 3,
+      "forceUpdate": true,
+      "updateUrl": "https://cafebazaar.ir/app/io.celin.super.app"
     },
     "myket": {
-      "updateUrl": "https://myket.ir/app/io.celin.super.app",
       "minimumSupportedVersion": 1,
-      "latestVersion": 1
+      "latestVersion": 1,
+      "updateUrl": "https://myket.ir/app/io.celin.super.app"
     }
   }
 }
