@@ -23,7 +23,7 @@ def test_the_app_reports_daily_totals_that_the_dashboard_sums_up(client, stats):
     for _ in range(2):
         assert client.post("/api/v1/events", json=report(
             ("app_opened", (), 3), ("active_day", (), 1), ("first_open", (), 1),
-            ("service_opened", ("snapp", "home"), 4), ("service_opened", ("digikala", "search"), 1),
+            ("service_opened", ("snapp", "home"), 4), ("service_opened", ("digikala", "search"), 1), ("service_opened", ("divar", "link"), 1),
             ("favorite_added", ("snapp",), 1), ("category_opened", ("transport",), 2),
             ("search_used", ("none",), 1), ("search_used", ("found",), 3),
             ("service_load_failed", ("snapp", "timeout"), 2), ("update_clicked", (), 1),
@@ -32,12 +32,13 @@ def test_the_app_reports_daily_totals_that_the_dashboard_sums_up(client, stats):
     summary = stats.summary(7)
     totals = summary["totals"]
     assert totals["activeToday"] == 2 and totals["installs"] == 2 and totals["appOpens"] == 6
-    assert totals["serviceOpens"] == 10 and totals["searches"] == 8 and totals["searchesWithoutResults"] == 2
+    assert totals["serviceOpens"] == 12 and totals["searches"] == 8 and totals["searchesWithoutResults"] == 2
     assert totals["loadFailures"] == 4 and totals["updateClicks"] == 2
     snapp = next(s for s in summary["services"] if s["id"] == "snapp")
     assert snapp["opens"] == 8 and snapp["favoritesAdded"] == 2 and snapp["failures"] == 4
     assert summary["services"][0]["id"] == "snapp"
     assert {"source": "home", "n": 8} in summary["sources"]
+    assert {"source": "link", "n": 2} in summary["sources"]  # opened from a link in another app
     assert summary["categories"] == [{"id": "transport", "n": 4}]
     assert summary["failures"] == [{"service": "snapp", "error": "timeout", "n": 4}]
     assert summary["daily"][-1]["activeUsers"] == 2 and len(summary["daily"]) == 7

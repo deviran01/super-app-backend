@@ -17,7 +17,7 @@ const METRICS = [
   ["serviceOpens", "Service opens"],
   ["installs", "New installs"],
 ];
-const SOURCES = { home: "Home", favorites: "Favorites", recent: "Recent", category: "Category page", search: "Search", tabs: "Open tabs", quick_switch: "Quick switch", add_service: "Add service" };
+const SOURCES = { home: "Home", favorites: "Favorites", recent: "Recent", category: "Category page", search: "Search", tabs: "Open tabs", quick_switch: "Quick switch", add_service: "Add service", link: "Link from another app" };
 const ERRORS = {
   offline: "Device offline", host_not_found: "Host not found", timeout: "Timed out", connection_failed: "Connection failed",
   insecure_connection: "Certificate error", unsupported_url: "Unsupported link", crashed: "Page crashed",

@@ -43,7 +43,7 @@ MAX_COUNTS_PER_DAY = 400
 MAX_RANGE_DAYS = 366
 
 OTHER = "other"
-OPEN_SOURCES = {"home", "favorites", "recent", "category", "search", "tabs", "quick_switch", "add_service"}
+OPEN_SOURCES = {"home", "favorites", "recent", "category", "search", "tabs", "quick_switch", "add_service", "link"}
 PAGE_ERRORS = {
     "offline", "host_not_found", "timeout", "connection_failed", "insecure_connection",
     "unsupported_url", "crashed", "web_view_unavailable", "generic",
