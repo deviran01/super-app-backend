@@ -63,6 +63,17 @@
       "enabled": true
     },
     {
+      "id": "cars",
+      "title": {
+        "en": "Cars",
+        "fa": "خودرو"
+      },
+      "icon": "icons/categories/cars.png",
+      "color": "#F08C00",
+      "order": 2,
+      "enabled": true
+    },
+    {
       "id": "food",
       "title": {
         "en": "Food",
@@ -70,7 +81,7 @@
       },
       "icon": "icons/categories/food.png",
       "color": "#E8590C",
-      "order": 2,
+      "order": 3,
       "enabled": true
     },
     {
@@ -81,7 +92,7 @@
       },
       "icon": "icons/categories/shopping.png",
       "color": "#D6336C",
-      "order": 3,
+      "order": 4,
       "enabled": true
     },
     {
@@ -92,7 +103,7 @@
       },
       "icon": "icons/categories/classifieds.png",
       "color": "#7048E8",
-      "order": 4,
+      "order": 5,
       "enabled": true
     },
     {
@@ -103,7 +114,7 @@
       },
       "icon": "icons/categories/travel.png",
       "color": "#1C7ED6",
-      "order": 5,
+      "order": 6,
       "enabled": true
     },
     {
@@ -114,7 +125,7 @@
       },
       "icon": "icons/categories/maps.png",
       "color": "#0CA678",
-      "order": 6,
+      "order": 7,
       "enabled": true
     },
     {
@@ -125,7 +136,51 @@
       },
       "icon": "icons/categories/entertainment.png",
       "color": "#AE3EC9",
-      "order": 7,
+      "order": 8,
+      "enabled": true
+    },
+    {
+      "id": "music",
+      "title": {
+        "en": "Music & audio",
+        "fa": "موسیقی و صوت"
+      },
+      "icon": "icons/categories/music.png",
+      "color": "#E64980",
+      "order": 9,
+      "enabled": true
+    },
+    {
+      "id": "books",
+      "title": {
+        "en": "Books",
+        "fa": "کتاب"
+      },
+      "icon": "icons/categories/books.png",
+      "color": "#A0522D",
+      "order": 10,
+      "enabled": true
+    },
+    {
+      "id": "education",
+      "title": {
+        "en": "Education",
+        "fa": "آموزش"
+      },
+      "icon": "icons/categories/education.png",
+      "color": "#3B5BDB",
+      "order": 11,
+      "enabled": true
+    },
+    {
+      "id": "jobs",
+      "title": {
+        "en": "Jobs",
+        "fa": "کاریابی"
+      },
+      "icon": "icons/categories/jobs.png",
+      "color": "#5C940D",
+      "order": 12,
       "enabled": true
     },
     {
@@ -136,7 +191,18 @@
       },
       "icon": "icons/categories/health.png",
       "color": "#F03E3E",
-      "order": 8,
+      "order": 13,
+      "enabled": true
+    },
+    {
+      "id": "insurance",
+      "title": {
+        "en": "Insurance",
+        "fa": "بیمه"
+      },
+      "icon": "icons/categories/insurance.png",
+      "color": "#0B7285",
+      "order": 14,
       "enabled": true
     },
     {
@@ -147,7 +213,7 @@
       },
       "icon": "icons/categories/finance.png",
       "color": "#1098AD",
-      "order": 9,
+      "order": 15,
       "enabled": true
     },
     {
@@ -158,7 +224,7 @@
       },
       "icon": "icons/categories/utilities.png",
       "color": "#4C6EF5",
-      "order": 10,
+      "order": 16,
       "enabled": true
     },
     {
@@ -169,7 +235,7 @@
       },
       "icon": "icons/categories/government.png",
       "color": "#495057",
-      "order": 11,
+      "order": 17,
       "enabled": true
     },
     {
@@ -180,7 +246,7 @@
       },
       "icon": "icons/categories/messaging.png",
       "color": "#15AABF",
-      "order": 12,
+      "order": 18,
       "enabled": true
     }
   ],
@@ -294,7 +360,7 @@
       "url": "https://app.snapp-box.com/",
       "logo": "logos/snappbox.png",
       "brandColor": "#00B862",
-      "enabled": false,
+      "enabled": true,
       "order": 30,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -1496,6 +1562,1509 @@
         "messenger",
         "پیام"
       ]
+    },
+    {
+      "id": "bama",
+      "name": {
+        "en": "Bama",
+        "fa": "باما"
+      },
+      "description": {
+        "en": "Car ads and today's prices",
+        "fa": "آگهی خودرو و قیمت روز"
+      },
+      "categoryId": "cars",
+      "url": "https://bama.ir/",
+      "logo": "logos/bama.png",
+      "brandColor": "#BEFA00",
+      "enabled": true,
+      "order": 300,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "bama.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "car",
+        "price",
+        "ماشین",
+        "خودرو",
+        "قیمت خودرو",
+        "خرید ماشین"
+      ]
+    },
+    {
+      "id": "karnameh",
+      "name": {
+        "en": "Karnameh",
+        "fa": "کارنامه"
+      },
+      "description": {
+        "en": "Inspected used cars and car services",
+        "fa": "خرید و فروش خودروی کارشناسی‌شده"
+      },
+      "categoryId": "cars",
+      "url": "https://karnameh.com/",
+      "logo": "logos/karnameh.png",
+      "brandColor": "#00A754",
+      "enabled": true,
+      "order": 310,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "karnameh.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "car",
+        "inspection",
+        "ماشین",
+        "خودرو",
+        "کارشناسی"
+      ]
+    },
+    {
+      "id": "khodro45",
+      "name": {
+        "en": "Khodro45",
+        "fa": "خودرو۴۵"
+      },
+      "description": {
+        "en": "Sell your car quickly at a fair price",
+        "fa": "فروش فوری خودرو با قیمت منصفانه"
+      },
+      "categoryId": "cars",
+      "url": "https://khodro45.com/",
+      "logo": "logos/khodro45.png",
+      "brandColor": "#FF9533",
+      "enabled": true,
+      "order": 320,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "khodro45.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "car",
+        "sell",
+        "ماشین",
+        "خودرو",
+        "فروش خودرو",
+        "خودرو 45"
+      ]
+    },
+    {
+      "id": "hamrahmechanic",
+      "name": {
+        "en": "Hamrah Mechanic",
+        "fa": "همراه مکانیک"
+      },
+      "description": {
+        "en": "Car repairs and service at your door",
+        "fa": "خدمات و تعمیر خودرو در محل"
+      },
+      "categoryId": "cars",
+      "url": "https://www.hamrah-mechanic.com/",
+      "logo": "logos/hamrahmechanic.png",
+      "brandColor": "#2B3990",
+      "enabled": true,
+      "order": 330,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "hamrah-mechanic.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": true,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "mechanic",
+        "repair",
+        "battery",
+        "مکانیک",
+        "تعمیر",
+        "باتری",
+        "امداد خودرو"
+      ]
+    },
+    {
+      "id": "beeptunes",
+      "name": {
+        "en": "Beeptunes",
+        "fa": "بیپ‌تونز"
+      },
+      "description": {
+        "en": "Legal Iranian music store",
+        "fa": "فروشگاه قانونی موسیقی ایرانی"
+      },
+      "categoryId": "music",
+      "url": "https://beeptunes.com/",
+      "logo": "logos/beeptunes.png",
+      "brandColor": "#4285F4",
+      "enabled": true,
+      "order": 340,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "beeptunes.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "HIGH",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "music",
+        "song",
+        "album",
+        "موسیقی",
+        "آهنگ",
+        "آلبوم",
+        "بیپ تونز"
+      ]
+    },
+    {
+      "id": "melodify",
+      "name": {
+        "en": "Melodify",
+        "fa": "ملودیفای"
+      },
+      "description": {
+        "en": "Stream music and playlists",
+        "fa": "پخش آنلاین آهنگ و پلی‌لیست"
+      },
+      "categoryId": "music",
+      "url": "https://desktop.melodify.app/",
+      "logo": "logos/melodify.png",
+      "brandColor": "#F2C94C",
+      "enabled": true,
+      "order": 350,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "melodify.app"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "HIGH",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "music",
+        "song",
+        "playlist",
+        "موسیقی",
+        "آهنگ",
+        "پلی لیست"
+      ]
+    },
+    {
+      "id": "navaar",
+      "name": {
+        "en": "Navaar",
+        "fa": "نوار"
+      },
+      "description": {
+        "en": "Audiobooks and podcasts",
+        "fa": "کتاب صوتی و پادکست"
+      },
+      "categoryId": "music",
+      "url": "https://www.navaar.ir/",
+      "logo": "logos/navaar.png",
+      "brandColor": "#00244D",
+      "enabled": true,
+      "order": 360,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "navaar.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "HIGH",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "audiobook",
+        "podcast",
+        "کتاب صوتی",
+        "پادکست"
+      ]
+    },
+    {
+      "id": "fidibo",
+      "name": {
+        "en": "Fidibo",
+        "fa": "فیدیبو"
+      },
+      "description": {
+        "en": "E-books and audiobooks",
+        "fa": "کتاب الکترونیکی و صوتی"
+      },
+      "categoryId": "books",
+      "url": "https://fidibo.com/",
+      "logo": "logos/fidibo.png",
+      "brandColor": "#23211F",
+      "enabled": true,
+      "order": 370,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "fidibo.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "book",
+        "ebook",
+        "audiobook",
+        "کتاب",
+        "کتاب صوتی"
+      ]
+    },
+    {
+      "id": "taaghche",
+      "name": {
+        "en": "Taaghche",
+        "fa": "طاقچه"
+      },
+      "description": {
+        "en": "Read and listen to books",
+        "fa": "خواندن و شنیدن کتاب"
+      },
+      "categoryId": "books",
+      "url": "https://taaghche.com/",
+      "logo": "logos/taaghche.png",
+      "brandColor": "#00A1A4",
+      "enabled": true,
+      "order": 380,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "taaghche.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "book",
+        "ebook",
+        "audiobook",
+        "کتاب",
+        "کتاب صوتی",
+        "طاقچه"
+      ]
+    },
+    {
+      "id": "ketabrah",
+      "name": {
+        "en": "Ketabrah",
+        "fa": "کتابراه"
+      },
+      "description": {
+        "en": "E-books and audiobooks",
+        "fa": "کتاب الکترونیکی و صوتی"
+      },
+      "categoryId": "books",
+      "url": "https://ketabrah.com/",
+      "logo": "logos/ketabrah.png",
+      "brandColor": "#649C3D",
+      "enabled": true,
+      "order": 390,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "ketabrah.com",
+          "ketabrah.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "book",
+        "ebook",
+        "کتاب",
+        "کتاب راه"
+      ]
+    },
+    {
+      "id": "faradars",
+      "name": {
+        "en": "Faradars",
+        "fa": "فرادرس"
+      },
+      "description": {
+        "en": "Video courses in every field",
+        "fa": "آموزش ویدیویی در همه زمینه‌ها"
+      },
+      "categoryId": "education",
+      "url": "https://faradars.org/",
+      "logo": "logos/faradars.png",
+      "brandColor": "#3064C0",
+      "enabled": true,
+      "order": 400,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "faradars.org"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "course",
+        "learn",
+        "آموزش",
+        "دوره",
+        "فرادرس"
+      ]
+    },
+    {
+      "id": "maktabkhooneh",
+      "name": {
+        "en": "Maktabkhooneh",
+        "fa": "مکتب‌خونه"
+      },
+      "description": {
+        "en": "Online courses with certificates",
+        "fa": "دوره‌های آنلاین با گواهی"
+      },
+      "categoryId": "education",
+      "url": "https://maktabkhooneh.org/",
+      "logo": "logos/maktabkhooneh.png",
+      "brandColor": "#009CA7",
+      "enabled": true,
+      "order": 410,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "maktabkhooneh.org"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "course",
+        "learn",
+        "mooc",
+        "آموزش",
+        "دوره",
+        "مکتب خونه"
+      ]
+    },
+    {
+      "id": "quera",
+      "name": {
+        "en": "Quera",
+        "fa": "کوئرا"
+      },
+      "description": {
+        "en": "Programming courses, contests and jobs",
+        "fa": "آموزش برنامه‌نویسی، مسابقه و استخدام"
+      },
+      "categoryId": "education",
+      "url": "https://quera.org/",
+      "logo": "logos/quera.png",
+      "brandColor": "#009ACD",
+      "enabled": true,
+      "order": 420,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "quera.org",
+          "quera.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "programming",
+        "coding",
+        "برنامه نویسی",
+        "کدنویسی",
+        "آموزش"
+      ]
+    },
+    {
+      "id": "jobinja",
+      "name": {
+        "en": "Jobinja",
+        "fa": "جابینجا"
+      },
+      "description": {
+        "en": "Job listings and hiring",
+        "fa": "آگهی استخدام و کاریابی"
+      },
+      "categoryId": "jobs",
+      "url": "https://jobinja.ir/",
+      "logo": "logos/jobinja.png",
+      "brandColor": "#1ABC9C",
+      "enabled": true,
+      "order": 430,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "jobinja.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "job",
+        "hiring",
+        "resume",
+        "استخدام",
+        "کار",
+        "رزومه",
+        "کاریابی"
+      ]
+    },
+    {
+      "id": "jobvision",
+      "name": {
+        "en": "Jobvision",
+        "fa": "جاب‌ویژن"
+      },
+      "description": {
+        "en": "Jobs and a resume builder",
+        "fa": "آگهی استخدام و رزومه‌ساز"
+      },
+      "categoryId": "jobs",
+      "url": "https://jobvision.ir/",
+      "logo": "logos/jobvision.png",
+      "brandColor": "#0053FF",
+      "enabled": true,
+      "order": 440,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "jobvision.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "job",
+        "hiring",
+        "resume",
+        "استخدام",
+        "کار",
+        "رزومه",
+        "جاب ویژن"
+      ]
+    },
+    {
+      "id": "irantalent",
+      "name": {
+        "en": "IranTalent",
+        "fa": "ایران تلنت"
+      },
+      "description": {
+        "en": "Jobs at leading companies",
+        "fa": "استخدام در شرکت‌های معتبر"
+      },
+      "categoryId": "jobs",
+      "url": "https://www.irantalent.com/",
+      "logo": "logos/irantalent.png",
+      "brandColor": "#145FA8",
+      "enabled": true,
+      "order": 450,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "irantalent.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "job",
+        "hiring",
+        "career",
+        "استخدام",
+        "کار",
+        "ایران تلنت"
+      ]
+    },
+    {
+      "id": "ponisha",
+      "name": {
+        "en": "Ponisha",
+        "fa": "پونیشا"
+      },
+      "description": {
+        "en": "Freelance projects",
+        "fa": "پروژه‌های فریلنسری"
+      },
+      "categoryId": "jobs",
+      "url": "https://ponisha.ir/",
+      "logo": "logos/ponisha.png",
+      "brandColor": "#007F48",
+      "enabled": true,
+      "order": 460,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "ponisha.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "freelance",
+        "project",
+        "remote",
+        "فریلنسر",
+        "دورکاری",
+        "پروژه"
+      ]
+    },
+    {
+      "id": "karlancer",
+      "name": {
+        "en": "Karlancer",
+        "fa": "کارلنسر"
+      },
+      "description": {
+        "en": "Freelance and remote work",
+        "fa": "فریلنسری و دورکاری"
+      },
+      "categoryId": "jobs",
+      "url": "https://www.karlancer.com/",
+      "logo": "logos/karlancer.png",
+      "brandColor": "#4160F5",
+      "enabled": true,
+      "order": 470,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "karlancer.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "freelance",
+        "project",
+        "remote",
+        "فریلنسر",
+        "دورکاری",
+        "پروژه"
+      ]
+    },
+    {
+      "id": "bimebazar",
+      "name": {
+        "en": "BimeBazar",
+        "fa": "بیمه‌بازار"
+      },
+      "description": {
+        "en": "Compare and buy insurance",
+        "fa": "مقایسه و خرید آنلاین بیمه"
+      },
+      "categoryId": "insurance",
+      "url": "https://bimebazar.com/",
+      "logo": "logos/bimebazar.png",
+      "brandColor": "#F2BE1A",
+      "enabled": true,
+      "order": 480,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "bimebazar.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "insurance",
+        "car insurance",
+        "بیمه",
+        "بیمه بدنه",
+        "بیمه شخص ثالث"
+      ]
+    },
+    {
+      "id": "azki",
+      "name": {
+        "en": "Azki",
+        "fa": "ازکی"
+      },
+      "description": {
+        "en": "Insurance and car loans, compared",
+        "fa": "مقایسه و خرید بیمه و وام خودرو"
+      },
+      "categoryId": "insurance",
+      "url": "https://www.azki.com/",
+      "logo": "logos/azki.png",
+      "brandColor": "#0093FF",
+      "enabled": true,
+      "order": 490,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "azki.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "insurance",
+        "loan",
+        "بیمه",
+        "وام",
+        "بیمه شخص ثالث",
+        "بیمیتو"
+      ]
+    },
+    {
+      "id": "bimeh",
+      "name": {
+        "en": "Bimeh.com",
+        "fa": "بیمه دات کام"
+      },
+      "description": {
+        "en": "Buy insurance online",
+        "fa": "خرید آنلاین بیمه"
+      },
+      "categoryId": "insurance",
+      "url": "https://bimeh.com/",
+      "logo": "logos/bimeh.png",
+      "brandColor": "#60269E",
+      "enabled": true,
+      "order": 500,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "bimeh.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "insurance",
+        "بیمه",
+        "بیمه درمان",
+        "بیمه شخص ثالث"
+      ]
+    },
+    {
+      "id": "kilid",
+      "name": {
+        "en": "Kilid",
+        "fa": "کیلید"
+      },
+      "description": {
+        "en": "Homes for sale and rent",
+        "fa": "خرید، فروش و اجاره ملک"
+      },
+      "categoryId": "classifieds",
+      "url": "https://kilid.com/",
+      "logo": "logos/kilid.png",
+      "brandColor": "#800040",
+      "enabled": true,
+      "order": 510,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "kilid.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "home",
+        "rent",
+        "real estate",
+        "خانه",
+        "اجاره",
+        "ملک",
+        "آپارتمان"
+      ]
+    },
+    {
+      "id": "snappdoctor",
+      "name": {
+        "en": "Snapp Doctor",
+        "fa": "اسنپ‌دکتر"
+      },
+      "description": {
+        "en": "Talk to a doctor online",
+        "fa": "مشاوره آنلاین با پزشک"
+      },
+      "categoryId": "health",
+      "url": "https://snapp.doctor/",
+      "logo": "logos/snappdoctor.png",
+      "brandColor": "#00C3FF",
+      "enabled": true,
+      "order": 520,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "snapp.doctor"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": true,
+          "microphone": true
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "doctor",
+        "consult",
+        "پزشک",
+        "مشاوره",
+        "دکتر"
+      ]
+    },
+    {
+      "id": "mrbilit",
+      "name": {
+        "en": "MrBilit",
+        "fa": "مستربلیط"
+      },
+      "description": {
+        "en": "Train, bus and flight tickets",
+        "fa": "بلیط قطار، اتوبوس و هواپیما"
+      },
+      "categoryId": "travel",
+      "url": "https://mrbilit.com/",
+      "logo": "logos/mrbilit.png",
+      "brandColor": "#0F84FA",
+      "enabled": true,
+      "order": 530,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "mrbilit.com",
+          "mrbilit.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "ticket",
+        "train",
+        "bus",
+        "flight",
+        "بلیط",
+        "قطار",
+        "اتوبوس",
+        "مستر بلیط"
+      ]
+    },
+    {
+      "id": "flytoday",
+      "name": {
+        "en": "Flytoday",
+        "fa": "فلای‌تودی"
+      },
+      "description": {
+        "en": "Flights, hotels and trains",
+        "fa": "بلیط هواپیما، هتل و قطار"
+      },
+      "categoryId": "travel",
+      "url": "https://www.flytoday.ir/",
+      "logo": "logos/flytoday.png",
+      "brandColor": "#001A4B",
+      "enabled": true,
+      "order": 540,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "flytoday.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "flight",
+        "hotel",
+        "ticket",
+        "پرواز",
+        "بلیط",
+        "هتل",
+        "فلای تودی"
+      ]
+    },
+    {
+      "id": "otaghak",
+      "name": {
+        "en": "Otaghak",
+        "fa": "اتاقک"
+      },
+      "description": {
+        "en": "Villas and holiday homes",
+        "fa": "اجاره ویلا و اقامتگاه"
+      },
+      "categoryId": "travel",
+      "url": "https://www.otaghak.com/",
+      "logo": "logos/otaghak.png",
+      "brandColor": "#F03E58",
+      "enabled": true,
+      "order": 550,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "otaghak.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "villa",
+        "stay",
+        "rent",
+        "ویلا",
+        "اقامتگاه",
+        "سوئیت"
+      ]
+    },
+    {
+      "id": "filmnet",
+      "name": {
+        "en": "Filmnet",
+        "fa": "فیلم‌نت"
+      },
+      "description": {
+        "en": "Movies and series",
+        "fa": "فیلم و سریال"
+      },
+      "categoryId": "entertainment",
+      "url": "https://filmnet.ir/",
+      "logo": "logos/filmnet.png",
+      "brandColor": "#D32B4E",
+      "enabled": true,
+      "order": 560,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "filmnet.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "movie",
+        "series",
+        "vod",
+        "فیلم",
+        "سریال",
+        "فیلم نت"
+      ]
+    },
+    {
+      "id": "cinematicket",
+      "name": {
+        "en": "Cinema Ticket",
+        "fa": "سینماتیکت"
+      },
+      "description": {
+        "en": "Cinema and theatre tickets",
+        "fa": "بلیط سینما و تئاتر"
+      },
+      "categoryId": "entertainment",
+      "url": "https://cinematicket.org/",
+      "logo": "logos/cinematicket.png",
+      "brandColor": "#FF3543",
+      "enabled": true,
+      "order": 570,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "cinematicket.org"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "cinema",
+        "ticket",
+        "theatre",
+        "سینما",
+        "بلیط",
+        "تئاتر"
+      ]
+    },
+    {
+      "id": "tiwall",
+      "name": {
+        "en": "Tiwall",
+        "fa": "تیوال"
+      },
+      "description": {
+        "en": "Theatre, concert and event tickets",
+        "fa": "بلیط تئاتر، کنسرت و رویداد"
+      },
+      "categoryId": "entertainment",
+      "url": "https://www.tiwall.com/",
+      "logo": "logos/tiwall.png",
+      "brandColor": "#3399DD",
+      "enabled": true,
+      "order": 580,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "tiwall.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "theatre",
+        "concert",
+        "ticket",
+        "تئاتر",
+        "کنسرت",
+        "بلیط"
+      ]
+    },
+    {
+      "id": "milli",
+      "name": {
+        "en": "Milli",
+        "fa": "میلی"
+      },
+      "description": {
+        "en": "Buy, sell and save gold",
+        "fa": "خرید، فروش و پس‌انداز طلا"
+      },
+      "categoryId": "finance",
+      "url": "https://milli.gold/",
+      "logo": "logos/milli.png",
+      "brandColor": "#051061",
+      "enabled": true,
+      "order": 590,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "milli.gold"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": true,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "gold",
+        "invest",
+        "طلا",
+        "طلای آب شده",
+        "سرمایه گذاری"
+      ]
+    },
+    {
+      "id": "technolife",
+      "name": {
+        "en": "Technolife",
+        "fa": "تکنولایف"
+      },
+      "description": {
+        "en": "Phones, laptops and electronics",
+        "fa": "موبایل، لپ‌تاپ و کالای دیجیتال"
+      },
+      "categoryId": "shopping",
+      "url": "https://www.technolife.com/",
+      "logo": "logos/technolife.png",
+      "brandColor": "#223266",
+      "enabled": true,
+      "order": 600,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "technolife.com",
+          "technolife.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "mobile",
+        "laptop",
+        "electronics",
+        "موبایل",
+        "لپ تاپ",
+        "گوشی"
+      ]
+    },
+    {
+      "id": "banimode",
+      "name": {
+        "en": "Banimode",
+        "fa": "بانی‌مد"
+      },
+      "description": {
+        "en": "Fashion and clothing",
+        "fa": "پوشاک و مد"
+      },
+      "categoryId": "shopping",
+      "url": "https://www.banimode.com/",
+      "logo": "logos/banimode.png",
+      "brandColor": "#1AC977",
+      "enabled": true,
+      "order": 610,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "web": {
+        "allowedDomains": [
+          "banimode.com"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "LOW",
+        "restoreLastUrl": true
+      },
+      "keywords": [
+        "fashion",
+        "clothes",
+        "shoes",
+        "لباس",
+        "پوشاک",
+        "کفش"
+      ]
     }
   ],
   "compareGroups": [
@@ -1541,7 +3110,8 @@
       "serviceIds": [
         "alibaba",
         "snapptrip",
-        "jabama"
+        "mrbilit",
+        "flytoday"
       ]
     },
     {
@@ -1552,7 +3122,8 @@
       },
       "serviceIds": [
         "filimo",
-        "namava"
+        "namava",
+        "filmnet"
       ]
     },
     {
@@ -1565,6 +3136,98 @@
         "digikala",
         "torob",
         "basalam"
+      ]
+    },
+    {
+      "id": "stays",
+      "title": {
+        "en": "Villas and stays",
+        "fa": "ویلا و اقامتگاه"
+      },
+      "serviceIds": [
+        "jabama",
+        "otaghak"
+      ]
+    },
+    {
+      "id": "car-market",
+      "title": {
+        "en": "Buy and sell cars",
+        "fa": "خرید و فروش خودرو"
+      },
+      "serviceIds": [
+        "bama",
+        "karnameh",
+        "khodro45"
+      ]
+    },
+    {
+      "id": "ebooks",
+      "title": {
+        "en": "Books",
+        "fa": "کتاب الکترونیکی"
+      },
+      "serviceIds": [
+        "fidibo",
+        "taaghche",
+        "ketabrah"
+      ]
+    },
+    {
+      "id": "courses",
+      "title": {
+        "en": "Online courses",
+        "fa": "آموزش آنلاین"
+      },
+      "serviceIds": [
+        "faradars",
+        "maktabkhooneh"
+      ]
+    },
+    {
+      "id": "job-search",
+      "title": {
+        "en": "Job search",
+        "fa": "کاریابی"
+      },
+      "serviceIds": [
+        "jobinja",
+        "jobvision",
+        "irantalent"
+      ]
+    },
+    {
+      "id": "freelance",
+      "title": {
+        "en": "Freelancing",
+        "fa": "فریلنسری"
+      },
+      "serviceIds": [
+        "ponisha",
+        "karlancer"
+      ]
+    },
+    {
+      "id": "insurance",
+      "title": {
+        "en": "Insurance",
+        "fa": "خرید بیمه"
+      },
+      "serviceIds": [
+        "bimebazar",
+        "azki",
+        "bimeh"
+      ]
+    },
+    {
+      "id": "event-tickets",
+      "title": {
+        "en": "Event tickets",
+        "fa": "بلیط سینما و تئاتر"
+      },
+      "serviceIds": [
+        "cinematicket",
+        "tiwall"
       ]
     }
   ]

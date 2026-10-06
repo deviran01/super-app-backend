@@ -12,8 +12,10 @@
   so the app's tint keeps the duotone look.
 
 Requires Pillow and resvg-py (pip install pillow resvg-py).
-Usage: python3 tools/fetch_assets.py [--logos] [--icons]
+Usage: python3 tools/fetch_assets.py [--logos] [--icons] [service or category id...]
+(ids limit the run to those services' logos and those categories' icons)
 """
+import http.cookiejar
 import io
 import json
 import os
@@ -58,9 +60,24 @@ BAZAAR_PACKAGES = {
     "mygov": "ir.gov.mygov",
     "eitaa": "ir.eitaa.messenger",
     "rubika": "app.rbmain.a",
+    "karnameh": "com.karnameh",
+    "beeptunes": "com.beep.tunes",
+    "navaar": "ir.navaar.android",
+    "fidibo": "com.fidibo.app",
+    "taaghche": "ir.mservices.mybook",
+    "bimebazar": "com.bimebazar.bimebazar",
+    "mrbilit": "com.mrbilit.app",
+    "flytoday": "ir.flytoday",
+    "otaghak": "ir.otaghak.app",
+    "filmnet": "ir.filmnet.android",
+    "milli": "gold.milli.app",
+    "technolife": "com.technolife",
+    "banimode": "com.banimode.app",
 }
 MYKET_PACKAGES = {
     "bale": "ir.nasim",
+    "jobvision": "com.jobvision.app",
+    "kilid": "com.kilid.portal",
 }
 BAZAAR_ICON = "https://s.cafebazaar.ir/images/icons/{package}_512x512.webp"
 MYKET_PAGE = "https://myket.ir/app/{package}"
@@ -70,13 +87,19 @@ CATEGORY_ICONS = {
     "travel": "suitcase", "maps": "map-point-wave", "entertainment": "clapperboard-play",
     "health": "health", "finance": "wallet-money", "utilities": "sim-card",
     "government": "buildings-3", "messaging": "chat-round-dots", "lab": "test-tube",
+    "cars": "wheel", "music": "music-notes", "books": "book-2", "education": "square-academic-cap",
+    "jobs": "case-round", "insurance": "shield-check",
 }
 SOLAR_JSON = "https://api.iconify.design/solar.json?icons={names}"
 
 
+# Keeps cookies: some sites redirect to themselves until a cookie they set is sent back.
+OPENER = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+
+
 def get(url, timeout=20):
     request = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "*/*"})
-    with urllib.request.urlopen(request, timeout=timeout) as response:
+    with OPENER.open(request, timeout=timeout) as response:
         return response.read(), response.headers.get("Content-Type", ""), response.geturl()
 
 
@@ -121,7 +144,7 @@ def site_icon_candidates(page_url):
     if parser.manifest:
         try:
             manifest_url = urljoin(final_url, parser.manifest)
-            manifest = json.loads(get(manifest_url)[0].decode("utf-8", "ignore"))
+            manifest = json.loads(get(manifest_url)[0].decode("utf-8-sig", "ignore"))
             for icon in manifest.get("icons", []):
                 size = max((int(n) for n in re.findall(r"(\d+)x\d+", icon.get("sizes", ""))), default=0)
                 if "maskable" not in icon.get("purpose", ""):
@@ -193,9 +216,9 @@ def normalize(data):
     return square.convert("RGB").resize((LOGO_SIZE, LOGO_SIZE), Image.LANCZOS)
 
 
-def fetch_logos():
-    with open(os.path.join(PUBLIC, "api", "v1", "config.json"), encoding="utf-8") as f:
-        services = json.load(f)["services"]
+def fetch_logos(only=()):
+    with open(os.path.join(HERE, "..", "data", "catalog.json"), encoding="utf-8") as f:
+        services = [s for s in json.load(f)["services"] if not only or s["id"] in only]
     os.makedirs(os.path.join(PUBLIC, "logos"), exist_ok=True)
     missing = []
     for service in services:
@@ -216,14 +239,15 @@ def fetch_logos():
 
 # --- Category icons ----------------------------------------------------------------------
 
-def fetch_category_icons():
+def fetch_category_icons(only=()):
     import resvg_py  # only needed here
 
-    names = sorted({f"{name}-bold-duotone" for name in CATEGORY_ICONS.values()})
+    icons = {c: name for c, name in CATEGORY_ICONS.items() if not only or c in only}
+    names = sorted({f"{name}-bold-duotone" for name in icons.values()})
     data = json.loads(get(SOLAR_JSON.format(names=",".join(names)))[0])
     out = os.path.join(PUBLIC, "icons", "categories")
     os.makedirs(out, exist_ok=True)
-    for category, name in CATEGORY_ICONS.items():
+    for category, name in icons.items():
         icon = data["icons"].get(f"{name}-bold-duotone")
         if icon is None:
             print(f"missing icon {category} ({name})")
@@ -239,9 +263,10 @@ def fetch_category_icons():
 
 
 if __name__ == "__main__":
-    selected = set(sys.argv[1:]) or {"--logos", "--icons"}
-    if "--icons" in selected:
-        fetch_category_icons()
-    if "--logos" in selected:
-        fetch_logos()
+    flags = {a for a in sys.argv[1:] if a.startswith("--")} or {"--logos", "--icons"}
+    ids = {a for a in sys.argv[1:] if not a.startswith("--")}
+    if "--icons" in flags:
+        fetch_category_icons(ids)
+    if "--logos" in flags:
+        fetch_logos(ids)
     sys.exit(0)

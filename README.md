@@ -28,7 +28,7 @@ app/feedback.py             feedback messages and their flood limits (SQLite, da
 app/admin/                  dashboard: API (routes.py), validation (schema.py), draft/publish/
                             history (store.py), accounts and sessions (auth.py), images, UI (static/)
 app/cli.py                  admin accounts from the command line
-data/catalog.json           the catalog (12 categories, 29 services, compare groups)
+data/catalog.json           the catalog (18 categories, 61 services, compare groups)
 data/release.json           update rules: defaults + per-store overrides and store links
 public/logos/<id>.png       service logos (official app icons, 256 px; dashboard uploads are <id>-<hash>.png);
                             missing ones fall back to monograms
@@ -193,7 +193,12 @@ A scenario may merge-patch the catalog (`"features": {…}`), add entries (`appe
 
 `tools/build_sample_config.py` holds the catalog as readable tables and writes
 `data/catalog.json` and `data/release.json`. Edit and re-run it, or edit the JSON directly.
-Image paths are relative to the site root (`logos/snapp.png`). Validate:
+Image paths are relative to the site root (`logos/snapp.png`).
+
+Only trusted businesses are added: a new service's site must show an e-Namad trust seal
+(`trustseal.enamad.ir/?id=…`) issued for its own domain, and its content must be licensed
+(no free downloads of other people's music or films). enamad.ir only answers from Iran, so
+open the seal there to confirm it's current. Validate:
 
 ```bash
 pip install jsonschema   # once

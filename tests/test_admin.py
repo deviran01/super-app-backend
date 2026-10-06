@@ -137,10 +137,11 @@ def test_release_rules_publish_to_the_version_endpoint(admin):
 
 def test_restore_loads_an_old_version_into_the_draft(admin):
     first = admin.get("/admin/api/history").json()[-1]["id"]
+    services = len(state(admin)["draft"]["catalog"]["services"])
     save(admin, lambda d: d["catalog"]["services"].pop())
     admin.post("/admin/api/publish", json={"revision": state(admin)["revision"]})
     restored = admin.post(f"/admin/api/history/{first}/restore").json()
-    assert restored["dirty"] and len(restored["draft"]["catalog"]["services"]) == 29
+    assert restored["dirty"] and len(restored["draft"]["catalog"]["services"]) == services
     assert admin.post("/admin/api/history/..%2F..%2Fadmins/restore").status_code in (404, 405)
     with pytest.raises(KeyError):
         main.app.state.admin_store.restore("../admins", "ali")
