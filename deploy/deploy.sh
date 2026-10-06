@@ -49,7 +49,9 @@ else
   docker build --platform linux/amd64 -t superapp-api:latest .
   # The running image stays as :previous — one command away from a rollback:
   #   sudo docker tag superapp-api:previous superapp-api:latest && sudo docker compose up -d --no-build
-  ssh "$HOST" "sudo docker tag superapp-api:latest superapp-api:previous 2>/dev/null || true"
+  # The image it replaces as :previous is removed (only ours, and only when nothing uses it).
+  ssh "$HOST" "old=\$(sudo docker images -q superapp-api:previous); sudo docker tag superapp-api:latest superapp-api:previous 2>/dev/null || true; \
+    if [ -n \"\$old\" ] && [ \"\$old\" != \"\$(sudo docker images -q superapp-api:previous)\" ]; then sudo docker rmi \"\$old\" >/dev/null 2>&1 || true; fi"
   docker save superapp-api:latest | gzip -1 | ssh "$HOST" "gunzip | sudo docker load"
   UP="sudo docker compose up -d --no-build --remove-orphans --wait --wait-timeout 90"
 fi
