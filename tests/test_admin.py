@@ -199,7 +199,7 @@ def test_huge_images_are_refused_before_decoding(admin):
     out = io.BytesIO()
     Image.new("L", (5000, 4000)).save(out, "PNG")  # 20 MP, tiny file
     response = admin.post("/admin/api/images/logo?name=snapp", content=out.getvalue(), headers={"Content-Type": "image/png"})
-    assert response.status_code == 422 and "megapixels" in response.json()["detail"]
+    assert response.status_code == 422 and "2048×2048" in response.json()["detail"]
 
 
 def test_discard_refuses_a_draft_that_changed_meanwhile(admin):
@@ -216,3 +216,21 @@ def test_a_recreated_account_does_not_revive_old_sessions(env, admin):
     accounts.delete("second", by="ali")
     accounts.create("second", PASSWORD, created_by="ali")
     assert accounts.resolve(old) is None
+
+
+def test_only_the_two_uploads_take_big_bodies(env):
+    # FastAPI parses a JSON body before it checks the session: a big one to any other admin
+    # route is refused unread, signed in or not.
+    client = TestClient(main.app, base_url=BASE, headers=HEADERS)
+    big = b"[" + b"{}," * 100_000 + b"{}]"
+    assert client.post("/admin/api/images/logo/from-store", content=big, headers={"Content-Type": "application/json"}).status_code == 413
+    assert client.post("/admin/api/images/logo?name=snapp", content=big).status_code == 401  # read only after sign-in
+
+
+def test_oversized_uploads_and_huge_pictures_are_refused(admin):
+    too_big = b"\x89PNG" + b"0" * (6 * 1024 * 1024)
+    assert admin.post("/admin/api/images/logo?name=snapp", content=too_big).status_code == 413
+    huge = png(size=(2100, 2100))  # 4.4 MP: over the limit, refused before decoding
+    response = admin.post("/admin/api/images/icon?name=transport", content=huge, headers={"Content-Type": "image/png"})
+    assert response.status_code == 422 and "2048×2048" in response.json()["detail"]
+    assert admin.post("/admin/api/images/logo?name=snapp", content=png(size=(2048, 2048))).status_code == 200

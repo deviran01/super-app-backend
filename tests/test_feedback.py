@@ -98,6 +98,18 @@ def test_storage_is_bounded_and_keeps_unread_messages(client, admin, monkeypatch
     assert full.status_code == 429 and full.json() == {"detail": "full"}
 
 
+def test_a_repeat_takes_no_room(client, admin, monkeypatch):
+    monkeypatch.setattr(feedback, "MAX_STORED", 2)
+    assert send(client, text="First message").status_code == 202
+    assert send(client, text="Second message").status_code == 202
+    first = min(item["id"] for item in inbox(admin)["items"])
+    assert admin.patch(f"/admin/api/feedback/{first}", json={"status": "read"}).status_code == 200
+    # At capacity, the same text again only bumps its counter: nothing is pruned or refused.
+    assert send(client, text="second MESSAGE").status_code == 202
+    items = inbox(admin)["items"]
+    assert len(items) == 2 and max(item["repeats"] for item in items) == 1
+
+
 def test_the_feature_flag_turns_it_off(client, data_dir):
     catalog = json.loads((data_dir / "catalog.json").read_text())
     catalog["features"]["feedback"] = False

@@ -141,10 +141,10 @@ class AdminAccounts:
     def verify(self, username: str, password: str, client: str) -> bool:
         username = username.strip().lower()
         now = time.time()
-        if len(self._failures) > 10_000:  # forget expired lockouts
-            self._failures = {k: v for k, v in self._failures.items() if v[1] > now}
         keys = (f"user:{username}", f"ip:{client}")
         with self._lock:
+            if len(self._failures) > 10_000:  # forget expired lockouts
+                self._failures = {k: v for k, v in self._failures.items() if v[1] > now}
             for key in keys:
                 count, until = self._failures.get(key, (0, 0.0))
                 if count >= MAX_FAILURES and now < until:

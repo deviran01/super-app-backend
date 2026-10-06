@@ -40,7 +40,7 @@ MAX_PENDING_KEYS = 50_000
 RETENTION_DAYS = 400
 MAX_REPORT_DAYS = 8
 MAX_COUNTS_PER_DAY = 400
-MAX_RANGE_DAYS = 366
+MAX_RANGE_DAYS = 90
 
 OTHER = "other"
 OPEN_SOURCES = {"home", "favorites", "recent", "category", "search", "tabs", "quick_switch", "add_service", "link"}
@@ -178,7 +178,10 @@ class StatsStore:
     def _run(self) -> None:
         while True:
             time.sleep(FLUSH_SECONDS)
-            self.flush()
+            try:
+                self.flush()
+            except Exception:  # e.g. the data directory became unwritable: retry next time
+                log.exception("Statistics writer failed")
 
     def flush(self) -> None:
         with self._write_lock:

@@ -1,3 +1,20 @@
+# Everything the image installs, at the versions running in production (pip freeze of the
+# deployed image): a rebuild never picks up a new release by surprise. Upgrade deliberately,
+# run the tests, then deploy.
 fastapi==0.142.2
 uvicorn==0.54.0
 pillow==12.3.0
+# fastapi, starlette and uvicorn dependencies
+annotated-doc==0.0.5
+annotated-types==0.8.0
+anyio==4.15.1
+click==8.5.0
+h11==0.16.0
+idna==3.20
+opentelemetry-api==1.45.0
+packaging==26.3
+pydantic==2.13.5
+pydantic_core==2.46.5
+starlette==1.7.0
+typing-inspection==0.4.4
+typing_extensions==4.16.0

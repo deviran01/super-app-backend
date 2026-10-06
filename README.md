@@ -30,7 +30,8 @@ app/admin/                  dashboard: API (routes.py), validation (schema.py), 
 app/cli.py                  admin accounts from the command line
 data/catalog.json           the catalog (12 categories, 29 services, compare groups)
 data/release.json           update rules: defaults + per-store overrides and store links
-public/logos/<id>.png       service logos (official app icons, 256 px); missing ones fall back to monograms
+public/logos/<id>.png       service logos (official app icons, 256 px; dashboard uploads are <id>-<hash>.png);
+                            missing ones fall back to monograms
 public/icons/categories/    duotone category glyphs, alpha only (tinted by the app)
 public/lab/                 QA test pages (local only, with the lab scenario)
 scenarios/*.json            QA overlays
@@ -50,7 +51,7 @@ deploy/                     deploy.sh and the host nginx site
   listing; names and descriptions in Persian and English; maintenance message; every web
   behavior the app supports (domains, permissions, popups, cache, keep-alive, user agent…).
 - **Categories**: order, title, color, icon (any glyph image, converted to a tintable icon).
-- **Compare groups**, **Settings** (feature flags, payment domains, links) and **Releases**
+- **Compare groups**, **Settings** (feature flags, refresh interval, web rules) and **Releases**
   (soft/hard update versions and the store page, per store).
 - **Draft → Publish**: edits collect in a draft; *Publish* validates it with the app's own
   rules and makes it live (users get it on their next launch). *Discard* drops the draft.

@@ -28,8 +28,15 @@ services:
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     mem_limit: 192m
+    memswap_limit: 192m
     cpus: 0.5
     pids_limit: 64
+    # Rotated, so the shared host's disk never fills with this container's logs.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
       interval: 30s

@@ -24,7 +24,6 @@ turns it off here and in the app.
 from __future__ import annotations
 
 import hashlib
-import logging
 import re
 import sqlite3
 import threading
@@ -35,8 +34,6 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterator
-
-log = logging.getLogger("feedback")
 
 MIN_CHARS = 1
 MAX_CHARS = 1000
@@ -61,7 +58,6 @@ CREATE TABLE IF NOT EXISTS feedback (
     text        TEXT    NOT NULL,
     fingerprint TEXT    NOT NULL,
     status      TEXT    NOT NULL,
-    spam_reason TEXT    NOT NULL DEFAULT '',
     repeats     INTEGER NOT NULL DEFAULT 0,
     channel     TEXT    NOT NULL,
     app_version INTEGER NOT NULL,
@@ -70,6 +66,7 @@ CREATE TABLE IF NOT EXISTS feedback (
 CREATE INDEX IF NOT EXISTS feedback_status ON feedback (status, id);
 CREATE INDEX IF NOT EXISTS feedback_created ON feedback (created_at);
 CREATE INDEX IF NOT EXISTS feedback_fingerprint ON feedback (fingerprint);
+DROP TABLE IF EXISTS used_challenges;
 """
 
 # Direction overrides and isolates would let a message reorder how the dashboard shows it.
@@ -117,8 +114,6 @@ def fingerprint(text: str) -> str:
     return hashlib.sha256(core.encode("utf-8")).hexdigest()
 
 
-
-
 class FeedbackStore:
     def __init__(self, path: Path) -> None:
         self._path = path
@@ -136,25 +131,31 @@ class FeedbackStore:
         if not MIN_CHARS <= len(text) <= MAX_CHARS or message.kind not in KINDS:
             raise Refused(400, "invalid")
         now = int(time.time())
-        with self._lock, self._db() as db:
-            self._check_address(address, now)
-            for window, limit in GLOBAL_LIMITS:
-                if self._count_since(db, now - window) >= limit:
-                    raise Refused(429, "busy", retry_after=min(window, 3600))
-            self._prune(db, now)
-            digest = fingerprint(text)
-            earlier = db.execute(
-                "SELECT id FROM feedback WHERE fingerprint = ? AND created_at >= ? ORDER BY id DESC LIMIT 1",
-                (digest, now - DUPLICATE_SECONDS),
-            ).fetchone()
-            if earlier:
-                db.execute("UPDATE feedback SET repeats = repeats + 1 WHERE id = ?", (earlier[0],))
-                return earlier[0]
-            cursor = db.execute(
-                "INSERT INTO feedback (created_at, kind, text, fingerprint, status, channel, app_version, os_version) VALUES (?, ?, ?, ?, 'new', ?, ?, ?)",
-                (now, message.kind, text, digest, message.channel, message.app_version, message.os_version),
-            )
-            return cursor.lastrowid
+        with self._lock:
+            self._check_address(address, now)  # in memory: before touching the database
+            with self._db() as db:
+                for window, limit in GLOBAL_LIMITS:
+                    if self._count_since(db, now - window) >= limit:
+                        raise Refused(429, "busy", retry_after=min(window, 3600))
+                digest = fingerprint(text)
+                earlier = db.execute(
+                    "SELECT id FROM feedback WHERE fingerprint = ? AND created_at >= ? ORDER BY id DESC LIMIT 1",
+                    (digest, now - DUPLICATE_SECONDS),
+                ).fetchone()
+                if earlier:
+                    # A repeat takes no room: it never prunes or gets refused for lack of space.
+                    db.execute("UPDATE feedback SET repeats = repeats + 1 WHERE id = ?", (earlier[0],))
+                    return earlier[0]
+                retention_ran = self._prune(db, now)
+                cursor = db.execute(
+                    "INSERT INTO feedback (created_at, kind, text, fingerprint, status, channel, app_version, os_version) VALUES (?, ?, ?, ?, 'new', ?, ?, ?)",
+                    (now, message.kind, text, digest, message.channel, message.app_version, message.os_version),
+                )
+                new_id = cursor.lastrowid
+            # Only once committed: a refused or failed insert rolls the retention delete back.
+            if retention_ran:
+                self._pruned_at = now
+            return new_id
 
     def _check_address(self, address: str, now: float) -> None:
         longest = max(window for window, _ in ADDRESS_LIMITS)
@@ -177,19 +178,21 @@ class FeedbackStore:
     def _count_since(self, db: sqlite3.Connection, since: int) -> int:
         return db.execute("SELECT COUNT(*) FROM feedback WHERE created_at >= ?", (since,)).fetchone()[0]
 
-    def _prune(self, db: sqlite3.Connection, now: int) -> None:
-        if now - self._pruned_at >= 3600:
+    def _prune(self, db: sqlite3.Connection, now: int) -> bool:
+        """Makes room for one more message; returns whether the hourly retention delete ran."""
+        retention_due = now - self._pruned_at >= 3600
+        if retention_due:
             db.execute("DELETE FROM feedback WHERE created_at < ?", (now - RETENTION_DAYS * 86400,))
-            self._pruned_at = now
         excess = db.execute("SELECT COUNT(*) FROM feedback").fetchone()[0] - MAX_STORED + 1
         for status in ("spam", "archived", "read"):
             if excess <= 0:
-                return
+                return retention_due
             excess -= db.execute(
                 "DELETE FROM feedback WHERE id IN (SELECT id FROM feedback WHERE status = ? ORDER BY id LIMIT ?)", (status, excess)
             ).rowcount
         if excess > 0:
             raise Refused(429, "full", retry_after=3600)
+        return retention_due
 
     # --- the dashboard --------------------------------------------------------------------
 

@@ -22,6 +22,11 @@ HOST="${DEPLOY_HOST:?Set DEPLOY_HOST=user@host (environment or deploy/.env)}"
 REMOTE="${DEPLOY_DIR:-/srv/superapp}"
 
 cd "$ROOT"
+# What goes live is what git records: uncommitted edits to deployed files are refused.
+if [ -n "$(git status --porcelain -- app scenarios Dockerfile requirements.txt compose.yaml .dockerignore)" ] && [ "${DEPLOY_DIRTY:-}" != 1 ]; then
+  echo "Uncommitted changes in deployed files: commit them first (or DEPLOY_DIRTY=1)." >&2
+  exit 1
+fi
 python3 -c 'from app.content import ContentStore; ContentStore()' # fails on an unusable seed
 
 # World-readable: the container runs as an unprivileged user. (Set here rather than with
@@ -42,6 +47,9 @@ if [ "${DEPLOY_BUILD:-local}" = "server" ]; then
   UP="sudo docker compose up -d --build --remove-orphans --wait --wait-timeout 90"
 else
   docker build --platform linux/amd64 -t superapp-api:latest .
+  # The running image stays as :previous — one command away from a rollback:
+  #   sudo docker tag superapp-api:previous superapp-api:latest && sudo docker compose up -d --no-build
+  ssh "$HOST" "sudo docker tag superapp-api:latest superapp-api:previous 2>/dev/null || true"
   docker save superapp-api:latest | gzip -1 | ssh "$HOST" "gunzip | sudo docker load"
   UP="sudo docker compose up -d --no-build --remove-orphans --wait --wait-timeout 90"
 fi

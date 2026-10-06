@@ -8,7 +8,7 @@ from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, Field, ValidationError
 
 from .auth import COOKIE, SECURE_COOKIES, SESSION_SECONDS, AdminAccounts, client_address, require_admin
-from .images import ImageError, fetch_store_icon, icon_png, logo_png, save
+from .images import MAX_UPLOAD_BYTES, ImageError, fetch_store_icon, icon_png, logo_png, save
 from .schema import ID_RE, Draft, problems
 from .store import AdminStore, Conflict, DraftState
 
@@ -170,10 +170,15 @@ def _name(value: str) -> str:
 
 
 async def _body(request: Request) -> bytes:
-    data = await request.body()
+    # nginx caps uploads too; this keeps a direct request from buffering more than one image.
+    data = bytearray()
+    async for chunk in request.stream():
+        data += chunk
+        if len(data) > MAX_UPLOAD_BYTES:
+            raise HTTPException(status_code=413, detail=f"The image is larger than {MAX_UPLOAD_BYTES // 1024 // 1024} MB")
     if not data:
         raise HTTPException(status_code=422, detail="Choose an image")
-    return data
+    return bytes(data)
 
 
 @router.post("/images/logo")
@@ -217,7 +222,7 @@ def logo_from_store(body: StoreIcon, request: Request, _: str = Depends(require_
 @router.get("/stats")
 def stats(
     request: Request,
-    days: int = Query(30, ge=1, le=366),
+    days: int = Query(30, ge=1, le=90),
     channel: str | None = Query(None, pattern=r"^[a-z0-9][a-z0-9_-]{0,63}$"),
     _: str = Depends(require_admin),
 ) -> dict[str, Any]:

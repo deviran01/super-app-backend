@@ -48,6 +48,7 @@ IMAGE_MAX_AGE = 7 * 24 * 3600
 MAX_EVENTS_BYTES = 64 * 1024
 MAX_FEEDBACK_BYTES = 8 * 1024
 MAX_ADMIN_JSON_BYTES = 256 * 1024
+UPLOAD_PATHS = {"/admin/api/images/logo", "/admin/api/images/icon"}
 MAX_CACHED_VARIANTS = 64
 # Versions above the highest one in the release rules (+ this margin) are counted as "other".
 VERSION_MARGIN = 10
@@ -139,8 +140,10 @@ def _revalidated(request: Request, body: bytes, etag: str, media_type: str = "ap
     return Response(content=body, media_type=media_type, headers=headers)
 
 
+# The fast answers are async: they only read the in-memory content, and must not wait for a
+# thread behind sign-ins (scrypt), store-icon fetches or statistics reads.
 @app.get("/api/v1/config")
-def get_config(request: Request, platform: Platform = "android", channel: Channel = "direct", appVersion: AppVersion = None) -> Response:
+async def get_config(request: Request, platform: Platform = "android", channel: Channel = "direct", appVersion: AppVersion = None) -> Response:
     content = store.get()
     if content.forced_status:
         return Response(status_code=content.forced_status)
@@ -155,7 +158,7 @@ def get_config(request: Request, platform: Platform = "android", channel: Channe
 
 
 @app.get("/api/v1/app/version")
-def get_app_version(request: Request, platform: Platform = "android", channel: Channel = "direct", appVersion: AppVersion = None) -> Response:
+async def get_app_version(request: Request, platform: Platform = "android", channel: Channel = "direct", appVersion: AppVersion = None) -> Response:
     content = store.get()
     if content.forced_status:
         return Response(status_code=content.forced_status)
@@ -272,7 +275,7 @@ async def post_feedback(request: Request) -> Response:
 
 
 @app.get("/health", include_in_schema=False)
-def health() -> dict[str, str]:
+async def health() -> dict[str, str]:
     store.get()
     return {"status": "ok"}
 
@@ -280,9 +283,10 @@ def health() -> dict[str, str]:
 @app.middleware("http")
 async def headers_and_counts(request: Request, call_next):
     path = request.url.path
-    # JSON to the dashboard API is small; only image uploads are big. Refused before parsing,
-    # so an unauthenticated 6 MB body can't balloon the process.
-    if path.startswith("/admin/api/") and not path.startswith("/admin/api/images/"):
+    # JSON to the dashboard API is small; only the two image uploads are big (their raw body is
+    # read after sign-in is checked). Refused before parsing, so an unauthenticated 6 MB JSON
+    # body (FastAPI parses it before checking the session) can't balloon the process.
+    if path.startswith("/admin/api/") and path not in UPLOAD_PATHS:
         length = request.headers.get("content-length", "")
         if length.isdigit() and int(length) > MAX_ADMIN_JSON_BYTES:
             return Response(status_code=413)

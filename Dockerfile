@@ -1,6 +1,6 @@
 # Anar API: FastAPI on uvicorn, on the same base image as the host's other Python services.
 # Content (data/, public/) is mounted at run time, so publishing a change needs no rebuild.
-FROM python:3.11-slim
+FROM python:3.11.17-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -19,6 +19,8 @@ USER api
 
 EXPOSE 8000
 # Behind the host's nginx (and ArvanCloud): trust its X-Forwarded-* headers. The port is
-# published on loopback only, so nothing else can send them.
+# published on the host's loopback only, so only nginx (or another process on the host) can
+# send them. A short graceful shutdown lets the statistics writer flush before Docker's kill.
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", \
-     "--proxy-headers", "--forwarded-allow-ips", "*", "--no-server-header"]
+     "--proxy-headers", "--forwarded-allow-ips", "*", "--no-server-header", \
+     "--timeout-graceful-shutdown", "5"]
