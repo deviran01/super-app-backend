@@ -4,7 +4,6 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-import app.feedback as feedback
 import app.main as main
 from app.admin.auth import AdminAccounts
 from app.content import ContentStore
@@ -25,10 +24,9 @@ def stats(tmp_path: Path) -> StatsStore:
 
 
 @pytest.fixture(autouse=True)
-def feedback_store(tmp_path: Path, monkeypatch) -> FeedbackStore:
-    """Feedback too, with an easy proof of work so tests stay fast."""
-    monkeypatch.setattr(feedback, "BASE_DIFFICULTY", 8)
-    store = FeedbackStore(tmp_path / "feedback" / "feedback.db", secret=b"test-secret")
+def feedback_store(tmp_path: Path) -> FeedbackStore:
+    """Feedback too."""
+    store = FeedbackStore(tmp_path / "feedback" / "feedback.db")
     main.app.state.feedback = store
     return store
 

@@ -1,39 +1,31 @@
 """Feedback from the app: short anonymous messages, read in the admin dashboard.
 
-    GET  /api/v1/feedback/challenge   a one-time proof-of-work challenge
-    POST /api/v1/feedback             the message, with the solved challenge
+    POST /api/v1/feedback    {kind, text, platform, channel, appVersion, osVersion}
 
 Feedback is anonymous like everything else the app sends: the message, its kind, and the
 build that sent it (store channel, versionCode, Android API level). No account, device id,
 address or contact detail is stored.
 
-Abuse and spam are handled without identifying anyone:
+Users aren't restricted: any non-empty message up to MAX_CHARS is taken. The limits only
+keep a flood from taking the server or its disk down:
 
-- Proof of work. Every message needs a fresh challenge (signed by this server, valid for ten
-  minutes, usable once) and a nonce that gives SHA-256("<challenge>:<nonce>") `difficulty`
-  leading zero bits. A phone finds one in about a second; a script pays that for every
-  message. The difficulty rises with the volume of the last hour.
-- Limits. Per address (kept in memory only, never stored) and overall per hour and per day;
-  past them the API answers 429. Behind the CDN the address is the CDN edge's, which many
-  users share, so the per-address limits are generous.
-- Content. Text is normalized (control and bidi-override characters removed, whitespace
-  collapsed) and must be MIN_CHARS–MAX_CHARS long. A message that looks like spam (many links,
-  one character repeated, hardly any letters) goes to the Spam folder instead of the inbox,
-  and the same text sent again only bumps a counter on the first copy. The sender gets the
-  same answer either way, so a spammer can't tell what was filtered.
-- Storage. Messages are deleted after RETENTION_DAYS; past MAX_STORED the oldest spam,
-  archived and read ones go first, and when only unread ones are left new ones are refused.
-- The catalog feature flag `feedback` (dashboard → Settings) turns it off here and in the app.
+- the body is at most 8 KB (nginx and the API);
+- per address (kept in memory only, never stored), a burst limit; behind the CDN the address
+  is the CDN edge's, which many users share, so it is generous;
+- for everyone together, caps per minute, hour and day, past which the API answers 429;
+- the same text sent again within a week only bumps a counter on the first copy;
+- at most MAX_STORED messages (the oldest spam, archived and read ones make room), deleted
+  after RETENTION_DAYS.
+
+Text is normalized (control and bidi-override characters removed, whitespace tidied) so it
+shows safely in the dashboard. The catalog feature flag `feedback` (dashboard → Settings)
+turns it off here and in the app.
 """
 from __future__ import annotations
 
-import base64
 import hashlib
-import hmac
 import logging
-import os
 import re
-import secrets
 import sqlite3
 import threading
 import time
@@ -46,24 +38,19 @@ from typing import Any, Iterator
 
 log = logging.getLogger("feedback")
 
-MIN_CHARS = 10
+MIN_CHARS = 1
 MAX_CHARS = 1000
 KINDS = ("problem", "idea", "other")
 STATUSES = ("new", "read", "archived", "spam")
 FOLDERS = {"inbox": ("new", "read"), "archived": ("archived",), "spam": ("spam",)}
 
-CHALLENGE_SECONDS = 600
-BASE_DIFFICULTY = 18
-# Messages received in the last hour from which each extra bit of difficulty applies (max 21).
-DIFFICULTY_STEPS = (20, 60, 150)
-
 # (window in seconds, messages): per address, and for everyone together.
-ADDRESS_LIMITS = ((600, 6), (3600, 20))
-GLOBAL_LIMITS = ((3600, 200), (86400, 1000))
+ADDRESS_LIMITS = ((60, 10),)
+GLOBAL_LIMITS = ((60, 60), (3600, 600), (86400, 3000))
 MAX_ADDRESSES = 10_000
 
 DUPLICATE_SECONDS = 7 * 86400
-MAX_STORED = 20_000
+MAX_STORED = 10_000
 RETENTION_DAYS = 365
 
 SCHEMA = """
@@ -83,22 +70,12 @@ CREATE TABLE IF NOT EXISTS feedback (
 CREATE INDEX IF NOT EXISTS feedback_status ON feedback (status, id);
 CREATE INDEX IF NOT EXISTS feedback_created ON feedback (created_at);
 CREATE INDEX IF NOT EXISTS feedback_fingerprint ON feedback (fingerprint);
-CREATE TABLE IF NOT EXISTS used_challenges (
-    id      TEXT    PRIMARY KEY,
-    expires INTEGER NOT NULL
-) WITHOUT ROWID;
 """
 
 # Direction overrides and isolates would let a message reorder how the dashboard shows it.
-BIDI_CONTROLS = re.compile("[‪-‮⁦-⁩]")
+BIDI_CONTROLS = re.compile("[\u202a-\u202e\u2066-\u2069]")
 SPACES = re.compile(r"[^\S\n]+")
 BLANK_LINES = re.compile(r"\n{3,}")
-LINK = re.compile(
-    r"(?i)(?:https?://|www\.)\S+"
-    r"|\b[a-z0-9-]{2,}\.(?:com|net|org|ir|io|me|xyz|top|info|link|site|online|shop|app|biz|click|cc|ru)\b"
-    r"|\bt\.me/\S+|(?<!\w)@[a-z][a-z0-9_]{4,}"
-)
-REPEATED = re.compile(r"(.)\1{19,}", re.S)
 # Arabic letters that Persian writes differently, and every digit, mapped to one form so
 # variants of the same text are recognized as repeats.
 UNIFY = str.maketrans({"ي": "ی", "ى": "ی", "ك": "ک", "ة": "ه", "ۀ": "ه", "أ": "ا", "إ": "ا", "آ": "ا"})
@@ -118,8 +95,6 @@ class Refused(Exception):
 class Message:
     kind: str
     text: str
-    challenge: str
-    nonce: str
     channel: str
     app_version: int
     os_version: int
@@ -130,7 +105,7 @@ def normalize(text: str) -> str:
     Zero-width (non-)joiners stay: Persian spelling uses them."""
     text = unicodedata.normalize("NFC", text).replace("\r\n", "\n").replace("\r", "\n").replace("\t", " ")
     text = BIDI_CONTROLS.sub("", text)
-    text = "".join(c for c in text if c in "\n‌‍" or unicodedata.category(c)[0] != "C")
+    text = "".join(c for c in text if c in "\n\u200c\u200d" or unicodedata.category(c)[0] != "C")
     text = "\n".join(SPACES.sub(" ", line).strip() for line in text.split("\n"))
     return BLANK_LINES.sub("\n\n", text).strip()
 
@@ -142,86 +117,15 @@ def fingerprint(text: str) -> str:
     return hashlib.sha256(core.encode("utf-8")).hexdigest()
 
 
-def spam_reason(text: str) -> str | None:
-    if len(LINK.findall(text)) > 2:
-        return "links"
-    if REPEATED.search(text):
-        return "repeated"
-    visible = [c for c in text if not c.isspace()]
-    if sum(c.isalpha() for c in visible) < len(visible) * 0.4:
-        return "symbols"
-    if len(visible) >= 40 and len({c.casefold() for c in visible}) < 8:
-        return "repetitive"
-    return None
-
-
-def leading_zero_bits(digest: bytes) -> int:
-    return len(digest) * 8 - int.from_bytes(digest, "big").bit_length()
-
-
-def difficulty_for(recent: int) -> int:
-    return BASE_DIFFICULTY + sum(recent >= step for step in DIFFICULTY_STEPS)
-
-
-def _b64(data: bytes) -> str:
-    return base64.urlsafe_b64encode(data).rstrip(b"=").decode("ascii")
 
 
 class FeedbackStore:
-    def __init__(self, path: Path, secret: bytes | None = None) -> None:
+    def __init__(self, path: Path) -> None:
         self._path = path
-        self._secret = secret
         self._ready = False
         self._lock = threading.Lock()  # one submission at a time: limits are checked, then counted
         self._addresses: dict[str, deque[float]] = {}
         self._pruned_at = 0.0
-
-    # --- challenges ---------------------------------------------------------------------
-
-    def challenge(self) -> dict[str, Any]:
-        now = int(time.time())
-        difficulty = difficulty_for(self._received_since(now - 3600))
-        payload = f"v1.{now}.{difficulty}.{_b64(secrets.token_bytes(12))}"
-        return {"challenge": f"{payload}.{self._sign(payload)}", "difficulty": difficulty, "expiresIn": CHALLENGE_SECONDS}
-
-    def _sign(self, payload: str) -> str:
-        return _b64(hmac.new(self._key(), payload.encode("ascii"), hashlib.sha256).digest()[:16])
-
-    def _key(self) -> bytes:
-        """From SUPERAPP_FEEDBACK_SECRET, or a random key kept next to the database."""
-        if self._secret is None:
-            configured = os.environ.get("SUPERAPP_FEEDBACK_SECRET")
-            if configured:
-                self._secret = configured.encode("utf-8")
-            else:
-                path = self._path.parent / "secret"
-                path.parent.mkdir(parents=True, exist_ok=True)
-                try:
-                    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-                except FileExistsError:
-                    self._secret = path.read_bytes()
-                else:
-                    with os.fdopen(fd, "wb") as file:
-                        self._secret = secrets.token_bytes(32)
-                        file.write(self._secret)
-        return self._secret
-
-    def _check_challenge(self, db: sqlite3.Connection, challenge: str, nonce: str, now: int) -> None:
-        parts = challenge.split(".")
-        if len(parts) != 5 or parts[0] != "v1" or not hmac.compare_digest(self._sign(".".join(parts[:4])), parts[4]):
-            raise Refused(409, "challenge")
-        try:
-            issued, difficulty = int(parts[1]), int(parts[2])
-        except ValueError:
-            raise Refused(409, "challenge")
-        if not now - CHALLENGE_SECONDS <= issued <= now + 60:
-            raise Refused(409, "challenge")
-        if leading_zero_bits(hashlib.sha256(f"{challenge}:{nonce}".encode("ascii")).digest()) < difficulty:
-            raise Refused(409, "challenge")
-        try:
-            db.execute("INSERT INTO used_challenges (id, expires) VALUES (?, ?)", (parts[3], issued + CHALLENGE_SECONDS))
-        except sqlite3.IntegrityError:
-            raise Refused(409, "challenge")
 
     # --- receiving ------------------------------------------------------------------------
 
@@ -233,7 +137,6 @@ class FeedbackStore:
             raise Refused(400, "invalid")
         now = int(time.time())
         with self._lock, self._db() as db:
-            self._check_challenge(db, message.challenge, message.nonce, now)
             self._check_address(address, now)
             for window, limit in GLOBAL_LIMITS:
                 if self._count_since(db, now - window) >= limit:
@@ -247,11 +150,9 @@ class FeedbackStore:
             if earlier:
                 db.execute("UPDATE feedback SET repeats = repeats + 1 WHERE id = ?", (earlier[0],))
                 return earlier[0]
-            reason = spam_reason(text)
             cursor = db.execute(
-                "INSERT INTO feedback (created_at, kind, text, fingerprint, status, spam_reason, channel, app_version, os_version) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (now, message.kind, text, digest, "spam" if reason else "new", reason or "", message.channel, message.app_version, message.os_version),
+                "INSERT INTO feedback (created_at, kind, text, fingerprint, status, channel, app_version, os_version) VALUES (?, ?, ?, ?, 'new', ?, ?, ?)",
+                (now, message.kind, text, digest, message.channel, message.app_version, message.os_version),
             )
             return cursor.lastrowid
 
@@ -276,14 +177,7 @@ class FeedbackStore:
     def _count_since(self, db: sqlite3.Connection, since: int) -> int:
         return db.execute("SELECT COUNT(*) FROM feedback WHERE created_at >= ?", (since,)).fetchone()[0]
 
-    def _received_since(self, since: int) -> int:
-        if not self._path.exists():
-            return 0
-        with self._db() as db:
-            return self._count_since(db, since)
-
     def _prune(self, db: sqlite3.Connection, now: int) -> None:
-        db.execute("DELETE FROM used_challenges WHERE expires < ?", (now,))
         if now - self._pruned_at >= 3600:
             db.execute("DELETE FROM feedback WHERE created_at < ?", (now - RETENTION_DAYS * 86400,))
             self._pruned_at = now
@@ -364,7 +258,6 @@ def _item(row: sqlite3.Row) -> dict[str, Any]:
         "kind": row["kind"],
         "text": row["text"],
         "status": row["status"],
-        "spamReason": row["spam_reason"] or None,
         "repeats": row["repeats"],
         "channel": row["channel"],
         "appVersion": row["app_version"],

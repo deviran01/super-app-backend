@@ -79,7 +79,7 @@ export async function render(root, reuse = false) {
         tableCard("Errors by service", ["Service", "Error", "Count"], data.failures.slice(0, 15).map((f) => [serviceName(f.service), ERRORS[f.error] || f.error, fmt(f.n)])),
         barsCard("Searches", [["Found services", t.searches - t.searchesWithoutResults], ["Found nothing", t.searchesWithoutResults]]),
         barsCard("Browsing data cleared", data.dataCleared.map((d) => [SCOPES[d.scope] || d.scope, d.n]))),
-      h("p", { class: "hint", text: "API calls are counted by the server. Everything else comes from apps that share anonymous statistics (on by default; users can turn it off in Privacy): daily totals per install, with no identifier, address, search text or time of day. Reports can't be authenticated, so treat the numbers as estimates." })));
+      h("p", { class: "hint", text: "API calls are counted by the server. Everything else comes from the apps themselves: daily totals per install, with no identifier, address, search text or time of day. Reports can't be authenticated, so treat the numbers as estimates." })));
 }
 
 function head(refresh) {

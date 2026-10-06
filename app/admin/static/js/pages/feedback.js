@@ -10,13 +10,12 @@ export const title = "Feedback";
 const FOLDERS = [["inbox", "Inbox"], ["archived", "Archived"], ["spam", "Spam"]];
 const KINDS = { problem: ["Problem", "warning"], idea: ["Idea", "accent"], other: ["Other", ""] };
 const CHANNELS = { bazaar: "Cafe Bazaar", myket: "Myket", direct: "Direct", other: "Other store" };
-const SPAM_REASONS = { links: "Many links", repeated: "Repeated characters", symbols: "Hardly any words", repetitive: "Repetitive text" };
 // Android API level → version, for the API levels the app supports (minSdk 26).
 const ANDROID = { 26: "8.0", 27: "8.1", 28: "9", 29: "10", 30: "11", 31: "12", 32: "12L", 33: "13", 34: "14", 35: "15", 36: "16", 37: "17" };
 const EMPTY = {
   inbox: "No messages yet. Feedback sent from the app's Settings shows up here.",
   archived: "Nothing archived.",
-  spam: "No spam. Messages that look like it (many links, repeated characters) land here instead of the inbox.",
+  spam: "Nothing here. Move messages you don't want in the inbox here; empty it anytime.",
 };
 const PAGE = 30;
 
@@ -63,7 +62,7 @@ export async function render(root) {
     page.items.length === 0
       ? h("div", { class: "card empty", text: EMPTY[folder] })
       : h("div", { class: "stack" }, list, more),
-    h("p", { class: "hint", text: "Messages are anonymous: only the text, its kind and the app build (store, version, Android version) are stored — no account, device or address. Each one costs the sender's phone a proof of work, senders and the total are rate-limited, repeats of the same text are counted on the first copy, and messages are deleted after a year." }));
+    h("p", { class: "hint", text: "Messages are anonymous: only the text, its kind and the app build (store, version, Android version) are stored — no account, device or address. Only floods are limited (per address and in total); repeats of the same text are counted on the first copy, and messages are deleted after a year." }));
 }
 
 function head(counts, rerender) {
@@ -143,7 +142,6 @@ function message(item, folder, rerender) {
       item.status === "new" && h("span", { class: "dot", title: "Unread", style: { background: "var(--accent)" } }),
       h("span", { class: `chip ${kindTone}`, text: kindLabel }),
       item.repeats > 0 && h("span", { class: "chip", title: "The same text was sent again", text: `Sent ${item.repeats + 1}×` }),
-      item.spamReason && h("span", { class: "chip danger", text: SPAM_REASONS[item.spamReason] || item.spamReason }),
       h("span", { class: "grow" }),
       h("time", { class: "hint", dateTime: new Date(item.createdAt * 1000).toISOString(), title: fullDate(item.createdAt), text: ago(item.createdAt) })),
     // dir=auto: Persian reads right to left, English left to right. Text only, never markup.

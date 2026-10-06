@@ -10,7 +10,7 @@ store's update policy. Python 3.11, FastAPI and uvicorn in Docker; the contract 
 | `GET /api/v1/config` | The catalog (`data/catalog.json`) plus `assetsBaseUrl`, the absolute base for its image paths. |
 | `GET /api/v1/app/version` | The update policy for the caller's store: `minimumSupportedVersion` (hard update), `latestVersion` (soft update), `forceUpdate`, `updateUrl` (that store's page), messages, and `update` (`REQUIRED` / `OPTIONAL` / `NONE`) when `appVersion` is sent. |
 | `POST /api/v1/events` | Anonymous daily usage totals from the app ([statistics](#usage-statistics)); `204`. |
-| `GET /api/v1/feedback/challenge`, `POST /api/v1/feedback` | A one-time proof-of-work challenge, then a user's anonymous [feedback](#feedback) message; `202`. |
+| `POST /api/v1/feedback` | A user's anonymous [feedback](#feedback) message; `202`. |
 | `GET /logos/…`, `GET /icons/…` | Images, cached for 7 days. |
 | `GET /health` | Liveness for Docker. |
 | `/admin/` | The [admin dashboard](#admin-dashboard) (sign-in required). |
@@ -24,7 +24,7 @@ or device data.
 app/main.py                 routes, ETag/304, image caching, security headers
 app/content.py              loads data/ (reloaded when the files change), checks, QA scenarios
 app/stats.py                usage statistics: API-call counts and app reports (SQLite, data/stats/)
-app/feedback.py             feedback messages, their spam and abuse checks (SQLite, data/feedback/)
+app/feedback.py             feedback messages and their flood limits (SQLite, data/feedback/)
 app/admin/                  dashboard: API (routes.py), validation (schema.py), draft/publish/
                             history (store.py), accounts and sessions (auth.py), images, UI (static/)
 app/cli.py                  admin accounts from the command line
@@ -92,8 +92,8 @@ Two sources, one table of daily counters (`data/stats/stats.db`, SQLite, kept 40
 - **App reports** (`POST /api/v1/events`): the app counts events on the device and sends
   daily totals at launch and when it goes to the background (at most every 15 minutes).
   There is no user or device identifier: daily active users and installs are counters each
-  install sends at most once a day / once ever. Users can turn reports off in the app
-  (Settings → Privacy). Format and event list: the app's
+  install sends at most once a day / once ever. Every install reports once its welcome
+  screen (which mentions it) was closed; there is no switch. Format and event list: the app's
   [CONFIG_SPEC.md](https://github.com/deviran01/super-app-android/blob/main/docs/CONFIG_SPEC.md#post-apiv1events--usage-totals).
 
 Reports can't be authenticated (the app has no identity), so treat the numbers as
@@ -108,34 +108,27 @@ read.
 ## Feedback
 
 Users send short messages from the app (Settings → Send feedback): a kind (problem, idea,
-other) and 10–1000 characters of text. Like everything else the app sends, it's anonymous:
-stored with the store channel, versionCode and Android API level only — no account, device,
-address or contact (`data/feedback/feedback.db`, SQLite, kept a year). The app tells users not
-to write passwords or personal details. Turn it off with the `feedback` feature flag
-(dashboard → Settings): the app hides it and the API refuses it.
+other) and up to 1000 characters of text. Like everything else the app sends, it's
+anonymous: stored with the store channel, versionCode and Android API level only — no
+account, device, address or contact (`data/feedback/feedback.db`, SQLite, kept a year). The
+app asks users not to write passwords or personal details. Turn it off with the `feedback`
+feature flag (dashboard → Settings): the app hides it and the API refuses it.
 
-Abuse and spam, without identifying anyone (`app/feedback.py`):
+Users aren't restricted — any non-empty message is taken and lands in the inbox. Only floods
+are stopped, so the server and its disk stay up (`app/feedback.py`):
 
-- **Proof of work.** `GET /api/v1/feedback/challenge` returns a challenge signed by the server
-  (valid 10 minutes, usable once) and a difficulty; the app finds a nonce for which
-  SHA-256(`<challenge>:<nonce>`) starts with that many zero bits (18 by default, about a
-  second on a phone; up to 21 when many messages arrive) and posts it with the message. A
-  script pays that for every message.
-- **Limits.** Per address, in memory only: 6 messages in 10 minutes, 20 an hour (behind the
-  CDN the address is the CDN edge's, which many users share). Overall: 200 an hour, 1000 a
-  day. Past them: `429` with `Retry-After`.
-- **Content.** Control and bidi-override characters are removed and whitespace tidied before
-  the length check. Messages with many links or handles, a character repeated 20 times, or
-  hardly any letters go to Spam instead of the inbox; the same text again (ignoring case,
-  punctuation, digits and Arabic/Persian letter forms) within a week only counts as a repeat
-  of the first copy. The sender gets `202` either way.
-- **Storage.** At most 20,000 messages: the oldest spam, archived and read ones make room;
-  new ones are refused (`429`) only when everything left is unread.
+- the body is at most 8 KB (nginx and the API);
+- per address, in memory only: 10 messages a minute (behind the CDN the address is the CDN
+  edge's, which many users share);
+- everyone together: 60 a minute, 600 an hour, 3000 a day;
+- the same text again within a week (ignoring case, punctuation, digits and Arabic/Persian
+  letter forms) only counts as a repeat of the first copy;
+- at most 10,000 messages: the oldest spam, archived and read ones make room; new ones are
+  refused only when everything left is unread.
 
-Answers: `202` taken; `400` invalid (length, kind, fields); `403` turned off; `409` the
-challenge is wrong, expired or used (get a new one); `413` over 8 KB; `429` rate-limited.
-The challenge key comes from `SUPERAPP_FEEDBACK_SECRET`, or is generated once into
-`data/feedback/secret`.
+Control and bidi-override characters are removed and whitespace tidied, so messages show
+safely in the dashboard. Answers: `202` taken; `400` empty, too long or malformed; `403`
+turned off; `413` over 8 KB; `429` flood limit (`Retry-After`).
 
 ## Releases: soft and hard updates per store
 

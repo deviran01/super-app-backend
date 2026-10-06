@@ -4,8 +4,7 @@
     GET /api/v1/app/version   the update policy for the caller's store: minimum version
                               (hard update), latest version (soft update), store link
     POST /api/v1/events       anonymous daily usage totals from the app (app/stats.py)
-    GET /api/v1/feedback/challenge, POST /api/v1/feedback
-                              a user's anonymous feedback message (app/feedback.py)
+    POST /api/v1/feedback     a user's anonymous feedback message (app/feedback.py)
     GET /health               liveness for Docker
     /admin                    the admin dashboard (sign-in required; app/admin/)
 
@@ -239,23 +238,10 @@ class FeedbackIn(BaseModel):
     kind: Literal["problem", "idea", "other"] = "other"
     # Raw; the length is checked again once normalized (app/feedback.py).
     text: str = Field(max_length=4000)
-    challenge: str = Field(max_length=200)
-    nonce: str = Field(pattern=r"^\d{1,20}$")
 
 
 def _feedback_enabled(content: Content) -> bool:
     return content.catalog.get("features", {}).get("feedback", True) is not False
-
-
-@app.get("/api/v1/feedback/challenge")
-def get_feedback_challenge(request: Request, platform: Platform = "android", channel: Channel = "direct", appVersion: AppVersion = None) -> Response:
-    content = store.get()
-    if content.forced_status:
-        return Response(status_code=content.forced_status)
-    if not _feedback_enabled(content):
-        return JSONResponse({"detail": "disabled"}, status_code=403)
-    # One per message: never cached, by anyone.
-    return JSONResponse(request.app.state.feedback.challenge(), headers={"Cache-Control": "no-store"})
 
 
 @app.post("/api/v1/feedback", status_code=202)
@@ -276,7 +262,7 @@ async def post_feedback(request: Request) -> Response:
     version = _bucketed_version(content, sent.appVersion)
     request.state.stats_channel = channel
     request.state.stats_version = version
-    message = Message(sent.kind, sent.text, sent.challenge, sent.nonce, channel, version, sent.osVersion)
+    message = Message(sent.kind, sent.text, channel, version, sent.osVersion)
     try:
         await run_in_threadpool(request.app.state.feedback.submit, message, client_address(request))
     except Refused as refused:
