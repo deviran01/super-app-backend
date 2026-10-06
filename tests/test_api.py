@@ -14,8 +14,9 @@ QUERY = {"platform": "android", "channel": "bazaar", "appVersion": 1}
 
 @pytest.fixture
 def data_dir(tmp_path: Path) -> Path:
-    for name in ("catalog.json", "release.json"):
-        shutil.copy(ROOT / "data" / name, tmp_path / name)
+    shutil.copy(ROOT / "data" / "catalog.json", tmp_path / "catalog.json")
+    # Fixed update rules: data/release.json follows what the dashboard publishes.
+    shutil.copy(ROOT / "tests" / "fixtures" / "release.json", tmp_path / "release.json")
     return tmp_path
 
 

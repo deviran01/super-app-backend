@@ -39,8 +39,9 @@ def feedback_store(tmp_path: Path) -> FeedbackStore:
 def data_dir(tmp_path: Path, monkeypatch) -> Path:
     data = tmp_path / "data"
     data.mkdir()
-    for name in ("catalog.json", "release.json"):
-        shutil.copy(ROOT / "data" / name, data / name)
+    shutil.copy(ROOT / "data" / "catalog.json", data / "catalog.json")
+    # Fixed update rules: data/release.json follows what the dashboard publishes.
+    shutil.copy(ROOT / "tests" / "fixtures" / "release.json", data / "release.json")
     monkeypatch.setattr(main, "store", ContentStore(data))
     return data
 
