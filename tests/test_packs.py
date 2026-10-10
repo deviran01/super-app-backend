@@ -172,3 +172,38 @@ def test_the_bundled_pack_fits_the_catalog():
         for item in pack["services"] + pack["categories"]:
             image = item.get("logo") or item.get("icon")
             assert image is None or (ROOT / "public" / image).is_file(), image
+
+
+def test_the_app_mode_switch_publishes_only_itself(admin, data_dir):
+    (data_dir / "catalog.json").write_text(json.dumps(standard(json.loads((data_dir / "catalog.json").read_text()))))
+    app = TestClient(main.app)
+    served = lambda: {s["id"]: s for s in app.get("/api/v1/config", params=QUERY).json()["services"]}
+    switch = lambda active: admin.post("/admin/api/packs/iran-access/switch", json={"active": active})
+    admin.post("/admin/api/packs/iran-access/add")
+    assert switch(True).status_code == 404  # only in the draft: publish it first
+    publish(admin)
+    before = served()
+
+    # An unrelated edit waits in the draft; a form is open on the draft as it is now.
+    current = state(admin)
+    current["draft"]["catalog"]["services"][0]["enabled"] = False
+    assert admin.put("/admin/api/draft", json={"revision": current["revision"], **current["draft"]}).status_code == 200
+    opened = state(admin)
+
+    on = switch(True)
+    assert on.status_code == 200
+    after = served()
+    assert len(after) == len(before) + len(packs.bundled()["iran-access"]["services"])
+    assert after["snapp"]["enabled"] is True  # the draft's edit stays unpublished
+    draft = on.json()["draft"]["catalog"]
+    assert draft["packs"][0]["active"] is True and draft["services"][0]["enabled"] is False and on.json()["dirty"]
+    assert admin.get("/admin/api/history").json()[0]["note"].startswith("Switched on")
+    # A form opened before the switch can't save over it.
+    stale = admin.put("/admin/api/draft", json={"revision": opened["revision"], **opened["draft"]})
+    assert stale.status_code == 409
+
+    assert switch(False).status_code == 200
+    assert served().keys() == before.keys()
+    assert switch(False).status_code == 200  # already off: nothing to publish
+    assert admin.get("/admin/api/history").json()[0]["note"].startswith("Switched off")
+    assert admin.post("/admin/api/packs/nope/switch", json={"active": True}).status_code == 404

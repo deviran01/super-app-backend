@@ -53,7 +53,7 @@ deploy/                     deploy.sh and the host nginx site
   behavior the app supports (domains, permissions, popups, cache, keep-alive, user agent…).
 - **Categories**: order, title, color, icon (any glyph image, converted to a tintable icon).
 - **[Packs](#packs-iran-accessible-sites)**: sets of services switched on and off together — the
-  Iran-accessible sites for international internet outages.
+  Iran-accessible sites for international internet outages, switched from Overview → *App mode*.
 - **Compare groups**, **Settings** (feature flags, refresh interval, web rules) and **Releases**
   (soft/hard update versions and the store page, per store).
 - **Draft → Publish**: edits collect in a draft; *Publish* validates it with the app's own
@@ -215,9 +215,11 @@ on, the app has 325 services in 30 categories (a 264 KB catalog).
    its logos and category icons with `public/`).
 2. Dashboard → **Packs** → *Add to the draft*. Everything comes in switched off; *Publish* (users
    see no change).
-3. **When needed**: switch the pack on → *Publish*. The app picks it up at its next launch, or on
-   return once the catalog is older than the refresh interval (Settings). Switch off → *Publish*
-   to go back. The server is in Iran, so the dashboard and the API stay reachable on the national
+3. **When needed**: Overview → **App mode** → the pack (or its switch on the Packs page), and
+   confirm. It is live right away: the switch publishes only itself (a new History entry), and
+   other unpublished edits stay in the draft. The app picks it up at its next launch, or on
+   return once the catalog is older than the refresh interval (Settings). *Current catalog* goes
+   back. The server is in Iran, so the dashboard and the API stay reachable on the national
    network; switching on before an expected cut also works (the app keeps its copy).
 
 Added entries are ordinary catalog entries: edit, disable or delete them like any other

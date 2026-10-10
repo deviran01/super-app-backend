@@ -298,6 +298,9 @@ table.table { width: 100%; border-collapse: collapse; }
 .seg { display: inline-flex; padding: 3px; gap: 2px; border-radius: var(--radius-sm); background: var(--surface-2); flex-wrap: wrap; }
 .seg .btn { border-color: transparent; background: transparent; color: var(--text-2); }
 .seg .btn[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow); border-color: var(--border); }
+/* App mode (Overview): each choice is a title over a count. */
+.seg.modes .btn { flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 16px; text-align: start; }
+.seg.modes .btn .small { font-weight: 500; }
 select.input.small-select { width: auto; min-height: 36px; padding-block: 6px; }
 .align-start { align-items: start; }
 .chart-wrap { position: relative; padding-top: 18px; }

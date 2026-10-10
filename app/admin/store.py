@@ -149,6 +149,33 @@ class AdminStore:
             (self.admin_dir / "draft.json").unlink(missing_ok=True)
             return self._state()
 
+    def switch_pack(self, pack_id: str, active: bool, user: str) -> DraftState:
+        """Switches a pack on or off in the live version and publishes just that (the app
+        mode switch): unpublished edits stay in the draft, which takes the same switch so
+        publishing it later doesn't undo it."""
+        with self._lock:
+            live = self._read_live()
+            pack = next((p for p in live["catalog"].get("packs", []) if p.get("id") == pack_id), None)
+            if pack is None:
+                raise KeyError(pack_id)
+            if pack.get("active", False) == active:
+                return self._state()
+            pack["active"] = active
+            document = normalize(Draft.model_validate(live))
+            document["catalog"]["configVersion"] = time.strftime("%Y-%m-%d.%H%M%S", time.gmtime())
+            write_json_atomically(self.data_dir / "catalog.json", document["catalog"])
+            title = pack["title"].get("fa") or pack["title"].get("en") or pack_id
+            self._record(document, published_by=user, note=f"Switched {'on' if active else 'off'}: {title}")
+            stored = self._read(self.admin_dir / "draft.json")
+            if stored is not None:
+                for draft_pack in stored["catalog"].get("packs", []):
+                    if draft_pack.get("id") == pack_id:
+                        draft_pack["active"] = active
+                # A new revision: a form opened before the switch can't save over it.
+                stored.update(revision=stored["revision"] + 1, updatedAt=time.time())
+                write_json_atomically(self.admin_dir / "draft.json", stored)
+            return self._state()
+
     def restore(self, entry_id: str, user: str, base_revision: int | None = None) -> DraftState:
         with self._lock:
             entry = self._read(self._entry_path(entry_id))

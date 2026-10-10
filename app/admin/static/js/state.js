@@ -87,6 +87,8 @@ export async function discard() { await conflictAware(() => api.post("/draft/dis
 export async function restore(id) { await conflictAware(() => api.post(`/history/${encodeURIComponent(id)}/restore`, { revision: state.revision })); }
 /** Copies a bundled pack's new entries into the draft (the server merges them). */
 export async function addPack(id) { await conflictAware(() => api.post(`/packs/${encodeURIComponent(id)}/add`, { revision: state.revision })); }
+/** Switches a published pack on or off for users right away (only that is published). */
+export async function switchPack(id, active) { await conflictAware(() => api.post(`/packs/${encodeURIComponent(id)}/switch`, { active })); }
 
 // --- helpers ----------------------------------------------------------------------------
 

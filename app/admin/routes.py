@@ -191,6 +191,21 @@ def add_pack(pack_id: str, request: Request, body: BaseRevision | None = None, u
         raise HTTPException(status_code=409, detail=CONFLICT)
 
 
+class PackSwitch(BaseModel):
+    active: bool
+
+
+@router.post("/packs/{pack_id}/switch")
+def switch_pack(pack_id: str, body: PackSwitch, request: Request, username: str = Depends(require_admin)) -> dict[str, Any]:
+    """Switches a published pack on or off for users right away, publishing only that."""
+    try:
+        return _state_json(store(request).switch_pack(pack_id, body.active, username))
+    except KeyError:
+        raise HTTPException(status_code=404, detail="This pack isn't published yet: add it, publish, then switch it")
+    except ValidationError as error:
+        raise HTTPException(status_code=422, detail={"message": "The live version can't take this switch", "problems": problems(error)})
+
+
 # --- images -------------------------------------------------------------------------------
 
 
