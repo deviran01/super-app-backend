@@ -186,7 +186,7 @@ def test_password_change_keeps_this_session_and_ends_others(admin):
 
 def test_large_json_is_refused_before_sign_in(env):
     client = TestClient(main.app, base_url=BASE, headers=HEADERS)
-    big = b"[" + b"[]," * 100_000 + b"[]]"
+    big = b"[" + b"[]," * (main.MAX_ADMIN_JSON_BYTES // 3) + b"[]]"
     assert client.post("/admin/api/session", content=big, headers={"Content-Type": "application/json"}).status_code == 413
 
 
@@ -223,7 +223,7 @@ def test_only_the_two_uploads_take_big_bodies(env):
     # FastAPI parses a JSON body before it checks the session: a big one to any other admin
     # route is refused unread, signed in or not.
     client = TestClient(main.app, base_url=BASE, headers=HEADERS)
-    big = b"[" + b"{}," * 100_000 + b"{}]"
+    big = b"[" + b"{}," * (main.MAX_ADMIN_JSON_BYTES // 3) + b"{}]"
     assert client.post("/admin/api/images/logo/from-store", content=big, headers={"Content-Type": "application/json"}).status_code == 413
     assert client.post("/admin/api/images/logo?name=snapp", content=big).status_code == 401  # read only after sign-in
 

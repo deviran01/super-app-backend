@@ -1,7 +1,7 @@
 // Services: the apps users open. Grouped by category in display order; drag to reorder
 // within a category, switch them on and off, edit everything the app supports.
 import { fill, h, icon } from "../dom.js";
-import { commit, host, imageUrl, renumber, sortedCategories, sortedServices, state, text } from "../state.js";
+import { commit, host, imageUrl, packActive, packTitle, renumber, sortedCategories, sortedServices, state, text } from "../state.js";
 import {
   advanced, applyProblems, colorField, confirm, dragHandle, drawer, imageField, linesField, localizedField,
   section, selectField, showError, sortable, textField, toast, toggleField,
@@ -9,15 +9,33 @@ import {
 
 let query = "";
 let categoryFilter = "all";
+// "all", "none" (not in a pack) or a pack id.
+let packFilter = "all";
 
 export const title = "Services";
 
+/** Opens the list on one pack's services (from the Packs page). */
+export function showPack(id) {
+  packFilter = id;
+  categoryFilter = "all";
+  query = "";
+}
+
+/** "None" plus the draft's packs, for the editors' Pack field. */
+export function packOptions(catalog) {
+  return [{ value: "", label: "None — always in the catalog" }, ...(catalog.packs || []).map((p) => ({ value: p.id, label: text(p.title, p.id) }))];
+}
+
 export function render(root) {
   const { catalog } = state.draft;
+  const packs = catalog.packs || [];
+  if (packFilter !== "all" && packFilter !== "none" && !packs.some((p) => p.id === packFilter)) packFilter = "all";
   const categories = sortedCategories(catalog);
   const services = sortedServices(catalog);
   const q = query.trim().toLowerCase();
-  const matches = (s) => !q || [s.id, s.url, s.name?.fa, s.name?.en, ...(s.keywords || [])].some((v) => (v || "").toLowerCase().includes(q));
+  const inPack = (s) => packFilter === "all" || (packFilter === "none" ? !s.pack : s.pack === packFilter);
+  const matches = (s) => inPack(s) && (!q || [s.id, s.url, s.name?.fa, s.name?.en, ...(s.keywords || [])].some((v) => (v || "").toLowerCase().includes(q)));
+  const filtering = Boolean(q) || packFilter !== "all";
 
   const search = h("input", { class: "input", type: "search", placeholder: "Search services", value: query, "aria-label": "Search services" });
   search.addEventListener("input", () => {
@@ -31,28 +49,41 @@ export function render(root) {
     on: { change: (e) => { categoryFilter = e.target.value; render(root); } } },
     h("option", { value: "all", text: "All categories", selected: categoryFilter === "all" }),
     categories.map((c) => h("option", { value: c.id, text: text(c.title, c.id), selected: categoryFilter === c.id })));
+  const packSelect = packs.length > 0 && h("select", { class: "input", style: { width: "auto" }, "aria-label": "Pack",
+    on: { change: (e) => { packFilter = e.target.value; render(root); } } },
+    h("option", { value: "all", text: "With packs", selected: packFilter === "all" }),
+    h("option", { value: "none", text: "Without packs", selected: packFilter === "none" }),
+    packs.map((p) => h("option", { value: p.id, text: `Pack: ${text(p.title, p.id)}`, selected: packFilter === p.id })));
 
   const enabled = services.filter((s) => s.enabled !== false).length;
-  fill(root, 
+  fill(root,
     h("div", { class: "page-head" },
       h("div", { class: "grow" }, h("h1", { text: "Services" }), h("div", { class: "muted", text: `${services.length} services · ${enabled} enabled` })),
       h("div", { class: "search" }, icon("search"), search),
       filter,
+      packSelect,
       h("button", { class: "btn primary", on: { click: () => edit(null) } }, icon("plus"), "Add service")),
-    q && h("div", { class: "hint", style: { marginBottom: "10px" }, text: "Clear the search to drag services into a new order." }),
+    filtering && h("div", { class: "hint", style: { marginBottom: "10px" }, text: "Show all services (clear the search and the pack filter) to drag them into a new order." }),
     categories
       .filter((c) => categoryFilter === "all" || c.id === categoryFilter)
       .map((category) => {
         const items = services.filter((s) => s.categoryId === category.id && matches(s));
-        if (!items.length && (q || categoryFilter === "all")) return null;
-        const list = h("ul", { class: "list card" }, items.map((s) => row(s, Boolean(q))));
+        if (!items.length && (filtering || categoryFilter === "all")) return null;
+        const list = h("ul", { class: "list card" }, items.map((s) => row(s, filtering)));
         sortable(list, (ids) => reorder(ids));
         return h("div", { class: "group" },
           h("div", { class: "group-head" }, h("span", { class: "dot", style: { background: category.color || "var(--accent)" } }), text(category.title, category.id),
-            h("span", { class: "chip", text: String(items.length) }), category.enabled === false && h("span", { class: "chip warning", text: "Category hidden" })),
+            h("span", { class: "chip", text: String(items.length) }), category.enabled === false && h("span", { class: "chip warning", text: "Category hidden" }),
+            category.pack && packChip(category.pack)),
           items.length ? list : h("div", { class: "card empty", text: "No services in this category yet." }));
       }),
   );
+}
+
+/** Which pack an entry belongs to, and whether that pack is switched off. */
+export function packChip(id) {
+  const on = packActive(id);
+  return h("span", { class: `chip ${on ? "accent" : ""}`, title: on ? "In a switched-on pack" : "In a switched-off pack: the app doesn't get it" }, `${packTitle(id)}${on ? "" : " · off"}`);
 }
 
 export function logo(service, size = 40) {
@@ -78,7 +109,8 @@ function row(service, searching) {
         service.name?.en && service.name?.fa && h("span", { class: "muted small", text: service.name.en }),
         service.featured && h("span", { class: "chip accent" }, icon("star"), "Featured"),
         service.maintenance && h("span", { class: "chip warning" }, icon("wrench"), "Maintenance"),
-        service.compatibility && service.compatibility !== "SUPPORTED" && h("span", { class: "chip", text: service.compatibility.toLowerCase() })),
+        service.compatibility && service.compatibility !== "SUPPORTED" && h("span", { class: "chip", text: service.compatibility.toLowerCase() }),
+        service.pack && packChip(service.pack)),
       h("div", { class: "sub ltr", text: `${service.id} · ${host(service.url)}` })),
     h("label", { class: "switch", title: off ? "Disabled" : "Enabled" }, toggle, h("span", { class: "track" })),
     h("button", { class: "btn ghost icon", "aria-label": `Edit ${text(service.name)}`, on: { click: () => edit(service.id) } }, icon("edit")),
@@ -141,7 +173,9 @@ const options = (pairs) => pairs.map(([value, label]) => ({ value, label }));
 function edit(id) {
   const { catalog } = state.draft;
   const existing = id ? catalog.services.find((s) => s.id === id) : null;
-  const s = existing || { enabled: true, web: { permissions: {} }, categoryId: sortedCategories(catalog)[0]?.id };
+  // A new service opened from a pack's list joins that pack.
+  const startPack = (catalog.packs || []).some((p) => p.id === packFilter) ? packFilter : undefined;
+  const s = existing || { enabled: true, web: { permissions: {} }, categoryId: sortedCategories(catalog)[0]?.id, pack: startPack };
   const web = s.web || {};
 
   const f = {
@@ -156,7 +190,9 @@ function edit(id) {
     compatibility: selectField({ label: "Compatibility", value: s.compatibility || "SUPPORTED", options: options(COMPATIBILITY) }),
     badge: localizedField({ label: "Badge", value: s.badge, maxLength: 16, hint: "A short label on the tile, e.g. “New”." }),
     keywords: linesField({ label: "Search keywords", values: s.keywords, hint: "One per line or comma separated; Persian and English." }),
+    pack: selectField({ label: "Pack", value: s.pack || "", options: packOptions(catalog), hint: "In a pack, it reaches the app only while the pack is switched on (Packs)." }),
   };
+  const hasPacks = (catalog.packs || []).length > 0 || Boolean(s.pack);
   f.logo = imageField({ label: "Logo", kind: "logo", value: s.logo, getName: () => existing?.id || f.id.value, hint: "Square app icon. PNG, JPEG or WebP; resized to 256 px." });
   const maintenanceOn = toggleField({ label: "Under maintenance", checked: Boolean(s.maintenance), hint: "Users see this message instead of the service." });
   const maintenanceMessage = localizedField({ label: "Maintenance message", value: s.maintenance?.message, maxLength: 400, multiline: true });
@@ -190,7 +226,7 @@ function edit(id) {
     body: [
       section("Basics", f.name.el, f.id.el, f.url.el, f.categoryId.el, f.description.el),
       section("Look", f.logo.el, f.brandColor.el, f.badge.el, h("div", { class: "grid-2" }, f.featured.el, f.enabled.el)),
-      section("Discovery", f.keywords.el, f.compatibility.el),
+      section("Discovery", f.keywords.el, f.compatibility.el, hasPacks && f.pack.el),
       section("Maintenance", maintenanceOn.el, maintenanceMessage.el),
       advanced("Web behavior", w.allowedDomains.el, h("div", { class: "label", text: "Permissions the page may ask for" }), h("div", { class: "grid-3" }, w.location.el, w.camera.el, w.microphone.el),
         w.popupPolicy.el, w.offDomainNavigation.el, w.externalDomains.el, w.externalSchemes.el,
@@ -214,6 +250,7 @@ function edit(id) {
         compatibility: f.compatibility.value,
         badge: f.badge.value,
         keywords: f.keywords.value,
+        pack: f.pack.value || null,
         maintenance: maintenanceOn.value ? { message: maintenanceMessage.value } : null,
         web: {
           ...(existing?.web || {}),

@@ -2,6 +2,7 @@
 import { fill, h, icon } from "../dom.js";
 import { commit, imageUrl, renumber, sortedCategories, state, text } from "../state.js";
 import { applyProblems, colorField, confirm, dialog, dragHandle, drawer, imageField, localizedField, section, selectField, showError, sortable, textField, toast, toggleField } from "../ui.js";
+import { packChip, packOptions } from "./services.js";
 
 export const title = "Categories";
 
@@ -41,7 +42,8 @@ function row(category, services) {
     glyph(category),
     h("div", { class: "grow" },
       h("div", { class: "row", style: { gap: "8px" } }, h("span", { class: "name", text: text(category.title, category.id) }),
-        category.title?.en && category.title?.fa && h("span", { class: "muted small", text: category.title.en })),
+        category.title?.en && category.title?.fa && h("span", { class: "muted small", text: category.title.en }),
+        category.pack && packChip(category.pack)),
       h("div", { class: "sub ltr", text: `${category.id} · ${services} service${services === 1 ? "" : "s"}` })),
     h("label", { class: "switch", title: off ? "Hidden" : "Shown" }, toggle, h("span", { class: "track" })),
     h("button", { class: "btn ghost icon", "aria-label": `Edit ${text(category.title)}`, on: { click: () => edit(category.id) } }, icon("edit")),
@@ -96,13 +98,15 @@ function edit(id) {
     id: textField({ label: "ID", value: c.id, mono: true, disabled: Boolean(existing), placeholder: "transport", hint: existing ? "Can't change: services refer to it." : "Lowercase letters, digits, - or _." }),
     color: colorField({ label: "Accent color", value: c.color, hint: "Tints the icon and the category's highlights." }),
     enabled: toggleField({ label: "Shown", checked: c.enabled !== false }),
+    pack: selectField({ label: "Pack", value: c.pack || "", options: packOptions(catalog), hint: "A pack's category leaves the app with the pack, so every service in it must be in the pack too." }),
   };
+  const hasPacks = (catalog.packs || []).length > 0 || Boolean(c.pack);
   f.icon = imageField({ label: "Icon", kind: "icon", value: c.icon, tint: c.color || "var(--accent)", getName: () => existing?.id || f.id.value,
     hint: "A single-color glyph (transparent PNG, or dark on white). The app tints it." });
   let index = -1;
   drawer({
     title: existing ? `Edit ${text(c.title, c.id)}` : "Add a category",
-    body: [section("Category", f.title.el, f.id.el, f.icon.el, f.color.el, f.enabled.el)],
+    body: [section("Category", f.title.el, f.id.el, f.icon.el, f.color.el, f.enabled.el, hasPacks && f.pack.el)],
     onProblems: (problems) => applyProblems(problems, `catalog.categories[${index}]`, f),
     onSave: async () => {
       const categoryId = existing ? existing.id : f.id.value;
@@ -110,7 +114,7 @@ function edit(id) {
         f.id.setError("Another category already uses this ID");
         throw new Error("Choose another ID");
       }
-      const next = { ...(existing || {}), id: categoryId, title: f.title.value, icon: f.icon.value, color: f.color.value, enabled: f.enabled.value };
+      const next = { ...(existing || {}), id: categoryId, pack: f.pack.value || null, title: f.title.value, icon: f.icon.value, color: f.color.value, enabled: f.enabled.value };
       await commit((d) => {
         if (existing) d.catalog.categories[d.catalog.categories.findIndex((x) => x.id === existing.id)] = next;
         else { next.order = 1_000_000; d.catalog.categories.push(next); }

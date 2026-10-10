@@ -154,8 +154,19 @@ class Maintenance(Model):
     message: Message | None = None
 
 
+class Pack(Model):
+    """A set of categories, services and compare groups (each naming it in `pack`) switched on
+    and off together. Dashboard only: the API serves the switched-on ones, without this."""
+
+    id: Id
+    title: Title
+    description: Message | None = None
+    active: bool = False
+
+
 class Service(Model):
     id: Id
+    pack: Id | None = None
     name: Title
     description: Description | None = None
     categoryId: Id
@@ -174,6 +185,7 @@ class Service(Model):
 
 class Category(Model):
     id: Id
+    pack: Id | None = None
     title: Title
     icon: ImageRef | None = None
     color: Color | None = None
@@ -183,6 +195,7 @@ class Category(Model):
 
 class CompareGroup(Model):
     id: Id
+    pack: Id | None = None
     title: Title | None = None
     serviceIds: list[Id] = Field(min_length=2)
 
@@ -204,6 +217,7 @@ class Catalog(Model):
     features: dict[str, bool] = Field(default_factory=dict)
     web: WebDefaults = Field(default_factory=WebDefaults)
     links: Links = Field(default_factory=Links)
+    packs: list[Pack] = Field(default_factory=list)
     categories: list[Category] = Field(default_factory=list)
     services: list[Service] = Field(default_factory=list)
     compareGroups: list[CompareGroup] = Field(default_factory=list)
@@ -211,21 +225,33 @@ class Catalog(Model):
     @model_validator(mode="after")
     def _references(self) -> "Catalog":
         problems = []
-        for kind, items in (("category", self.categories), ("service", self.services), ("compare group", self.compareGroups)):
+        for kind, items in (("pack", self.packs), ("category", self.categories), ("service", self.services), ("compare group", self.compareGroups)):
             seen: set[str] = set()
             for item in items:
                 if item.id in seen:
                     problems.append(f"duplicate {kind} id {item.id!r}")
                 seen.add(item.id)
-        category_ids = {c.id for c in self.categories}
+        pack_ids = {p.id for p in self.packs}
+        for kind, items in (("category", self.categories), ("service", self.services), ("compare group", self.compareGroups)):
+            problems += [f"{kind} {item.id!r}: unknown pack {item.pack!r}" for item in items if item.pack and item.pack not in pack_ids]
+        categories = {c.id: c for c in self.categories}
         service_ids = {s.id for s in self.services}
-        problems += [f"service {s.id!r}: unknown category {s.categoryId!r}" for s in self.services if s.categoryId not in category_ids]
+        problems += [f"service {s.id!r}: unknown category {s.categoryId!r}" for s in self.services if s.categoryId not in categories]
+        # A pack's category leaves with the pack: everything in it must leave too.
+        problems += [
+            f"service {s.id!r} is in category {s.categoryId!r} of pack {categories[s.categoryId].pack!r}, so it must be in that pack too"
+            for s in self.services
+            if s.categoryId in categories and categories[s.categoryId].pack and s.pack != categories[s.categoryId].pack
+        ]
         for group in self.compareGroups:
             unknown = [sid for sid in group.serviceIds if sid not in service_ids]
             if unknown:
                 problems.append(f"compare group {group.id!r}: unknown services {unknown}")
+        active = {p.id for p in self.packs if p.active}
         if not any(s.enabled for s in self.services):
             problems.append("at least one service must be enabled")
+        elif not any(s.enabled and (s.pack is None or s.pack in active) for s in self.services):
+            problems.append("at least one enabled service must be outside switched-off packs")
         if problems:
             raise ValueError("; ".join(problems))
         return self

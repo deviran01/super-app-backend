@@ -85,6 +85,8 @@ async function conflictAware(request) {
 export async function publish(note) { await conflictAware(() => api.post("/publish", { revision: state.revision, note })); }
 export async function discard() { await conflictAware(() => api.post("/draft/discard", { revision: state.revision })); }
 export async function restore(id) { await conflictAware(() => api.post(`/history/${encodeURIComponent(id)}/restore`, { revision: state.revision })); }
+/** Copies a bundled pack's new entries into the draft (the server merges them). */
+export async function addPack(id) { await conflictAware(() => api.post(`/packs/${encodeURIComponent(id)}/add`, { revision: state.revision })); }
 
 // --- helpers ----------------------------------------------------------------------------
 
@@ -121,11 +123,30 @@ export function sortedServices(catalog) {
   return [...catalog.services].sort((a, b) => a.order - b.order);
 }
 
+/** A pack's display title, from the draft or (removed since) the live version. */
+export function packTitle(id) {
+  const pack = [...(state.draft?.catalog.packs || []), ...(state.live?.catalog.packs || [])].find((p) => p.id === id);
+  return text(pack?.title, id);
+}
+
+/** Whether the pack is switched on in the draft. */
+export function packActive(id) {
+  return Boolean((state.draft?.catalog.packs || []).find((p) => p.id === id)?.active);
+}
+
 /** Human-readable differences between the draft and the live version. */
 export function changes() {
   if (!state.draft || !state.live) return [];
   const out = [];
   const before = state.live.catalog, after = state.draft.catalog;
+  const packsBefore = new Map((before.packs || []).map((p) => [p.id, p]));
+  for (const pack of after.packs || []) {
+    const was = packsBefore.get(pack.id), name = text(pack.title, pack.id);
+    if (!was) out.push(`Added pack “${name}” (switched ${pack.active ? "on" : "off"})`);
+    else if (Boolean(was.active) !== Boolean(pack.active)) out.push(`Switched ${pack.active ? "on" : "off"} pack “${name}”`);
+    else if (JSON.stringify(was) !== JSON.stringify(pack)) out.push(`Edited pack “${name}”`);
+  }
+  for (const [id, pack] of packsBefore) if (!(after.packs || []).some((p) => p.id === id)) out.push(`Removed pack “${text(pack.title, id)}”`);
   diffItems(out, "service", before.services, after.services, (s) => text(s.name, s.id));
   diffItems(out, "category", before.categories, after.categories, (c) => text(c.title, c.id));
   diffItems(out, "compare group", before.compareGroups || [], after.compareGroups || [], (g) => text(g.title, g.id));
@@ -143,13 +164,26 @@ export function changes() {
   return out;
 }
 
+const PLURAL = { service: "services", category: "categories", "compare group": "compare groups" };
+
 function diffItems(out, kind, before, after, label) {
   const old = new Map(before.map((i) => [i.id, i]));
   const now = new Map(after.map((i) => [i.id, i]));
+  // A pack brings hundreds of entries at once: one line per pack instead of one per entry.
+  const bulk = new Map();
+  const note = (verb, item) => {
+    if (!item.pack) return out.push(`${verb} ${kind} “${label(item)}”`);
+    const key = JSON.stringify([verb, item.pack]);
+    bulk.set(key, (bulk.get(key) || 0) + 1);
+  };
   for (const [id, item] of now) {
-    if (!old.has(id)) { out.push(`Added ${kind} “${label(item)}”`); continue; }
+    if (!old.has(id)) { note("Added", item); continue; }
     const strip = ({ order, ...rest }) => JSON.stringify(rest);
     if (strip(old.get(id)) !== strip(item)) out.push(`Edited ${kind} “${label(item)}”`);
   }
-  for (const [id, item] of old) if (!now.has(id)) out.push(`Removed ${kind} “${label(item)}”`);
+  for (const [id, item] of old) if (!now.has(id)) note("Removed", item);
+  for (const [key, count] of bulk) {
+    const [verb, pack] = JSON.parse(key);
+    out.push(`${verb} ${count} ${count === 1 ? kind : PLURAL[kind]} ${verb === "Added" ? "to" : "from"} pack “${packTitle(pack)}”`);
+  }
 }

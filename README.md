@@ -28,6 +28,7 @@ app/feedback.py             feedback messages and their flood limits (SQLite, da
 app/admin/                  dashboard: API (routes.py), validation (schema.py), draft/publish/
                             history (store.py), accounts and sessions (auth.py), images, UI (static/)
 app/cli.py                  admin accounts from the command line
+app/packs/                  packs that ship with the code (the Iran-accessible sites), added from the dashboard
 data/catalog.json           the catalog (18 categories, 61 services, compare groups)
 data/release.json           update rules: defaults + per-store overrides and store links
 public/logos/<id>.png       service logos (official app icons, 256 px; dashboard uploads are <id>-<hash>.png);
@@ -51,6 +52,8 @@ deploy/                     deploy.sh and the host nginx site
   listing; names and descriptions in Persian and English; maintenance message; every web
   behavior the app supports (domains, permissions, popups, cache, keep-alive, user agent…).
 - **Categories**: order, title, color, icon (any glyph image, converted to a tintable icon).
+- **[Packs](#packs-iran-accessible-sites)**: sets of services switched on and off together — the
+  Iran-accessible sites for international internet outages.
 - **Compare groups**, **Settings** (feature flags, refresh interval, web rules) and **Releases**
   (soft/hard update versions and the store page, per store).
 - **Draft → Publish**: edits collect in a draft; *Publish* validates it with the app's own
@@ -189,6 +192,49 @@ A scenario may merge-patch the catalog (`"features": {…}`), add entries (`appe
 `appendServices`), patch services by id (`patchServices`), merge-patch the release rules
 (`"release": {…}`), replace the catalog body (`raw`) or force a status (`status`).
 
+## Packs: Iran-accessible sites
+
+A pack is a set of categories, services and compare groups that is switched on and off
+together. It stays in the catalog either way (each entry names it in `pack`; the catalog lists
+packs in `packs`), but the API serves a pack's entries only while it is switched on, and never
+serves the pack fields themselves: switched off, the app gets exactly what it got before.
+Compare groups lose members that aren't served (and are dropped below two).
+
+**Iran-accessible sites** (`app/packs/iran-access.json`, built by
+`tools/build_iran_access_pack.py`) is the catalog to switch to when international internet is
+cut: 264 Iranian sites that stay reachable on the national network, from MCI's list
+(mci.ir/links), RTL Theme's list of sites reachable during shutdowns, and the major services both
+leave out. 12 categories of its own (news, banks, payments and bills, search engines, app stores,
+tools, cloud and email, sports, technology, universities, lifestyle, home services); the rest join
+the catalog's categories (government, finance, travel, education, health, insurance…). Switched
+on, the app has 325 services in 30 categories (a 264 KB catalog).
+
+1. **Once**: before the first dashboard save with the pack, the host nginx must take 1 MB edits
+   (copy `deploy/host-nginx/superapp.2z2.ir.conf`, `nginx -t && systemctl reload nginx`): every
+   save sends the whole draft, about 330 KB with the pack. Deploy (the pack ships in the image,
+   its logos and category icons with `public/`).
+2. Dashboard → **Packs** → *Add to the draft*. Everything comes in switched off; *Publish* (users
+   see no change).
+3. **When needed**: switch the pack on → *Publish*. The app picks it up at its next launch, or on
+   return once the catalog is older than the refresh interval (Settings). Switch off → *Publish*
+   to go back. The server is in Iran, so the dashboard and the API stay reachable on the national
+   network; switching on before an expected cut also works (the app keeps its copy).
+
+Added entries are ordinary catalog entries: edit, disable or delete them like any other
+(Services → *Pack* filter; the editors' *Pack* field). A pack's own category can only hold that
+pack's services. To change the bundled list, edit the tables in `tools/build_iran_access_pack.py`,
+run it, `python3 tools/fetch_assets.py --logos --missing` and deploy: the Packs page then offers
+the entries the catalog doesn't have (new ones, and ones deleted there) without touching the rest.
+
+Which sites: every start URL was loaded from outside Iran, or (for sites that only answer from
+Iran — most banks, government and universities) its domain resolved; dead and parked domains,
+redirects to plain `http` (the app refuses cleartext) and sites merged into a catalog service
+were dropped. Public bodies, banks, universities, hospitals and news outlets are listed on their
+official domains. Businesses that take payments should show an e-Namad seal like any catalog
+service; some only render it from Iran, so check those there before switching on. Unlike the
+catalog's own services, the pack also lists download sites for software and music (Soft98,
+Downloadha, YasDL, Vala Music), by the owner's decision.
+
 ## Editing the catalog
 
 `tools/build_sample_config.py` holds the catalog as readable tables and writes
@@ -224,7 +270,7 @@ everything else on it:
 |---|---|---|
 | Container `superapp-api` | `/srv/superapp` (compose project `superapp`) | `python:3.11-slim`, uvicorn as an unprivileged user, loopback `127.0.0.1:8120` only, read-only root FS, all capabilities dropped, 192 MB / 0.5 CPU / 64 PID cap |
 | Content | `/srv/superapp/data`, `/srv/superapp/public` | written by the dashboard (owned by uid 10001); `data/admin/` holds accounts, the draft and history; `data/stats/` the usage statistics, `data/feedback/` feedback messages |
-| Host nginx site | `/etc/nginx/sites-available/superapp.2z2.ir.conf` | copy of `deploy/host-nginx/superapp.2z2.ir.conf`; the API is GET/HEAD only except `POST /api/v1/events` (64 KB) and `POST /api/v1/feedback` (8 KB); `/admin` takes edits (256 KB) and image uploads (6 MB); `X-Forwarded-For` is set by nginx, never passed through |
+| Host nginx site | `/etc/nginx/sites-available/superapp.2z2.ir.conf` | copy of `deploy/host-nginx/superapp.2z2.ir.conf`; the API is GET/HEAD only except `POST /api/v1/events` (64 KB) and `POST /api/v1/feedback` (8 KB); `/admin` takes edits (1 MB: the whole draft) and image uploads (6 MB); `X-Forwarded-For` is set by nginx, never passed through |
 | TLS | Let's Encrypt via webroot `/var/www/letsencrypt` | renews with the host's certbot timer; its own hook reloads nginx |
 | CDN | ArvanCloud proxies the domain | Arvan terminates TLS for users and reaches the origin over HTTPS. It honors `Cache-Control`: API responses are never cached at the edge (`no-cache` + ETag → 304s), images are (7 days) |
 

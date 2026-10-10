@@ -197,6 +197,8 @@ class AdminStore:
         entry_id = time.strftime("%Y%m%d-%H%M%S", time.gmtime(now)) + f"-{int(now * 1000) % 1000:03d}"
         catalog = document.get("catalog") or {}
         services = catalog.get("services", [])
+        # "Enabled" is what the app gets: services in switched-off packs don't count.
+        active = {p.get("id") for p in catalog.get("packs", []) if p.get("active")}
         write_json_atomically(
             self.history_dir / f"{entry_id}.json",
             {
@@ -206,7 +208,7 @@ class AdminStore:
                 "note": note[:200],
                 "summary": {
                     "services": len(services),
-                    "enabled": sum(1 for s in services if s.get("enabled", True)),
+                    "enabled": sum(1 for s in services if s.get("enabled", True) and (s.get("pack") is None or s.get("pack") in active)),
                     "categories": len(catalog.get("categories", [])),
                 },
                 **document,

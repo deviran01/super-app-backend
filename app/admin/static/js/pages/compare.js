@@ -3,6 +3,7 @@
 import { fill, h, icon } from "../dom.js";
 import { commit, imageUrl, sortedServices, state, text } from "../state.js";
 import { applyProblems, confirm, drawer, localizedField, section, showError, textField, toast } from "../ui.js";
+import { packChip } from "./services.js";
 
 export const title = "Compare groups";
 
@@ -16,7 +17,7 @@ export function render(root) {
       h("button", { class: "btn primary", on: { click: () => edit(null) } }, icon("plus"), "Add group")),
     groups.length
       ? h("ul", { class: "list card" }, groups.map((g) => h("li", { class: "item" },
-          h("div", { class: "grow" }, h("div", { class: "name", text: text(g.title, g.id) }), h("div", { class: "sub ltr", text: g.id })),
+          h("div", { class: "grow" }, h("div", { class: "row", style: { gap: "8px" } }, h("span", { class: "name", text: text(g.title, g.id) }), g.pack && packChip(g.pack)), h("div", { class: "sub ltr", text: g.id })),
           h("div", { class: "row", style: { gap: "4px" } }, g.serviceIds.map((id) => {
             const s = byId.get(id);
             return s?.logo ? h("img", { class: "logo", src: imageUrl(s.logo), alt: text(s.name, id), title: text(s.name, id), style: { width: "30px", height: "30px" } }) : h("span", { class: "chip", text: id });

@@ -1,4 +1,4 @@
-"""Admin API (/admin/api): sign-in, the draft, publishing, history, images, accounts, usage statistics and feedback."""
+"""Admin API (/admin/api): sign-in, the draft, publishing, history, packs, images, accounts, usage statistics and feedback."""
 from __future__ import annotations
 
 from typing import Any, Literal
@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, Field, ValidationError
 
+from . import packs
 from .auth import COOKIE, SECURE_COOKIES, SESSION_SECONDS, AdminAccounts, client_address, require_admin
 from .images import MAX_UPLOAD_BYTES, ImageError, fetch_store_icon, icon_png, logo_png, save
 from .schema import ID_RE, Draft, problems
@@ -156,6 +157,36 @@ def restore(entry_id: str, request: Request, body: BaseRevision | None = None, u
         return _state_json(store(request).restore(entry_id, username, body.revision if body else None))
     except KeyError:
         raise HTTPException(status_code=404, detail="No such version")
+    except Conflict:
+        raise HTTPException(status_code=409, detail=CONFLICT)
+
+
+# --- packs --------------------------------------------------------------------------------
+
+
+@router.get("/packs")
+def bundled_packs(request: Request, _: str = Depends(require_admin)) -> list[dict[str, Any]]:
+    """The packs that ship with the code, and how much of each the draft doesn't have yet."""
+    catalog = store(request).state().draft["catalog"]
+    return [packs.summary(pack, catalog) for pack in packs.bundled().values()]
+
+
+@router.post("/packs/{pack_id}/add")
+def add_pack(pack_id: str, request: Request, body: BaseRevision | None = None, username: str = Depends(require_admin)) -> dict[str, Any]:
+    """Copies a bundled pack's new entries into the draft; a pack added for the first time is
+    switched off."""
+    pack = packs.bundled().get(pack_id)
+    if pack is None:
+        raise HTTPException(status_code=404, detail="No such pack")
+    admin_store = store(request)
+    current = admin_store.state()
+    revision = current.revision if body is None or body.revision is None else body.revision
+    try:
+        draft = Draft.model_validate(packs.merge(current.draft, pack))
+    except ValidationError as error:
+        raise HTTPException(status_code=422, detail={"message": "The pack doesn't fit the draft", "problems": problems(error)})
+    try:
+        return _state_json(admin_store.save_draft(draft, revision, username))
     except Conflict:
         raise HTTPException(status_code=409, detail=CONFLICT)
 

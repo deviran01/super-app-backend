@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 
 import app.main as main
 from app.admin.auth import AdminAccounts
+from app.admin.store import AdminStore
 from app.content import ContentStore
 from app.feedback import FeedbackStore
 from app.stats import StatsStore
@@ -53,6 +54,8 @@ def client(data_dir) -> TestClient:
 
 @pytest.fixture
 def admin(data_dir) -> TestClient:
+    # Drafts and history in the temporary data/ too, never in the checkout's.
+    main.app.state.admin_store = AdminStore(data_dir)
     main.app.state.admin_accounts = AdminAccounts(data_dir / "admin")
     main.app.state.admin_accounts.create("ali", PASSWORD, created_by="test")
     client = TestClient(main.app, base_url="https://testserver", headers=HEADERS)

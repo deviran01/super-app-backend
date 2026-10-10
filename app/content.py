@@ -4,6 +4,10 @@ Files are re-read when they change on disk, so a deploy that replaces them takes
 the next request without a restart. A file that fails the checks below never replaces good
 content that is already being served.
 
+Packs (catalog `packs`, and `pack` on categories, services and compare groups) are sets of
+services switched on and off together from the dashboard. The app gets only the switched-on
+ones and never sees the bookkeeping: see served_catalog().
+
 QA scenarios (scenarios/*.json, enabled with SUPERAPP_SCENARIOS=lab,force-update) overlay the
 content for testing; production runs without any.
 """
@@ -38,24 +42,32 @@ KNOWN_CHANNELS = ("bazaar", "myket", "direct")
 
 @dataclass(frozen=True)
 class Content:
-    catalog: dict[str, Any]
+    catalog: dict[str, Any]  # what the app gets
     release: dict[str, Any]
     # Scenario effects, for QA only.
     forced_status: int | None = None
     raw_catalog: str | None = None
     scenarios: tuple[str, ...] = field(default_factory=tuple)
+    # data/catalog.json as published, switched-off packs included (default: [catalog]).
+    catalog_file: dict[str, Any] | None = field(default=None, compare=False, repr=False)
     # Answers built from this content (body and ETag), keyed by request variant. A content
     # change creates a new Content, so nothing here can go stale.
     responses: dict[Any, Any] = field(default_factory=dict, compare=False, repr=False)
 
     # Derived once per content version (a frozen dataclass still allows cached_property).
+    # Switched-off packs count too: usage reports about a pack that was just switched off
+    # still arrive.
     @cached_property
     def service_ids(self) -> frozenset[str]:
-        return frozenset(s["id"] for s in self.catalog.get("services", []) if isinstance(s, dict) and "id" in s)
+        return self._ids("services")
 
     @cached_property
     def category_ids(self) -> frozenset[str]:
-        return frozenset(c["id"] for c in self.catalog.get("categories", []) if isinstance(c, dict) and "id" in c)
+        return self._ids("categories")
+
+    def _ids(self, key: str) -> frozenset[str]:
+        items = [*self.catalog.get(key, []), *(self.catalog_file or {}).get(key, [])]
+        return frozenset(item["id"] for item in items if isinstance(item, dict) and "id" in item)
 
     @cached_property
     def channels(self) -> frozenset[str]:
@@ -113,6 +125,46 @@ def check_catalog(catalog: Any) -> dict[str, Any]:
     return catalog
 
 
+def served_catalog(catalog: dict[str, Any]) -> dict[str, Any]:
+    """The catalog as the app gets it: without the categories, services and compare groups of
+    switched-off packs, and without the pack bookkeeping. Compare groups lose members that
+    aren't served and are dropped below two (the app does the same)."""
+    if "packs" not in catalog and not any(
+        isinstance(item, dict) and "pack" in item
+        for key in ("categories", "services", "compareGroups")
+        for item in (catalog.get(key) if isinstance(catalog.get(key), list) else [])
+    ):
+        return catalog
+    packs = catalog.get("packs")
+    active = {p.get("id") for p in packs if isinstance(p, dict) and p.get("active") is True} if isinstance(packs, list) else set()
+
+    def shown(items: Any) -> list[Any]:
+        if not isinstance(items, list):
+            return items
+        return [
+            {k: v for k, v in item.items() if k != "pack"} if isinstance(item, dict) else item
+            for item in items
+            if not isinstance(item, dict) or item.get("pack") is None or item.get("pack") in active
+        ]
+
+    served = {k: v for k, v in catalog.items() if k != "packs"}
+    for key in ("categories", "services", "compareGroups"):
+        if key in catalog:
+            served[key] = shown(catalog[key])
+    if isinstance(served.get("compareGroups"), list):
+        ids = {s.get("id") for s in served.get("services") or [] if isinstance(s, dict)}
+        groups = []
+        for group in served["compareGroups"]:
+            members = group.get("serviceIds") if isinstance(group, dict) else None
+            if isinstance(members, list):
+                group = {**group, "serviceIds": [sid for sid in members if sid in ids]}
+                if len(group["serviceIds"]) < 2:
+                    continue
+            groups.append(group)
+        served["compareGroups"] = groups
+    return served
+
+
 class ContentStore:
     """Serves the latest valid content, reloading the files when they change."""
 
@@ -147,7 +199,8 @@ class ContentStore:
 
     def _reload(self, stamp: tuple[tuple[int, int, int], ...]) -> None:
         try:
-            catalog = check_catalog(json.loads((self._data_dir / "catalog.json").read_text(encoding="utf-8")))
+            catalog_file = check_catalog(json.loads((self._data_dir / "catalog.json").read_text(encoding="utf-8")))
+            catalog = check_catalog(served_catalog(catalog_file))
             release = check_release(json.loads((self._data_dir / "release.json").read_text(encoding="utf-8")))
         except (OSError, ValueError) as error:
             if self._content is None:
@@ -156,11 +209,11 @@ class ContentStore:
             log.error("Content reload failed; still serving the previous content: %s", error)
             self._stamp = stamp
             return
-        self._content = self._apply_scenarios(catalog, release)
+        self._content = self._apply_scenarios(catalog, release, catalog_file)
         self._stamp = stamp
-        log.info("Content loaded: %d services", len(catalog.get("services", [])))
+        log.info("Content loaded: %d of %d services served", len(catalog.get("services", [])), len(catalog_file.get("services", [])))
 
-    def _apply_scenarios(self, catalog: dict[str, Any], release: dict[str, Any]) -> Content:
+    def _apply_scenarios(self, catalog: dict[str, Any], release: dict[str, Any], catalog_file: dict[str, Any]) -> Content:
         status, raw = None, None
         for scenario in self._scenarios:
             special = {"appendCategories", "appendServices", "patchServices", "raw", "status", "release"}
@@ -174,7 +227,7 @@ class ContentStore:
             release = deep_merge(release, scenario.get("release", {}))
             status = scenario.get("status", status)
             raw = scenario.get("raw", raw)
-        return Content(catalog, release, status, raw, self._scenario_names)
+        return Content(catalog, release, status, raw, self._scenario_names, catalog_file)
 
     @staticmethod
     def _load_scenario(name: str) -> dict[str, Any]:

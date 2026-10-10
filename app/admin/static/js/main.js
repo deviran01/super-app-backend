@@ -8,6 +8,7 @@ import * as statistics from "./pages/statistics.js";
 import * as feedback from "./pages/feedback.js";
 import * as services from "./pages/services.js";
 import * as categories from "./pages/categories.js";
+import * as packs from "./pages/packs.js";
 import * as compare from "./pages/compare.js";
 import * as releases from "./pages/releases.js";
 import * as settings from "./pages/settings.js";
@@ -20,6 +21,7 @@ const PAGES = [
   ["feedback", feedback, "message"],
   ["services", services, "apps"],
   ["categories", categories, "categories"],
+  ["packs", packs, "packs"],
   ["compare", compare, "compare"],
   ["releases", releases, "releases"],
   ["settings", settings, "settings"],

@@ -47,7 +47,8 @@ PUBLIC_URL = os.environ.get("SUPERAPP_PUBLIC_URL")
 IMAGE_MAX_AGE = 7 * 24 * 3600
 MAX_EVENTS_BYTES = 64 * 1024
 MAX_FEEDBACK_BYTES = 8 * 1024
-MAX_ADMIN_JSON_BYTES = 256 * 1024
+# Every dashboard edit sends the whole draft: ~330 KB with the Iran-access pack added.
+MAX_ADMIN_JSON_BYTES = 1024 * 1024
 UPLOAD_PATHS = {"/admin/api/images/logo", "/admin/api/images/icon"}
 MAX_CACHED_VARIANTS = 64
 # Versions above the highest one in the release rules (+ this margin) are counted as "other".
@@ -283,7 +284,7 @@ async def health() -> dict[str, str]:
 @app.middleware("http")
 async def headers_and_counts(request: Request, call_next):
     path = request.url.path
-    # JSON to the dashboard API is small; only the two image uploads are big (their raw body is
+    # JSON to the dashboard API is at most the whole draft; only the two image uploads are big (their raw body is
     # read after sign-in is checked). Refused before parsing, so an unauthenticated 6 MB JSON
     # body (FastAPI parses it before checking the session) can't balloon the process.
     if path.startswith("/admin/api/") and path not in UPLOAD_PATHS:

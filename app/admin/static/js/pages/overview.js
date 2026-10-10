@@ -1,13 +1,16 @@
 // Overview: what is live, what is in the draft, and the API the app calls.
 import { fill, h, icon } from "../dom.js";
-import { changes, state } from "../state.js";
+import { changes, packActive, state, text } from "../state.js";
 
 export const title = "Overview";
 
 export function render(root) {
   const { catalog, release } = state.draft;
   const services = catalog.services;
-  const enabled = services.filter((s) => s.enabled !== false).length;
+  // What the app gets: services in switched-off packs don't count.
+  const enabled = services.filter((s) => s.enabled !== false && (!s.pack || packActive(s.pack))).length;
+  const packs = catalog.packs || [];
+  const packsOn = packs.filter((p) => p.active);
   const maintenance = services.filter((s) => s.maintenance).length;
   const published = state.published || {};
   const pending = changes();
@@ -16,9 +19,10 @@ export function render(root) {
   fill(root, 
     h("div", { class: "page-head" }, h("div", { class: "grow" }, h("h1", { text: "Overview" }), h("div", { class: "muted", text: "Manage what the Anar app shows, then publish." }))),
     h("div", { class: "stats" },
-      stat("Services", `${enabled} / ${services.length}`, "enabled / total"),
+      stat("Services", `${enabled} / ${services.length}`, packs.length ? "in the app / total" : "enabled / total"),
       stat("Categories", String(catalog.categories.length)),
       stat("Under maintenance", String(maintenance)),
+      packs.length > 0 && stat("Packs on", `${packsOn.length} / ${packs.length}`, packsOn.length ? packsOn.map((p) => text(p.title, p.id)).join(", ") : "all switched off"),
       stat("Minimum version", String(release.default.minimumSupportedVersion), `latest ${release.default.latestVersion ?? release.default.minimumSupportedVersion}`)),
     h("div", { class: "stack" },
       h("section", { class: "card" },

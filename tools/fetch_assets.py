@@ -11,10 +11,14 @@
   128x128 PNGs in public/icons/categories/. They are one color with two opacity levels,
   so the app's tint keeps the duotone look.
 
+Covers the catalog and the packs that ship with the code (app/packs/*.json).
+
 Requires Pillow and resvg-py (pip install pillow resvg-py).
-Usage: python3 tools/fetch_assets.py [--logos] [--icons] [service or category id...]
-(ids limit the run to those services' logos and those categories' icons)
+Usage: python3 tools/fetch_assets.py [--logos] [--icons] [--missing] [service or category id...]
+(ids limit the run to those services' logos and those categories' icons; --missing skips
+services that already have a logo)
 """
+import glob
 import http.cookiejar
 import io
 import json
@@ -73,6 +77,28 @@ BAZAAR_PACKAGES = {
     "milli": "gold.milli.app",
     "technolife": "com.technolife",
     "banimode": "com.banimode.app",
+    # Iran-access pack: official apps, checked by their Bazaar listing title (sites that only
+    # answer from Iran, or only offer small icons).
+    "asriran": "com.asriran", "telewebion": "net.telewebion", "shad": "ir.medu.shad",
+    "gaj": "ir.gajino.android", "kanoon": "ir.kanoon.kanooniha.android",
+    "bmi": "ir.bmi.bam.nativeweb", "banksepah": "com.tosan.dara.sepah", "bankmellat": "com.pmb.mobile",
+    "tejaratbank": "ir.tejaratbank.tata.mobile.android.tejarat", "bsi": "com.isc.bsinew",
+    "bki": "com.gostaresh.mobilebank.boilerplate", "postbank": "com.tosan.dara.postbank",
+    "refahbank": "com.refahbank.dpi.android", "ttbank": "mob.banking.android.taavon",
+    "bpi": "mob.banking.android.pasargad", "parsianbank": "com.pdbplus.android",
+    "enbank": "com.farazpardazan.enbank", "karafarinbank": "ir.karafarinbank.digital.mb",
+    "sinabank": "com.tosan.dara.sina", "sbank": "com.tosan.dara.sarmayeh", "shahrbank": "com.citydi.hplus",
+    "bankday": "com.tosan.dara.day", "middleeastbank": "ir.middleeastbank.www.meb_bank",
+    "izbank": "ir.izbank.omnichannel", "tourismbank": "mob.banking.android.gardesh",
+    "rqbank": "mob.banking.android.resalat", "qmb": "com.ada.mbank.mehr", "melalbank": "com.melal",
+    "wepod": "com.dotin.wepod", "bankino": "digital.neobank",
+    "ap": "com.sibche.aspardproject.app", "hafhashtad": "ir.hafhashtad.android780", "ewano": "com.ebcom.ewano",
+    "ghabzino": "ir.ayantech.ghabzino", "tara": "com.tara360.tara.production", "tsetmc": "ir.tse.mapp",
+    "tamin": "com.tamin.taminhamrah", "policeman": "com.nrdc.android.pyh", "mytehran": "com.mytehran",
+    "rightel": "ir.rightel.myrightel", "tci": "ir.mytci", "shatel": "com.Shatel.myshatel",
+    "asiatech": "com.asiatech.android", "bargheman": "com.pdpsoft.android.saapa",
+    "alopeyk": "com.alopeyk.customer", "tipax": "ir.tipax.mytipax", "safarmarket": "com.safarmarket.app",
+    "danainsurance": "ir.insurance.dana.android",
 }
 MYKET_PACKAGES = {
     "bale": "ir.nasim",
@@ -89,6 +115,10 @@ CATEGORY_ICONS = {
     "government": "buildings-3", "messaging": "chat-round-dots", "lab": "test-tube",
     "cars": "wheel", "music": "music-notes", "books": "book-2", "education": "square-academic-cap",
     "jobs": "case-round", "insurance": "shield-check",
+    # The Iran-access pack's own categories.
+    "news": "document-text", "banks": "safe-square", "payments": "card", "search": "magnifier",
+    "appstores": "widget-add", "tools": "toolbox", "cloud": "cloud-storage", "sports": "football",
+    "tech": "cpu", "universities": "diploma", "lifestyle": "heart", "home-services": "home-smile",
 }
 SOLAR_JSON = "https://api.iconify.design/solar.json?icons={names}"
 
@@ -201,12 +231,15 @@ def normalize(data):
     )
     if is_tile:
         # A rounded-square app icon: extend each corner's own color into its transparent corner.
-        background = Image.new("RGBA", image.size)
-        for (cx, cy), (_, point) in zip(corners, insets):
+        # Only the corner itself (a rounding of radius r stops r·(1 - 1/√2) in along the
+        # diagonal): holes cut through the icon (Bankino's star) stay white.
+        background = Image.new("RGBA", image.size, (255, 255, 255, 255))
+        for (cx, cy), (step, point) in zip(corners, insets):
             inward = (point[0] + (2 if cx == 0 else -2), point[1] + (2 if cy == 0 else -2))
             color = image.getpixel(inward)[:3] + (255,)
-            box = (cx * width // 2, cy * height // 2, (cx + 1) * width // 2 + 1, (cy + 1) * height // 2 + 1)
-            background.paste(color, box)
+            reach = min(int(step * 3.5) + 3, width // 2, height // 2)
+            left, top = (0 if cx == 0 else width - reach), (0 if cy == 0 else height - reach)
+            background.paste(color, (left, top, left + reach, top + reach))
         background.alpha_composite(image)
         square = background
     else:
@@ -217,13 +250,25 @@ def normalize(data):
     return square.convert("RGB").resize((LOGO_SIZE, LOGO_SIZE), Image.LANCZOS)
 
 
-def fetch_logos(only=()):
-    with open(os.path.join(HERE, "..", "data", "catalog.json"), encoding="utf-8") as f:
-        services = [s for s in json.load(f)["services"] if not only or s["id"] in only]
+def all_services():
+    """The catalog's services, then the bundled packs'."""
+    paths = [os.path.join(HERE, "..", "data", "catalog.json"), *sorted(glob.glob(os.path.join(HERE, "..", "app", "packs", "*.json")))]
+    services = {}
+    for path in paths:
+        with open(path, encoding="utf-8") as f:
+            for service in json.load(f)["services"]:
+                services.setdefault(service["id"], service)
+    return list(services.values())
+
+
+def fetch_logos(only=(), skip_existing=False):
+    services = [s for s in all_services() if not only or s["id"] in only]
     os.makedirs(os.path.join(PUBLIC, "logos"), exist_ok=True)
     missing = []
     for service in services:
         sid = service["id"]
+        if skip_existing and os.path.exists(os.path.join(PUBLIC, "logos", f"{sid}.png")):
+            continue
         for source, load in (("store", lambda: store_icon(sid)), ("site", lambda: site_icon(service["url"]))):
             try:
                 data = load()
@@ -264,10 +309,12 @@ def fetch_category_icons(only=()):
 
 
 if __name__ == "__main__":
-    flags = {a for a in sys.argv[1:] if a.startswith("--")} or {"--logos", "--icons"}
+    flags = {a for a in sys.argv[1:] if a.startswith("--")}
+    if not flags - {"--missing"}:
+        flags |= {"--logos", "--icons"}
     ids = {a for a in sys.argv[1:] if not a.startswith("--")}
     if "--icons" in flags:
         fetch_category_icons(ids)
     if "--logos" in flags:
-        fetch_logos(ids)
+        fetch_logos(ids, skip_existing="--missing" in flags)
     sys.exit(0)
