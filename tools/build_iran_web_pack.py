@@ -8,7 +8,9 @@ tables below):
 
   reachable  hosted in Iran: the addresses an Iranian resolver gives are on Iranian networks,
              so the site stays up on the national network when international internet is cut.
-             Also left out: dead domains, intranet-only addresses, expired certificates.
+             Also left out: dead domains and expired certificates. Some government sites only
+             answer Iranian resolvers or use intranet addresses: those were checked from the
+             server in Iran.
   web only   no app of the site's own on Myket (MYKET_APPS lists the ones left out, with the
              package). Unofficial wrappers and readers by other developers don't count.
   lawful     nothing prohibited under Iranian law. Sites whose business is that never were
@@ -143,7 +145,7 @@ MYKET_APPS = {
     "parsonline": "com.parsonline.app.my", "niniban": "com.bartarinha.niniban",
 }
 
-# Left out: not reachable on the national network (checked 2026-10-11).
+# Left out: not reachable on the national network (checked 2026-10-11, from Iran too).
 NOT_REACHABLE = {
     "tasnim": "hosted abroad (DIGITURUNC, TR)", "ghabzino": "hosted abroad (WORLDSTREAM, NL)",
     "tgju": "hosted abroad (Cloudflare)", "lastsecond": "hosted abroad (NL)", "payaneh": "hosted abroad (BITCOMMAND, AM)",
@@ -154,9 +156,10 @@ NOT_REACHABLE = {
     "mobileir": "hosted abroad (OVH, FR)", "caspian": "hosted abroad (RU)", "hidoctor": "hosted abroad (Hetzner, DE)",
     "sakhtafzarmag": "hosted abroad (OVH, FR)", "itresan": "hosted abroad (Cloudflare)", "barnamenevis": "hosted abroad (Hetzner, DE)",
     "persiantools": "hosted abroad (CA)", "majidonline": "hosted abroad (Hetzner, DE)", "seemorgh": "hosted abroad (Hetzner, DE)",
-    "medu": "resolves to a private address: government network only",
-    "ircfda": "resolves to a private address: government network only",
-    "irica": "the domain doesn't resolve", "targoman": "the domain doesn't resolve", "faraazin": "the domain doesn't resolve",
+    # An intranet address works on the national network (medu.gov.ir does, from the server in
+    # Iran); this one didn't answer from there either.
+    "ircfda": "an intranet address that didn't answer from Iran",
+    "targoman": "the domain doesn't resolve", "faraazin": "the domain doesn't resolve",
     "blogir": "the domain doesn't resolve", "saleauto": "the domain doesn't resolve", "zagros": "the domain doesn't resolve",
     "bazinama": "the domain doesn't resolve", "akairan": "the domain doesn't resolve",
     "khorasannews": "its HTTPS certificate has expired (the app refuses it)",
@@ -199,20 +202,24 @@ COMPARE_GROUPS = [
 # Main colors of the logos the Iran-access pack has none for (tools/build_iran_access_pack.py
 # BRAND_COLORS has the rest): behind the logo while it loads.
 BRAND_COLORS = {
-    "alef": "#040404", "alldigitall": "#DC0C1C", "asriran": "#949494", "birjand": "#344C94",
-    "blogsky": "#2C5494", "codeyad": "#2C6CBC", "cra195": "#2C54AC", "darmankade": "#5CC4F4",
+    "alef": "#040404", "alldigitall": "#DC0C1C", "asiainsurance": "#3C3C3C", "asriran": "#949494",
+    "bimehma": "#E4746C", "birjand": "#344C94", "blogsky": "#2C5494", "chmail": "#1464C4",
+    "codal": "#0484C4", "codeyad": "#2C6CBC", "cra195": "#2C54AC", "darmankade": "#5CC4F4",
     "delgarm": "#3464D4", "didbaniran": "#3C2454", "downloadir": "#04D48C",
-    "eghtesadonline": "#D41C24", "farabi": "#343464", "fardanews": "#FC0404", "farsroid": "#4CBC24",
-    "gamefa": "#EC244C", "gisoom": "#3C8C34", "haftesobh": "#2C54FC", "hamrahacademy": "#14140C",
-    "ihio": "#043464", "iranjib": "#347CF4", "irantvto": "#044C9C", "jamaran": "#0474BC",
-    "mehrnews": "#BC0404", "melkana": "#3C3C3C", "miare": "#8C2CAC",
-    "mojnews": "#0C64AC", "mongard": "#CCFC04", "namatek": "#048C64", "nobat": "#04B4CC",
+    "eghtesadonline": "#D41C24", "esam": "#2CDC04", "fadak": "#D4B444", "farabi": "#343464",
+    "fardanews": "#FC0404", "farsroid": "#4CBC24", "fids": "#6CA414", "gamefa": "#EC244C",
+    "gisoom": "#3C8C34", "haftesobh": "#2C54FC", "hamrahacademy": "#14140C", "ihio": "#043464",
+    "irangov": "#1C0C54", "iranjib": "#347CF4", "irantvto": "#044C9C", "iut": "#040404",
+    "jamaran": "#0474BC", "lu": "#CCCC04", "medu": "#040404", "mehrabad": "#244454",
+    "mehrnews": "#BC0404", "melkana": "#3C3C3C", "miare": "#8C2CAC", "mojnews": "#0C64AC",
+    "mongard": "#CCFC04", "mui": "#E4E4EC", "namatek": "#048C64", "nobat": "#04B4CC",
     "noormags": "#DC643C", "nournews": "#0C7474", "p30download": "#1C3C7C", "pana": "#3C3C5C",
-    "qeshmair": "#FC0404", "raja": "#FCC404", "sbu": "#3C648C", "setare": "#740454",
-    "sevenlearn": "#1C94F4", "shahed": "#CC241C", "sibook": "#04BCD4", "sid": "#ACACAC",
-    "snappshop": "#B404AC", "soft98": "#447494", "techrato": "#44C404", "tehrantimes": "#FC0404",
-    "tejaratnews": "#E40414", "theater": "#D4D4D4", "upmusics": "#143C4C", "ut": "#0494FC",
-    "vigiato": "#E40424", "zoomit": "#E40C2C",
+    "pedal": "#FC8C04", "qeshmair": "#FC0404", "raja": "#FCC404", "sabteahval": "#DCDCDC",
+    "sahamedalat": "#1C346C", "sbu": "#3C648C", "setare": "#740454", "sevenlearn": "#1C94F4",
+    "shahed": "#CC241C", "sibook": "#04BCD4", "sid": "#ACACAC", "snappshop": "#B404AC",
+    "soft98": "#447494", "techrato": "#44C404", "tehrantimes": "#FC0404", "tejaratnews": "#E40414",
+    "theater": "#D4D4D4", "upmusics": "#143C4C", "urmia": "#040C5C", "ut": "#0494FC",
+    "vigiato": "#E40424", "yasdl": "#040404", "zoomg": "#EC2C5C", "zoomit": "#E40C2C",
 }
 
 

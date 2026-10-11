@@ -409,7 +409,8 @@
       },
       "categoryId": "web-downloads",
       "url": "https://www.yasdl.com/",
-      "brandColor": "#2B8A3E",
+      "logo": "logos/yasdl.png",
+      "brandColor": "#040404",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -3063,7 +3064,8 @@
       },
       "categoryId": "web-government",
       "url": "https://www.sabteahval.ir/",
-      "brandColor": "#495057",
+      "logo": "logos/sabteahval.png",
+      "brandColor": "#DCDCDC",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -3391,6 +3393,54 @@
       "pack": "iran-web"
     },
     {
+      "id": "web-irica",
+      "name": {
+        "fa": "گمرک ایران",
+        "en": "Iran Customs"
+      },
+      "description": {
+        "fa": "خدمات و استعلام گمرکی",
+        "en": "Customs services and inquiries"
+      },
+      "categoryId": "web-government",
+      "url": "https://www.irica.ir/",
+      "brandColor": "#495057",
+      "enabled": true,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "keywords": [
+        "customs",
+        "گمرک",
+        "سامانه",
+        "دولت"
+      ],
+      "web": {
+        "allowedDomains": [
+          "irica.ir",
+          "irica.gov.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "order": 640,
+      "pack": "iran-web"
+    },
+    {
       "id": "web-sahamedalat",
       "name": {
         "fa": "سهام عدالت",
@@ -3402,7 +3452,8 @@
       },
       "categoryId": "web-government",
       "url": "https://sahamedalat.ir/",
-      "brandColor": "#495057",
+      "logo": "logos/sahamedalat.png",
+      "brandColor": "#1C346C",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -3434,7 +3485,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 640,
+      "order": 650,
       "pack": "iran-web"
     },
     {
@@ -3482,7 +3533,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 650,
+      "order": 660,
       "pack": "iran-web"
     },
     {
@@ -3531,7 +3582,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 660,
+      "order": 670,
       "pack": "iran-web"
     },
     {
@@ -3546,7 +3597,8 @@
       },
       "categoryId": "web-government",
       "url": "https://iran.gov.ir/",
-      "brandColor": "#495057",
+      "logo": "logos/irangov.png",
+      "brandColor": "#1C0C54",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -3578,7 +3630,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 670,
+      "order": 680,
       "pack": "iran-web"
     },
     {
@@ -3626,7 +3678,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 680,
+      "order": 690,
       "pack": "iran-web"
     },
     {
@@ -3675,7 +3727,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 690,
+      "order": 700,
       "pack": "iran-web"
     },
     {
@@ -3723,7 +3775,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 700,
+      "order": 710,
       "pack": "iran-web"
     },
     {
@@ -3770,7 +3822,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 710,
+      "order": 720,
       "pack": "iran-web"
     },
     {
@@ -3819,7 +3871,57 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 720,
+      "order": 730,
+      "pack": "iran-web"
+    },
+    {
+      "id": "web-medu",
+      "name": {
+        "fa": "وزارت آموزش و پرورش",
+        "en": "Ministry of Education"
+      },
+      "description": {
+        "fa": "اطلاعیه‌ها و سامانه‌های آموزش و پرورش",
+        "en": "Notices and services for schools"
+      },
+      "categoryId": "web-government",
+      "url": "https://medu.gov.ir/",
+      "logo": "logos/medu.png",
+      "brandColor": "#040404",
+      "enabled": true,
+      "featured": false,
+      "compatibility": "SUPPORTED",
+      "keywords": [
+        "medu",
+        "آموزش و پرورش",
+        "مدرسه",
+        "سامانه",
+        "دولت"
+      ],
+      "web": {
+        "allowedDomains": [
+          "medu.gov.ir",
+          "medu.ir"
+        ],
+        "javascript": true,
+        "domStorage": true,
+        "permissions": {
+          "location": false,
+          "camera": false,
+          "microphone": false
+        },
+        "fileUpload": true,
+        "downloads": true,
+        "popupPolicy": "NEW_TAB",
+        "offDomainNavigation": "STAY_IN_TAB",
+        "externalDomains": [],
+        "externalSchemes": [],
+        "thirdPartyCookies": true,
+        "cacheMode": "DEFAULT",
+        "keepAlive": "NORMAL",
+        "restoreLastUrl": true
+      },
+      "order": 740,
       "pack": "iran-web"
     },
     {
@@ -3867,7 +3969,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 730,
+      "order": 750,
       "pack": "iran-web"
     },
     {
@@ -3915,7 +4017,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 740,
+      "order": 760,
       "pack": "iran-web"
     },
     {
@@ -3963,7 +4065,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 750,
+      "order": 770,
       "pack": "iran-web"
     },
     {
@@ -4012,7 +4114,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 760,
+      "order": 780,
       "pack": "iran-web"
     },
     {
@@ -4059,7 +4161,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 770,
+      "order": 790,
       "pack": "iran-web"
     },
     {
@@ -4106,7 +4208,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 780,
+      "order": 800,
       "pack": "iran-web"
     },
     {
@@ -4154,7 +4256,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 790,
+      "order": 810,
       "pack": "iran-web"
     },
     {
@@ -4201,7 +4303,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 800,
+      "order": 820,
       "pack": "iran-web"
     },
     {
@@ -4248,7 +4350,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 810,
+      "order": 830,
       "pack": "iran-web"
     },
     {
@@ -4295,7 +4397,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 820,
+      "order": 840,
       "pack": "iran-web"
     },
     {
@@ -4342,7 +4444,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 830,
+      "order": 850,
       "pack": "iran-web"
     },
     {
@@ -4390,7 +4492,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 840,
+      "order": 860,
       "pack": "iran-web"
     },
     {
@@ -4437,7 +4539,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 850,
+      "order": 870,
       "pack": "iran-web"
     },
     {
@@ -4484,7 +4586,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 860,
+      "order": 880,
       "pack": "iran-web"
     },
     {
@@ -4532,7 +4634,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 870,
+      "order": 890,
       "pack": "iran-web"
     },
     {
@@ -4579,7 +4681,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 880,
+      "order": 900,
       "pack": "iran-web"
     },
     {
@@ -4627,7 +4729,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 890,
+      "order": 910,
       "pack": "iran-web"
     },
     {
@@ -4674,7 +4776,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 900,
+      "order": 920,
       "pack": "iran-web"
     },
     {
@@ -4689,7 +4791,8 @@
       },
       "categoryId": "web-universities",
       "url": "https://www.iut.ac.ir/",
-      "brandColor": "#364FC7",
+      "logo": "logos/iut.png",
+      "brandColor": "#040404",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -4721,7 +4824,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 910,
+      "order": 930,
       "pack": "iran-web"
     },
     {
@@ -4768,7 +4871,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 920,
+      "order": 940,
       "pack": "iran-web"
     },
     {
@@ -4815,7 +4918,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 930,
+      "order": 950,
       "pack": "iran-web"
     },
     {
@@ -4863,7 +4966,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 940,
+      "order": 960,
       "pack": "iran-web"
     },
     {
@@ -4910,7 +5013,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 950,
+      "order": 970,
       "pack": "iran-web"
     },
     {
@@ -4957,7 +5060,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 960,
+      "order": 980,
       "pack": "iran-web"
     },
     {
@@ -5004,7 +5107,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 970,
+      "order": 990,
       "pack": "iran-web"
     },
     {
@@ -5051,7 +5154,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 980,
+      "order": 1000,
       "pack": "iran-web"
     },
     {
@@ -5098,7 +5201,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 990,
+      "order": 1010,
       "pack": "iran-web"
     },
     {
@@ -5146,7 +5249,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1000,
+      "order": 1020,
       "pack": "iran-web"
     },
     {
@@ -5193,7 +5296,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1010,
+      "order": 1030,
       "pack": "iran-web"
     },
     {
@@ -5240,7 +5343,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1020,
+      "order": 1040,
       "pack": "iran-web"
     },
     {
@@ -5288,7 +5391,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1030,
+      "order": 1050,
       "pack": "iran-web"
     },
     {
@@ -5303,7 +5406,8 @@
       },
       "categoryId": "web-universities",
       "url": "https://urmia.ac.ir/",
-      "brandColor": "#364FC7",
+      "logo": "logos/urmia.png",
+      "brandColor": "#040C5C",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -5335,7 +5439,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1040,
+      "order": 1060,
       "pack": "iran-web"
     },
     {
@@ -5382,7 +5486,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1050,
+      "order": 1070,
       "pack": "iran-web"
     },
     {
@@ -5430,7 +5534,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1060,
+      "order": 1080,
       "pack": "iran-web"
     },
     {
@@ -5477,7 +5581,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1070,
+      "order": 1090,
       "pack": "iran-web"
     },
     {
@@ -5524,7 +5628,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1080,
+      "order": 1100,
       "pack": "iran-web"
     },
     {
@@ -5571,7 +5675,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1090,
+      "order": 1110,
       "pack": "iran-web"
     },
     {
@@ -5618,7 +5722,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1100,
+      "order": 1120,
       "pack": "iran-web"
     },
     {
@@ -5665,7 +5769,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1110,
+      "order": 1130,
       "pack": "iran-web"
     },
     {
@@ -5713,7 +5817,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1120,
+      "order": 1140,
       "pack": "iran-web"
     },
     {
@@ -5761,7 +5865,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1130,
+      "order": 1150,
       "pack": "iran-web"
     },
     {
@@ -5809,7 +5913,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1140,
+      "order": 1160,
       "pack": "iran-web"
     },
     {
@@ -5857,7 +5961,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1150,
+      "order": 1170,
       "pack": "iran-web"
     },
     {
@@ -5904,7 +6008,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1160,
+      "order": 1180,
       "pack": "iran-web"
     },
     {
@@ -5952,7 +6056,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1170,
+      "order": 1190,
       "pack": "iran-web"
     },
     {
@@ -5967,7 +6071,8 @@
       },
       "categoryId": "web-universities",
       "url": "https://lu.ac.ir/",
-      "brandColor": "#364FC7",
+      "logo": "logos/lu.png",
+      "brandColor": "#CCCC04",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -6000,7 +6105,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1180,
+      "order": 1200,
       "pack": "iran-web"
     },
     {
@@ -6047,7 +6152,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1190,
+      "order": 1210,
       "pack": "iran-web"
     },
     {
@@ -6094,7 +6199,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1200,
+      "order": 1220,
       "pack": "iran-web"
     },
     {
@@ -6141,7 +6246,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1210,
+      "order": 1230,
       "pack": "iran-web"
     },
     {
@@ -6156,7 +6261,8 @@
       },
       "categoryId": "web-universities",
       "url": "https://mui.ac.ir/",
-      "brandColor": "#364FC7",
+      "logo": "logos/mui.png",
+      "brandColor": "#E4E4EC",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -6188,7 +6294,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1220,
+      "order": 1240,
       "pack": "iran-web"
     },
     {
@@ -6238,7 +6344,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1230,
+      "order": 1250,
       "pack": "iran-web"
     },
     {
@@ -6288,7 +6394,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1240,
+      "order": 1260,
       "pack": "iran-web"
     },
     {
@@ -6337,7 +6443,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1250,
+      "order": 1270,
       "pack": "iran-web"
     },
     {
@@ -6384,7 +6490,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1260,
+      "order": 1280,
       "pack": "iran-web"
     },
     {
@@ -6431,7 +6537,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1270,
+      "order": 1290,
       "pack": "iran-web"
     },
     {
@@ -6479,7 +6585,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1280,
+      "order": 1300,
       "pack": "iran-web"
     },
     {
@@ -6526,7 +6632,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1290,
+      "order": 1310,
       "pack": "iran-web"
     },
     {
@@ -6573,7 +6679,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1300,
+      "order": 1320,
       "pack": "iran-web"
     },
     {
@@ -6619,7 +6725,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1310,
+      "order": 1330,
       "pack": "iran-web"
     },
     {
@@ -6667,7 +6773,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1320,
+      "order": 1340,
       "pack": "iran-web"
     },
     {
@@ -6715,7 +6821,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1330,
+      "order": 1350,
       "pack": "iran-web"
     },
     {
@@ -6761,7 +6867,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1340,
+      "order": 1360,
       "pack": "iran-web"
     },
     {
@@ -6808,7 +6914,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1350,
+      "order": 1370,
       "pack": "iran-web"
     },
     {
@@ -6854,7 +6960,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1360,
+      "order": 1380,
       "pack": "iran-web"
     },
     {
@@ -6901,7 +7007,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1370,
+      "order": 1390,
       "pack": "iran-web"
     },
     {
@@ -6948,7 +7054,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1380,
+      "order": 1400,
       "pack": "iran-web"
     },
     {
@@ -6995,7 +7101,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1390,
+      "order": 1410,
       "pack": "iran-web"
     },
     {
@@ -7042,7 +7148,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1400,
+      "order": 1420,
       "pack": "iran-web"
     },
     {
@@ -7088,7 +7194,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1410,
+      "order": 1430,
       "pack": "iran-web"
     },
     {
@@ -7134,7 +7240,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1420,
+      "order": 1440,
       "pack": "iran-web"
     },
     {
@@ -7180,7 +7286,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1430,
+      "order": 1450,
       "pack": "iran-web"
     },
     {
@@ -7230,7 +7336,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1440,
+      "order": 1460,
       "pack": "iran-web"
     },
     {
@@ -7245,7 +7351,8 @@
       },
       "categoryId": "web-finance",
       "url": "https://codal.ir/",
-      "brandColor": "#1098AD",
+      "logo": "logos/codal.png",
+      "brandColor": "#0484C4",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -7276,7 +7383,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1450,
+      "order": 1470,
       "pack": "iran-web"
     },
     {
@@ -7322,7 +7429,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1460,
+      "order": 1480,
       "pack": "iran-web"
     },
     {
@@ -7368,7 +7475,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1470,
+      "order": 1490,
       "pack": "iran-web"
     },
     {
@@ -7415,7 +7522,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1480,
+      "order": 1500,
       "pack": "iran-web"
     },
     {
@@ -7461,7 +7568,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1490,
+      "order": 1510,
       "pack": "iran-web"
     },
     {
@@ -7506,7 +7613,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1500,
+      "order": 1520,
       "pack": "iran-web"
     },
     {
@@ -7552,7 +7659,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1510,
+      "order": 1530,
       "pack": "iran-web"
     },
     {
@@ -7597,7 +7704,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1520,
+      "order": 1540,
       "pack": "iran-web"
     },
     {
@@ -7641,7 +7748,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1530,
+      "order": 1550,
       "pack": "iran-web"
     },
     {
@@ -7687,7 +7794,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1540,
+      "order": 1560,
       "pack": "iran-web"
     },
     {
@@ -7736,7 +7843,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1550,
+      "order": 1570,
       "pack": "iran-web"
     },
     {
@@ -7784,7 +7891,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1560,
+      "order": 1580,
       "pack": "iran-web"
     },
     {
@@ -7830,7 +7937,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1570,
+      "order": 1590,
       "pack": "iran-web"
     },
     {
@@ -7878,7 +7985,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1580,
+      "order": 1600,
       "pack": "iran-web"
     },
     {
@@ -7924,7 +8031,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1590,
+      "order": 1610,
       "pack": "iran-web"
     },
     {
@@ -7971,7 +8078,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1600,
+      "order": 1620,
       "pack": "iran-web"
     },
     {
@@ -8017,7 +8124,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1610,
+      "order": 1630,
       "pack": "iran-web"
     },
     {
@@ -8063,7 +8170,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1620,
+      "order": 1640,
       "pack": "iran-web"
     },
     {
@@ -8109,7 +8216,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1630,
+      "order": 1650,
       "pack": "iran-web"
     },
     {
@@ -8156,7 +8263,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1640,
+      "order": 1660,
       "pack": "iran-web"
     },
     {
@@ -8201,7 +8308,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1650,
+      "order": 1670,
       "pack": "iran-web"
     },
     {
@@ -8248,7 +8355,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1660,
+      "order": 1680,
       "pack": "iran-web"
     },
     {
@@ -8294,7 +8401,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1670,
+      "order": 1690,
       "pack": "iran-web"
     },
     {
@@ -8341,7 +8448,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1680,
+      "order": 1700,
       "pack": "iran-web"
     },
     {
@@ -8387,7 +8494,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1690,
+      "order": 1710,
       "pack": "iran-web"
     },
     {
@@ -8433,7 +8540,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1700,
+      "order": 1720,
       "pack": "iran-web"
     },
     {
@@ -8478,7 +8585,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1710,
+      "order": 1730,
       "pack": "iran-web"
     },
     {
@@ -8525,7 +8632,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1720,
+      "order": 1740,
       "pack": "iran-web"
     },
     {
@@ -8572,7 +8679,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1730,
+      "order": 1750,
       "pack": "iran-web"
     },
     {
@@ -8618,7 +8725,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1740,
+      "order": 1760,
       "pack": "iran-web"
     },
     {
@@ -8666,7 +8773,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1750,
+      "order": 1770,
       "pack": "iran-web"
     },
     {
@@ -8713,7 +8820,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1760,
+      "order": 1780,
       "pack": "iran-web"
     },
     {
@@ -8728,7 +8835,8 @@
       },
       "categoryId": "web-travel",
       "url": "https://mehrabad.airport.ir/",
-      "brandColor": "#1C7ED6",
+      "logo": "logos/mehrabad.png",
+      "brandColor": "#244454",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -8760,7 +8868,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1770,
+      "order": 1790,
       "pack": "iran-web"
     },
     {
@@ -8775,7 +8883,8 @@
       },
       "categoryId": "web-travel",
       "url": "https://fids.airport.ir/",
-      "brandColor": "#1C7ED6",
+      "logo": "logos/fids.png",
+      "brandColor": "#6CA414",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -8807,7 +8916,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1780,
+      "order": 1800,
       "pack": "iran-web"
     },
     {
@@ -8855,7 +8964,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1790,
+      "order": 1810,
       "pack": "iran-web"
     },
     {
@@ -8901,7 +9010,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1800,
+      "order": 1820,
       "pack": "iran-web"
     },
     {
@@ -8948,7 +9057,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1810,
+      "order": 1830,
       "pack": "iran-web"
     },
     {
@@ -8994,7 +9103,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1820,
+      "order": 1840,
       "pack": "iran-web"
     },
     {
@@ -9040,7 +9149,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1830,
+      "order": 1850,
       "pack": "iran-web"
     },
     {
@@ -9055,7 +9164,8 @@
       },
       "categoryId": "web-travel",
       "url": "https://fadaktrains.com/",
-      "brandColor": "#1C7ED6",
+      "logo": "logos/fadak.png",
+      "brandColor": "#D4B444",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -9086,7 +9196,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1840,
+      "order": 1860,
       "pack": "iran-web"
     },
     {
@@ -9132,7 +9242,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1850,
+      "order": 1870,
       "pack": "iran-web"
     },
     {
@@ -9178,7 +9288,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1860,
+      "order": 1880,
       "pack": "iran-web"
     },
     {
@@ -9225,7 +9335,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1870,
+      "order": 1890,
       "pack": "iran-web"
     },
     {
@@ -9273,7 +9383,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 1880,
+      "order": 1900,
       "pack": "iran-web"
     },
     {
@@ -9320,7 +9430,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1890,
+      "order": 1910,
       "pack": "iran-web"
     },
     {
@@ -9367,7 +9477,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1900,
+      "order": 1920,
       "pack": "iran-web"
     },
     {
@@ -9414,7 +9524,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1910,
+      "order": 1930,
       "pack": "iran-web"
     },
     {
@@ -9460,7 +9570,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1920,
+      "order": 1940,
       "pack": "iran-web"
     },
     {
@@ -9506,7 +9616,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1930,
+      "order": 1950,
       "pack": "iran-web"
     },
     {
@@ -9521,7 +9631,8 @@
       },
       "categoryId": "web-cars",
       "url": "https://pedal.ir/",
-      "brandColor": "#F08C00",
+      "logo": "logos/pedal.png",
+      "brandColor": "#FC8C04",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -9551,7 +9662,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1940,
+      "order": 1960,
       "pack": "iran-web"
     },
     {
@@ -9597,7 +9708,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1950,
+      "order": 1970,
       "pack": "iran-web"
     },
     {
@@ -9642,7 +9753,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1960,
+      "order": 1980,
       "pack": "iran-web"
     },
     {
@@ -9690,7 +9801,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1970,
+      "order": 1990,
       "pack": "iran-web"
     },
     {
@@ -9705,7 +9816,8 @@
       },
       "categoryId": "web-classifieds",
       "url": "https://esam.ir/",
-      "brandColor": "#7048E8",
+      "logo": "logos/esam.png",
+      "brandColor": "#2CDC04",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -9736,7 +9848,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1980,
+      "order": 2000,
       "pack": "iran-web"
     },
     {
@@ -9784,7 +9896,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 1990,
+      "order": 2010,
       "pack": "iran-web"
     },
     {
@@ -9831,7 +9943,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2000,
+      "order": 2020,
       "pack": "iran-web"
     },
     {
@@ -9882,7 +9994,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2010,
+      "order": 2030,
       "pack": "iran-web"
     },
     {
@@ -9932,7 +10044,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2020,
+      "order": 2040,
       "pack": "iran-web"
     },
     {
@@ -9982,7 +10094,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2030,
+      "order": 2050,
       "pack": "iran-web"
     },
     {
@@ -10032,7 +10144,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2040,
+      "order": 2060,
       "pack": "iran-web"
     },
     {
@@ -10079,7 +10191,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2050,
+      "order": 2070,
       "pack": "iran-web"
     },
     {
@@ -10125,7 +10237,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2060,
+      "order": 2080,
       "pack": "iran-web"
     },
     {
@@ -10172,7 +10284,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2070,
+      "order": 2090,
       "pack": "iran-web"
     },
     {
@@ -10218,7 +10330,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2080,
+      "order": 2100,
       "pack": "iran-web"
     },
     {
@@ -10264,7 +10376,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2090,
+      "order": 2110,
       "pack": "iran-web"
     },
     {
@@ -10310,7 +10422,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2100,
+      "order": 2120,
       "pack": "iran-web"
     },
     {
@@ -10325,7 +10437,8 @@
       },
       "categoryId": "web-insurance",
       "url": "https://www.bimehasia.com/",
-      "brandColor": "#0B7285",
+      "logo": "logos/asiainsurance.png",
+      "brandColor": "#3C3C3C",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -10355,7 +10468,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2110,
+      "order": 2130,
       "pack": "iran-web"
     },
     {
@@ -10370,7 +10483,8 @@
       },
       "categoryId": "web-insurance",
       "url": "https://www.bimehma.com/",
-      "brandColor": "#0B7285",
+      "logo": "logos/bimehma.png",
+      "brandColor": "#E4746C",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -10400,7 +10514,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2120,
+      "order": 2140,
       "pack": "iran-web"
     },
     {
@@ -10445,7 +10559,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2130,
+      "order": 2150,
       "pack": "iran-web"
     },
     {
@@ -10490,7 +10604,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2140,
+      "order": 2160,
       "pack": "iran-web"
     },
     {
@@ -10537,7 +10651,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2150,
+      "order": 2170,
       "pack": "iran-web"
     },
     {
@@ -10583,7 +10697,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2160,
+      "order": 2180,
       "pack": "iran-web"
     },
     {
@@ -10633,7 +10747,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2170,
+      "order": 2190,
       "pack": "iran-web"
     },
     {
@@ -10684,7 +10798,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2180,
+      "order": 2200,
       "pack": "iran-web"
     },
     {
@@ -10733,7 +10847,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2190,
+      "order": 2210,
       "pack": "iran-web"
     },
     {
@@ -10782,7 +10896,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2200,
+      "order": 2220,
       "pack": "iran-web"
     },
     {
@@ -10832,7 +10946,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2210,
+      "order": 2230,
       "pack": "iran-web"
     },
     {
@@ -10883,7 +10997,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2220,
+      "order": 2240,
       "pack": "iran-web"
     },
     {
@@ -10932,7 +11046,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2230,
+      "order": 2250,
       "pack": "iran-web"
     },
     {
@@ -10982,7 +11096,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2240,
+      "order": 2260,
       "pack": "iran-web"
     },
     {
@@ -11032,7 +11146,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2250,
+      "order": 2270,
       "pack": "iran-web"
     },
     {
@@ -11082,7 +11196,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2260,
+      "order": 2280,
       "pack": "iran-web"
     },
     {
@@ -11131,7 +11245,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2270,
+      "order": 2290,
       "pack": "iran-web"
     },
     {
@@ -11182,7 +11296,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2280,
+      "order": 2300,
       "pack": "iran-web"
     },
     {
@@ -11197,7 +11311,8 @@
       },
       "categoryId": "web-tech",
       "url": "https://www.zoomg.ir/",
-      "brandColor": "#495057",
+      "logo": "logos/zoomg.png",
+      "brandColor": "#EC2C5C",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -11232,7 +11347,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2290,
+      "order": 2310,
       "pack": "iran-web"
     },
     {
@@ -11282,7 +11397,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2300,
+      "order": 2320,
       "pack": "iran-web"
     },
     {
@@ -11332,7 +11447,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2310,
+      "order": 2330,
       "pack": "iran-web"
     },
     {
@@ -11381,7 +11496,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2320,
+      "order": 2340,
       "pack": "iran-web"
     },
     {
@@ -11431,7 +11546,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2330,
+      "order": 2350,
       "pack": "iran-web"
     },
     {
@@ -11480,7 +11595,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2340,
+      "order": 2360,
       "pack": "iran-web"
     },
     {
@@ -11529,7 +11644,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2350,
+      "order": 2370,
       "pack": "iran-web"
     },
     {
@@ -11577,7 +11692,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2360,
+      "order": 2380,
       "pack": "iran-web"
     },
     {
@@ -11625,7 +11740,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2370,
+      "order": 2390,
       "pack": "iran-web"
     },
     {
@@ -11673,7 +11788,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2380,
+      "order": 2400,
       "pack": "iran-web"
     },
     {
@@ -11724,7 +11839,7 @@
         "keepAlive": "HIGH",
         "restoreLastUrl": true
       },
-      "order": 2390,
+      "order": 2410,
       "pack": "iran-web"
     },
     {
@@ -11774,7 +11889,7 @@
         "keepAlive": "HIGH",
         "restoreLastUrl": true
       },
-      "order": 2400,
+      "order": 2420,
       "pack": "iran-web"
     },
     {
@@ -11823,7 +11938,7 @@
         "keepAlive": "HIGH",
         "restoreLastUrl": true
       },
-      "order": 2410,
+      "order": 2430,
       "pack": "iran-web"
     },
     {
@@ -11870,7 +11985,7 @@
         "keepAlive": "HIGH",
         "restoreLastUrl": true
       },
-      "order": 2420,
+      "order": 2440,
       "pack": "iran-web"
     },
     {
@@ -11920,7 +12035,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2430,
+      "order": 2450,
       "pack": "iran-web"
     },
     {
@@ -11966,7 +12081,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2440,
+      "order": 2460,
       "pack": "iran-web"
     },
     {
@@ -12012,7 +12127,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2450,
+      "order": 2470,
       "pack": "iran-web"
     },
     {
@@ -12061,7 +12176,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2460,
+      "order": 2480,
       "pack": "iran-web"
     },
     {
@@ -12110,7 +12225,7 @@
         "keepAlive": "LOW",
         "restoreLastUrl": true
       },
-      "order": 2470,
+      "order": 2490,
       "pack": "iran-web"
     },
     {
@@ -12157,7 +12272,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2480,
+      "order": 2500,
       "pack": "iran-web"
     },
     {
@@ -12203,7 +12318,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2490,
+      "order": 2510,
       "pack": "iran-web"
     },
     {
@@ -12249,7 +12364,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2500,
+      "order": 2520,
       "pack": "iran-web"
     },
     {
@@ -12294,7 +12409,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2510,
+      "order": 2530,
       "pack": "iran-web"
     },
     {
@@ -12340,7 +12455,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2520,
+      "order": 2540,
       "pack": "iran-web"
     },
     {
@@ -12389,7 +12504,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2530,
+      "order": 2550,
       "pack": "iran-web"
     },
     {
@@ -12437,7 +12552,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2540,
+      "order": 2560,
       "pack": "iran-web"
     },
     {
@@ -12487,7 +12602,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2550,
+      "order": 2570,
       "pack": "iran-web"
     },
     {
@@ -12502,7 +12617,8 @@
       },
       "categoryId": "web-cloud",
       "url": "https://chmail.ir/",
-      "brandColor": "#1971C2",
+      "logo": "logos/chmail.png",
+      "brandColor": "#1464C4",
       "enabled": true,
       "featured": false,
       "compatibility": "SUPPORTED",
@@ -12537,7 +12653,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2560,
+      "order": 2580,
       "pack": "iran-web"
     },
     {
@@ -12585,7 +12701,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2570,
+      "order": 2590,
       "pack": "iran-web"
     },
     {
@@ -12634,7 +12750,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2580,
+      "order": 2600,
       "pack": "iran-web"
     },
     {
@@ -12684,7 +12800,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2590,
+      "order": 2610,
       "pack": "iran-web"
     },
     {
@@ -12733,7 +12849,7 @@
         "keepAlive": "NORMAL",
         "restoreLastUrl": true
       },
-      "order": 2600,
+      "order": 2620,
       "pack": "iran-web"
     }
   ],

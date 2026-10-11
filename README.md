@@ -242,7 +242,7 @@ Downloadha, YasDL, Vala Music), by the owner's decision.
 
 **Iranian sites without an app** (`app/packs/iran-web.json`, built by
 `tools/build_iran_web_pack.py`) is an app mode of its own: it replaces the catalog
-(`exclusive`), so while it's on the app shows only these 260 sites in 24 categories (a 205 KB
+(`exclusive`), so while it's on the app shows only these 262 sites in 24 categories (a 205 KB
 catalog) — downloads, news, government, universities, learning, markets, health, travel and
 more. Every site is
 - **reachable on the national network**: an Iranian resolver gives addresses on Iranian networks
