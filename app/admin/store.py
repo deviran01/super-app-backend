@@ -20,6 +20,7 @@ from typing import Any
 
 from pydantic import ValidationError
 
+from ..content import served_packs
 from .schema import Draft, normalize
 
 HISTORY_LIMIT = 200
@@ -150,31 +151,60 @@ class AdminStore:
             return self._state()
 
     def switch_pack(self, pack_id: str, active: bool, user: str) -> DraftState:
-        """Switches a pack on or off in the live version and publishes just that (the app
-        mode switch): unpublished edits stay in the draft, which takes the same switch so
-        publishing it later doesn't undo it."""
+        """Switches a pack on or off in the live version and publishes just that: unpublished
+        edits stay in the draft, which takes the same switch so publishing it later doesn't
+        undo it. A pack that replaces the catalog is on alone: switching it on switches the
+        others off, and switching another on switches it off."""
         with self._lock:
-            live = self._read_live()
-            pack = next((p for p in live["catalog"].get("packs", []) if p.get("id") == pack_id), None)
-            if pack is None:
-                raise KeyError(pack_id)
-            if pack.get("active", False) == active:
-                return self._state()
-            pack["active"] = active
-            document = normalize(Draft.model_validate(live))
-            document["catalog"]["configVersion"] = time.strftime("%Y-%m-%d.%H%M%S", time.gmtime())
-            write_json_atomically(self.data_dir / "catalog.json", document["catalog"])
-            title = pack["title"].get("fa") or pack["title"].get("en") or pack_id
-            self._record(document, published_by=user, note=f"Switched {'on' if active else 'off'}: {title}")
-            stored = self._read(self.admin_dir / "draft.json")
-            if stored is not None:
-                for draft_pack in stored["catalog"].get("packs", []):
-                    if draft_pack.get("id") == pack_id:
-                        draft_pack["active"] = active
-                # A new revision: a form opened before the switch can't save over it.
-                stored.update(revision=stored["revision"] + 1, updatedAt=time.time())
-                write_json_atomically(self.admin_dir / "draft.json", stored)
+            packs = self._live_packs(pack_id)
+            if not active:
+                wanted = {pack_id: False}
+            elif packs[pack_id].get("exclusive"):
+                wanted = {pid: pid == pack_id for pid in packs}
+            else:
+                wanted = {pack_id: True} | {pid: False for pid, p in packs.items() if p.get("exclusive")}
+            title = self._title(packs[pack_id])
+            return self._switch(wanted, user, f"Switched {'on' if active else 'off'}: {title}")
+
+    def set_mode(self, pack_id: str | None, user: str) -> DraftState:
+        """The app mode: the catalog alone (None), or with exactly one pack switched on."""
+        with self._lock:
+            packs = self._live_packs(pack_id)
+            note = f"App mode: {self._title(packs[pack_id]) if pack_id else 'the current catalog'}"
+            return self._switch({pid: pid == pack_id for pid in packs}, user, note)
+
+    def _live_packs(self, pack_id: str | None) -> dict[str, dict[str, Any]]:
+        packs = {p.get("id"): p for p in self._read_live()["catalog"].get("packs", [])}
+        if pack_id is not None and pack_id not in packs:
+            raise KeyError(pack_id)
+        return packs
+
+    @staticmethod
+    def _title(pack: dict[str, Any]) -> str:
+        return pack["title"].get("fa") or pack["title"].get("en") or pack["id"]
+
+    def _switch(self, wanted: dict[str, bool], user: str, note: str) -> DraftState:
+        """Publishes the live version with the packs in `wanted` switched as given."""
+        live = self._read_live()
+        changed = {p["id"]: wanted[p["id"]] for p in live["catalog"].get("packs", [])
+                   if p.get("id") in wanted and bool(p.get("active", False)) != wanted[p["id"]]}
+        if not changed:
             return self._state()
+        for pack in live["catalog"]["packs"]:
+            pack["active"] = changed.get(pack["id"], pack.get("active", False))
+        document = normalize(Draft.model_validate(live))
+        document["catalog"]["configVersion"] = time.strftime("%Y-%m-%d.%H%M%S", time.gmtime())
+        write_json_atomically(self.data_dir / "catalog.json", document["catalog"])
+        self._record(document, published_by=user, note=note)
+        stored = self._read(self.admin_dir / "draft.json")
+        if stored is not None:
+            for draft_pack in stored["catalog"].get("packs", []):
+                if draft_pack.get("id") in changed:
+                    draft_pack["active"] = changed[draft_pack["id"]]
+            # A new revision: a form opened before the switch can't save over it.
+            stored.update(revision=stored["revision"] + 1, updatedAt=time.time())
+            write_json_atomically(self.admin_dir / "draft.json", stored)
+        return self._state()
 
     def restore(self, entry_id: str, user: str, base_revision: int | None = None) -> DraftState:
         with self._lock:
@@ -225,7 +255,7 @@ class AdminStore:
         catalog = document.get("catalog") or {}
         services = catalog.get("services", [])
         # "Enabled" is what the app gets: services in switched-off packs don't count.
-        active = {p.get("id") for p in catalog.get("packs", []) if p.get("active")}
+        served = served_packs(catalog.get("packs"))
         write_json_atomically(
             self.history_dir / f"{entry_id}.json",
             {
@@ -235,7 +265,7 @@ class AdminStore:
                 "note": note[:200],
                 "summary": {
                     "services": len(services),
-                    "enabled": sum(1 for s in services if s.get("enabled", True) and (s.get("pack") is None or s.get("pack") in active)),
+                    "enabled": sum(1 for s in services if s.get("enabled", True) and served(s.get("pack"))),
                     "categories": len(catalog.get("categories", [])),
                 },
                 **document,

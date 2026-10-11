@@ -198,8 +198,23 @@ class PackSwitch(BaseModel):
 @router.post("/packs/{pack_id}/switch")
 def switch_pack(pack_id: str, body: PackSwitch, request: Request, username: str = Depends(require_admin)) -> dict[str, Any]:
     """Switches a published pack on or off for users right away, publishing only that."""
+    return _switched(lambda: store(request).switch_pack(pack_id, body.active, username))
+
+
+class AppMode(BaseModel):
+    pack: str | None = None
+
+
+@router.post("/mode")
+def set_mode(body: AppMode, request: Request, username: str = Depends(require_admin)) -> dict[str, Any]:
+    """The app mode, right away: the current catalog alone (pack null), or with exactly one
+    published pack switched on (every other one off)."""
+    return _switched(lambda: store(request).set_mode(body.pack, username))
+
+
+def _switched(switch: Any) -> dict[str, Any]:
     try:
-        return _state_json(store(request).switch_pack(pack_id, body.active, username))
+        return _state_json(switch())
     except KeyError:
         raise HTTPException(status_code=404, detail="This pack isn't published yet: add it, publish, then switch it")
     except ValidationError as error:

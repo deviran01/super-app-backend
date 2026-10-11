@@ -85,7 +85,7 @@
       }
     },
     "packs": {
-      "description": "Dashboard only, never served: sets of categories, services and compare groups (those naming the pack in `pack`) switched on and off together.",
+      "description": "Dashboard only, never served: sets of categories, services and compare groups (those naming the pack in `pack`) switched on and off together. Switched-on packs add to the catalog, or replace it when exclusive.",
       "type": "array",
       "items": {
         "$ref": "#/$defs/pack"
@@ -188,6 +188,11 @@
           "$ref": "#/$defs/text"
         },
         "active": {
+          "type": "boolean",
+          "default": false
+        },
+        "exclusive": {
+          "description": "Replaces the catalog while switched on: the app gets only this pack's categories, services and compare groups.",
           "type": "boolean",
           "default": false
         }

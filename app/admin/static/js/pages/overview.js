@@ -1,15 +1,15 @@
 // Overview: the app mode, what is live, what is in the draft, and the API the app calls.
 import { fill, h, icon } from "../dom.js";
-import { changes, packActive, state, text } from "../state.js";
-import { switchLive } from "./packs.js";
+import { changes, servedServices, state, text } from "../state.js";
+import { chooseMode } from "./packs.js";
 
 export const title = "Overview";
 
 export function render(root) {
   const { catalog, release } = state.draft;
   const services = catalog.services;
-  // What the app gets: services in switched-off packs don't count.
-  const enabled = services.filter((s) => s.enabled !== false && (!s.pack || packActive(s.pack))).length;
+  // What the app gets: services in packs it doesn't get don't count.
+  const enabled = servedServices(catalog).length;
   const packs = catalog.packs || [];
   const maintenance = services.filter((s) => s.maintenance).length;
   const published = state.published || {};
@@ -19,7 +19,7 @@ export function render(root) {
   fill(root, 
     h("div", { class: "page-head" }, h("div", { class: "grow" }, h("h1", { text: "Overview" }), h("div", { class: "muted", text: "Manage what the Anar app shows, then publish." }))),
     // First: the switch to reach for when international internet is cut.
-    (state.live.catalog.packs || []).length > 0 && h("div", { class: "stack", style: { marginBottom: "20px" } }, state.live.catalog.packs.map(modeCard)),
+    (state.live.catalog.packs || []).length > 0 && h("div", { class: "stack", style: { marginBottom: "20px" } }, modeCard()),
     h("div", { class: "stats" },
       stat("Services", `${enabled} / ${services.length}`, packs.length ? "in the app / total" : "enabled / total"),
       stat("Categories", String(catalog.categories.length)),
@@ -45,22 +45,28 @@ export function render(root) {
             h("div", { class: "row" }, h("span", { class: "muted", style: { width: "110px" }, text: label }), h("a", { class: "mono ltr", href: path, target: "_blank", rel: "noopener", style: { minWidth: 0, overflowWrap: "anywhere" }, text: `${origin}${path}` }), icon("external")))))));
 }
 
-/** The current catalog, or with a published pack: what users get, switched right away. */
-function modeCard(pack) {
+/**
+ * What users get, switched right away: the current catalog, the catalog with one published
+ * pack, or a pack alone when it replaces the catalog.
+ */
+function modeCard() {
   const live = state.live.catalog;
-  const otherPacksOn = new Set((live.packs || []).filter((p) => p.active && p.id !== pack.id).map((p) => p.id));
-  const base = live.services.filter((s) => s.enabled !== false && (!s.pack || otherPacksOn.has(s.pack))).length;
-  const extra = live.services.filter((s) => s.enabled !== false && s.pack === pack.id).length;
-  const on = Boolean(pack.active);
-  const option = (active, label, count) => h("button", { class: "btn", "aria-pressed": String(on === active),
-    on: { click: () => { if (on !== active) switchLive(pack, active); } } },
-    h("span", { dir: "auto", text: label }), h("span", { class: "muted small", text: `${count} services` }));
+  const packs = live.packs || [];
+  const on = packs.filter((p) => p.active);
+  // null: the current catalog; undefined: several packs on (switched on the Packs page).
+  const current = on.length === 0 ? null : on.length === 1 ? on[0].id : undefined;
+  const count = (id) => servedServices({ ...live, packs: packs.map((p) => ({ ...p, active: p.id === id })) }).length;
+  const option = (pack) => {
+    const id = pack ? pack.id : null;
+    return h("button", { class: "btn", "aria-pressed": String(current === id), on: { click: () => { if (current !== id) chooseMode(pack); } } },
+      h("span", { dir: "auto", text: pack ? text(pack.title, pack.id) : "Current catalog" }),
+      h("span", { class: "muted small", text: `${count(id)} services${pack?.exclusive ? " · on its own" : ""}` }));
+  };
+  const label = current === null ? "Current catalog" : on.map((p) => text(p.title, p.id)).join(" + ");
   return h("section", { class: "card" },
     h("div", { class: "card-head" }, h("h2", { class: "grow", text: "App mode" }),
-      h("span", { class: `chip ${on ? "warning" : "success"}`, dir: "auto", text: on ? text(pack.title, pack.id) : "Current catalog" })),
+      h("span", { class: `chip ${current === null ? "success" : "warning"}`, dir: "auto", text: label })),
     h("div", { class: "card-body stack", style: { gap: "10px" } },
-      h("div", { class: "seg modes", role: "group", "aria-label": "App mode" },
-        option(false, "Current catalog", base),
-        option(true, text(pack.title, pack.id), base + extra)),
+      h("div", { class: "seg modes", role: "group", "aria-label": "App mode" }, option(null), packs.map(option)),
       h("div", { class: "hint", text: "Switching is live right away: users get it the next time the app opens or refreshes its catalog. Only the mode is published; other draft changes stay unpublished." })));
 }

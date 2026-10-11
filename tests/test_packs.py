@@ -158,13 +158,15 @@ def test_pack_rules(admin):
     assert response.status_code == 422 and "outside switched-off packs" in response.text
 
 
-def test_the_bundled_pack_fits_the_catalog():
+def test_the_bundled_packs_fit_the_catalog():
     catalog = standard(json.loads((ROOT / "data" / "catalog.json").read_text(encoding="utf-8")))
     release = json.loads((ROOT / "data" / "release.json").read_text(encoding="utf-8"))
+    document = {"catalog": catalog, "release": release}
     for pack in packs.bundled().values():
-        merged = packs.merge({"catalog": catalog, "release": release}, pack)
-        Draft.model_validate(merged)  # the dashboard would accept it
-        assert len(merged["catalog"]["services"]) == len(catalog["services"]) + len(pack["services"]), "an id is taken"
+        before = len(document["catalog"]["services"])
+        document = packs.merge(document, pack)
+        Draft.model_validate(document)  # the dashboard would accept it, with the packs before it
+        assert len(document["catalog"]["services"]) == before + len(pack["services"]), "an id is taken"
         for service in pack["services"]:
             assert re.match(r"^https://[a-z0-9.-]+/", service["url"]), service["id"]
             assert service["pack"] == pack["id"] and service["enabled"]
@@ -207,3 +209,81 @@ def test_the_app_mode_switch_publishes_only_itself(admin, data_dir):
     assert switch(False).status_code == 200  # already off: nothing to publish
     assert admin.get("/admin/api/history").json()[0]["note"].startswith("Switched off")
     assert admin.post("/admin/api/packs/nope/switch", json={"active": True}).status_code == 404
+
+
+ALONE = {"id": "web", "title": {"en": "Web only"}, "active": False, "exclusive": True}
+
+
+def with_exclusive_pack(catalog, active=False, extra_active=False):
+    """with_pack() plus a pack that replaces the catalog: its own category and two services,
+    and a compare group mixing one of them with a catalog service."""
+    catalog = with_pack(catalog, active=extra_active)
+    catalog["packs"].append({**ALONE, "active": active})
+    catalog["categories"].append({"id": "web-news", "pack": "web", "title": {"en": "News"}, "order": 100})
+    catalog["services"] += [
+        {"id": "web-isna", "pack": "web", "name": {"en": "ISNA"}, "categoryId": "web-news", "url": "https://www.isna.ir/"},
+        {"id": "web-alef", "pack": "web", "name": {"en": "Alef"}, "categoryId": "web-news", "url": "https://www.alef.ir/"},
+    ]
+    catalog["compareGroups"] += [
+        {"id": "web-headlines", "pack": "web", "serviceIds": ["web-isna", "web-alef"]},
+        {"id": "web-mixed", "pack": "web", "serviceIds": ["web-isna", "snappfood"]},
+    ]
+    return catalog
+
+
+def test_a_pack_that_replaces_the_catalog_is_served_alone(data_dir, monkeypatch):
+    original = standard(json.loads((data_dir / "catalog.json").read_text()))
+    off = config(data_dir, with_exclusive_pack(original), monkeypatch)
+    assert ids(off["services"]) == ids(original["services"])
+    # On, even with another pack on too: only its own entries, without the bookkeeping.
+    body = config(data_dir, with_exclusive_pack(original, active=True, extra_active=True), monkeypatch)
+    assert ids(body["services"]) == {"web-isna", "web-alef"}
+    assert ids(body["categories"]) == {"web-news"}
+    assert [g["id"] for g in body["compareGroups"]] == ["web-headlines"]
+    assert "packs" not in body and '"pack"' not in json.dumps(body)
+    # Reports about the catalog's services still count while it's on.
+    assert "snappfood" in main.store.get().service_ids
+
+
+def test_rules_for_a_pack_that_replaces_the_catalog(admin):
+    def add(catalog, active=False):
+        catalog["packs"] = [*catalog.get("packs", []), {**ALONE, "active": active}]
+        catalog["categories"].append({"id": "web-news", "pack": "web", "title": {"en": "News"}})
+
+    # Its services can't sit in the catalog's categories: those are hidden while it's on.
+    response = save(admin, lambda c: (add(c), c["services"].append(
+        {"id": "web-isna", "pack": "web", "name": {"en": "ISNA"}, "categoryId": c["services"][0]["categoryId"], "url": "https://www.isna.ir/"})))
+    assert response.status_code == 422 and "replaces the catalog, so its category must be in that pack too" in response.text
+    # Switched on without an enabled service, the app would get nothing.
+    response = save(admin, lambda c: add(c, active=True))
+    assert response.status_code == 422 and "needs an enabled service" in response.text
+
+
+def test_the_app_mode_picks_one_pack_and_a_replacing_pack_is_on_alone(admin, data_dir):
+    catalog = with_exclusive_pack(standard(json.loads((data_dir / "catalog.json").read_text())))
+    (data_dir / "catalog.json").write_text(json.dumps(catalog))
+    app = TestClient(main.app)
+    served = lambda: ids(app.get("/api/v1/config", params=QUERY).json()["services"])
+    mode = lambda pack: admin.post("/admin/api/mode", json={"pack": pack})
+    switch = lambda pack, active: admin.post(f"/admin/api/packs/{pack}/switch", json={"active": active})
+    live = lambda: {p["id"]: p["active"] for p in state(admin)["live"]["catalog"]["packs"]}
+    base = served()
+
+    assert mode("outage").status_code == 200 and live() == {"outage": True, "web": False}
+    assert served() == base | {"isna", "okala"}
+    assert admin.get("/admin/api/history").json()[0]["note"] == "App mode: Outage"
+    assert mode("web").status_code == 200 and live() == {"outage": False, "web": True}
+    assert served() == {"web-isna", "web-alef"}
+    assert admin.get("/admin/api/history").json()[0]["summary"]["enabled"] == 2
+    assert mode(None).status_code == 200 and live() == {"outage": False, "web": False}
+    assert served() == base
+
+    # The single switch keeps a replacing pack alone: on, it switches the others off...
+    assert switch("outage", True).status_code == 200
+    assert switch("web", True).status_code == 200 and live() == {"outage": False, "web": True}
+    # ...and switching another pack on switches it off.
+    assert switch("outage", True).status_code == 200 and live() == {"outage": True, "web": False}
+
+    assert mode("nope").status_code == 404
+    signed_out = TestClient(main.app, base_url="https://testserver")
+    assert signed_out.post("/admin/api/mode", json={"pack": None}).status_code == 401

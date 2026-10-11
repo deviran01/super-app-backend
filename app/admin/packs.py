@@ -1,4 +1,4 @@
-"""Packs that ship with the code (app/packs/<id>.json, built by tools/build_iran_access_pack.py).
+"""Packs that ship with the code (app/packs/<id>.json, built by tools/build_iran_*_pack.py).
 
 The server owns data/, so a pack reaches the live catalog through the dashboard: adding it
 copies its categories, services and compare groups into the draft, switched off, and the
@@ -30,7 +30,7 @@ def bundled() -> dict[str, dict[str, Any]]:
 def summary(pack: dict[str, Any], catalog: dict[str, Any]) -> dict[str, Any]:
     """What the pack holds, and how much of it adding would bring into the draft."""
     merged = merge({"catalog": catalog}, pack)["catalog"]
-    out: dict[str, Any] = {key: pack.get(key) for key in ("id", "title", "description")}
+    out: dict[str, Any] = {key: pack.get(key) for key in ("id", "title", "description")} | {"exclusive": bool(pack.get("exclusive"))}
     for part in PARTS:
         out[part] = len(pack.get(part, []))
         out[f"new_{part}"] = len(merged[part]) - len(catalog.get(part, []))
@@ -45,7 +45,7 @@ def merge(document: dict[str, Any], pack: dict[str, Any]) -> dict[str, Any]:
     catalog = copy.deepcopy(document["catalog"])
     packs = catalog.setdefault("packs", [])
     if not any(p.get("id") == pack["id"] for p in packs):
-        packs.append({key: pack[key] for key in ("id", "title", "description") if key in pack} | {"active": False})
+        packs.append({key: pack[key] for key in ("id", "title", "description", "exclusive") if key in pack} | {"active": False})
     for part in PARTS:
         items = catalog.setdefault(part, [])
         have = {item.get("id") for item in items}

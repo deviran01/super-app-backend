@@ -1,10 +1,11 @@
 // Packs: sets of services switched on and off together, e.g. Iranian sites that stay reachable
 // when international internet is cut. A switched-off pack stays in the catalog; the app gets
-// only switched-on ones. Packs that ship with the code are added to the draft from here; the
-// switch acts on the live version right away (it publishes only itself).
+// only switched-on ones, added to the catalog, or alone for a pack that replaces it. Packs
+// that ship with the code are added to the draft from here; the switch acts on the live
+// version right away (it publishes only itself).
 import { api } from "../api.js";
 import { fill, h, icon } from "../dom.js";
-import { addPack, commit, renumber, sortedCategories, state, switchPack, text } from "../state.js";
+import { addPack, commit, renumber, servedServices, setMode, sortedCategories, state, switchPack, text } from "../state.js";
 import { confirm, showError, toast } from "../ui.js";
 import { showPack } from "./services.js";
 
@@ -23,7 +24,7 @@ export async function render(root) {
   fill(root,
     h("div", { class: "page-head" },
       h("div", { class: "grow" }, h("h1", { text: "Packs" }),
-        h("div", { class: "muted", text: "Sets of services you switch on together, e.g. Iranian sites for when international internet is cut. A switched-off pack stays here but the app doesn't get it. The switch is live right away: it publishes only itself." }))),
+        h("div", { class: "muted", text: "Sets of services you switch on together, e.g. Iranian sites for when international internet is cut. A switched-off pack stays here but the app doesn't get it; a pack that replaces the catalog is shown on its own. The switch is live right away: it publishes only itself." }))),
     h("div", { class: "stack" },
       inDraft.map((pack) => packCard(pack, bundled.find((b) => b.id === pack.id))),
       notAdded.map(bundledCard),
@@ -49,6 +50,7 @@ function packCard(pack, bundle) {
   return h("section", { class: "card" },
     h("div", { class: "card-head", style: { flexWrap: "wrap" } },
       h("div", { class: "grow", style: { minWidth: "12em" } }, h("h2", { dir: "auto", text: text(pack.title, pack.id) }), pack.title?.en && pack.title?.fa && h("div", { class: "muted small", text: pack.title.en })),
+      pack.exclusive && h("span", { class: "chip", title: "While it's on, the app gets only this pack", text: "Replaces the catalog" }),
       h("span", { class: `chip ${live?.active ? "success" : ""}`, text: live ? (live.active ? "Live: on" : "Live: off") : "Not published yet" }),
       pending && h("span", { class: "chip warning", text: pack.active ? "On after you publish" : "Off after you publish" }),
       h("label", { class: "switch", title: !live ? "Publish the pack first" : live.active ? "On for users" : "Off for users" }, toggle, h("span", { class: "track" }))),
@@ -70,6 +72,7 @@ function bundledCard(bundle) {
   return h("section", { class: "card" },
     h("div", { class: "card-head", style: { flexWrap: "wrap" } },
       h("div", { class: "grow", style: { minWidth: "12em" } }, h("h2", { dir: "auto", text: text(bundle.title, bundle.id) }), bundle.title?.en && bundle.title?.fa && h("div", { class: "muted small", text: bundle.title.en })),
+      bundle.exclusive && h("span", { class: "chip", title: "While it's on, the app gets only this pack", text: "Replaces the catalog" }),
       h("span", { class: "chip", text: "Not in the catalog" })),
     h("div", { class: "card-body stack", style: { gap: "12px" } },
       bundle.description && h("div", { class: "muted", dir: "auto", text: text(bundle.description) }),
@@ -100,21 +103,54 @@ async function add(bundle) {
 
 /**
  * Switches a published pack for users right away, after a confirmation. Publishes only the
- * switch: other unpublished changes stay in the draft. Shared with Overview's app mode.
+ * switch: other unpublished changes stay in the draft. A pack that replaces the catalog is on
+ * alone (the server switches the others off).
  */
 export async function switchLive(pack, active) {
+  const live = state.live.catalog;
+  const packs = live.packs || [];
+  const after = active
+    ? packs.map((p) => ({ ...p, active: p.id === pack.id || (Boolean(p.active) && !pack.exclusive && !p.exclusive) }))
+    : packs.map((p) => ({ ...p, active: p.id !== pack.id && Boolean(p.active) }));
   const name = text(pack.title, pack.id);
-  const count = state.live.catalog.services.filter((s) => s.pack === pack.id && s.enabled !== false).length;
-  const ok = await confirm({
+  return confirmSwitch(packs, after, {
     title: active ? `Switch on “${name}” for users?` : `Switch off “${name}” for users?`,
-    message: `${active ? `Users get its ${count} services` : `Its ${count} services leave the app`} the next time the app opens or refreshes its catalog. This publishes only the switch: other unpublished changes stay in the draft.`,
     confirmLabel: active ? "Switch on now" : "Switch off now",
     danger: !active,
+    run: () => switchPack(pack.id, active),
+    done: active ? "Switched on — live now" : "Switched off — live now",
   });
-  if (!ok) return false;
+}
+
+/** The app mode (Overview): the current catalog (null), or with exactly [pack] switched on. */
+export async function chooseMode(pack) {
+  const packs = state.live.catalog.packs || [];
+  const after = packs.map((p) => ({ ...p, active: Boolean(pack) && p.id === pack.id }));
+  return confirmSwitch(packs, after, {
+    title: pack ? `Switch the app to “${text(pack.title, pack.id)}”?` : "Switch the app back to the current catalog?",
+    confirmLabel: "Switch now",
+    danger: false,
+    run: () => setMode(pack ? pack.id : null),
+    done: "Switched — live now",
+  });
+}
+
+async function confirmSwitch(before, after, { run, done, ...dialog }) {
+  const live = state.live.catalog;
+  const count = (packs) => servedServices({ ...live, packs }).length;
+  const name = (p) => `“${text(p.title, p.id)}”`;
+  const alone = after.find((p) => p.active && p.exclusive);
+  const offToo = before.filter((p) => p.active && !after.find((q) => q.id === p.id)?.active);
+  const lines = [
+    alone ? `Users get only ${name(alone)}: ${count(after)} services, instead of ${count(before)} now. The current catalog's services leave the app until you switch back.`
+      : `Users get ${count(after)} services, instead of ${count(before)} now.`,
+    offToo.length > 1 || (offToo.length === 1 && !dialog.danger) ? `This switches off ${offToo.map(name).join(" and ")}.` : "",
+    "It's live the next time the app opens or refreshes its catalog. Only the switch is published: other unpublished changes stay in the draft.",
+  ];
+  if (!(await confirm({ ...dialog, message: lines.filter(Boolean).join(" ") }))) return false;
   try {
-    await switchPack(pack.id, active);
-    toast(active ? "Switched on — live now" : "Switched off — live now");
+    await run();
+    toast(done);
     return true;
   } catch (error) {
     showError(error);

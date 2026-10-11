@@ -89,6 +89,8 @@ export async function restore(id) { await conflictAware(() => api.post(`/history
 export async function addPack(id) { await conflictAware(() => api.post(`/packs/${encodeURIComponent(id)}/add`, { revision: state.revision })); }
 /** Switches a published pack on or off for users right away (only that is published). */
 export async function switchPack(id, active) { await conflictAware(() => api.post(`/packs/${encodeURIComponent(id)}/switch`, { active })); }
+/** The app mode, right away: the current catalog (null), or with exactly that pack switched on. */
+export async function setMode(pack) { await conflictAware(() => api.post("/mode", { pack })); }
 
 // --- helpers ----------------------------------------------------------------------------
 
@@ -131,9 +133,22 @@ export function packTitle(id) {
   return text(pack?.title, id);
 }
 
-/** Whether the pack is switched on in the draft. */
-export function packActive(id) {
-  return Boolean((state.draft?.catalog.packs || []).find((p) => p.id === id)?.active);
+/**
+ * Whether the app gets an entry of the given pack (null: the catalog's own), like the server's
+ * served_packs(): switched-on packs add to the catalog, unless one replaces it (exclusive).
+ */
+export function servedBy(catalog) {
+  const on = (catalog.packs || []).filter((p) => p.active === true);
+  const alone = new Set(on.filter((p) => p.exclusive === true).map((p) => p.id));
+  if (alone.size) return (pack) => alone.has(pack);
+  const active = new Set(on.map((p) => p.id));
+  return (pack) => !pack || active.has(pack);
+}
+
+/** The enabled services the app gets from [catalog]. */
+export function servedServices(catalog) {
+  const served = servedBy(catalog);
+  return catalog.services.filter((s) => s.enabled !== false && served(s.pack));
 }
 
 /** Human-readable differences between the draft and the live version. */

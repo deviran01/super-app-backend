@@ -8,6 +8,8 @@ from typing import Annotated, Any, ClassVar, Literal
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, ValidationError, model_validator
 
+from ..content import served_packs
+
 ID_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{0,63}$")
 HOST_RE = re.compile(r"^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{0,61}[a-z0-9]$")
 SCHEME_RE = re.compile(r"^[a-z][a-z0-9+.-]{0,31}$")
@@ -156,12 +158,14 @@ class Maintenance(Model):
 
 class Pack(Model):
     """A set of categories, services and compare groups (each naming it in `pack`) switched on
-    and off together. Dashboard only: the API serves the switched-on ones, without this."""
+    and off together. Dashboard only: the API serves the switched-on ones, without this.
+    An exclusive pack replaces the catalog while it's on: the app gets only the pack."""
 
     id: Id
     title: Title
     description: Message | None = None
     active: bool = False
+    exclusive: bool | None = None  # left out unless set, like the other optional fields
 
 
 class Service(Model):
@@ -243,15 +247,26 @@ class Catalog(Model):
             for s in self.services
             if s.categoryId in categories and categories[s.categoryId].pack and s.pack != categories[s.categoryId].pack
         ]
+        # Nothing outside a pack that replaces the catalog is served with it, its categories either.
+        exclusive = {p.id for p in self.packs if p.exclusive}
+        problems += [
+            f"service {s.id!r} is in pack {s.pack!r}, which replaces the catalog, so its category must be in that pack too"
+            for s in self.services
+            if s.pack in exclusive and s.categoryId in categories and categories[s.categoryId].pack != s.pack
+        ]
         for group in self.compareGroups:
             unknown = [sid for sid in group.serviceIds if sid not in service_ids]
             if unknown:
                 problems.append(f"compare group {group.id!r}: unknown services {unknown}")
-        active = {p.id for p in self.packs if p.active}
+        served = served_packs([p.model_dump() for p in self.packs])
         if not any(s.enabled for s in self.services):
             problems.append("at least one service must be enabled")
-        elif not any(s.enabled and (s.pack is None or s.pack in active) for s in self.services):
-            problems.append("at least one enabled service must be outside switched-off packs")
+        elif not any(s.enabled and served(s.pack) for s in self.services):
+            replacing = [p.id for p in self.packs if p.active and p.exclusive]
+            problems.append(
+                f"pack {replacing[0]!r} replaces the catalog, so it needs an enabled service" if replacing
+                else "at least one enabled service must be outside switched-off packs"
+            )
         if problems:
             raise ValueError("; ".join(problems))
         return self

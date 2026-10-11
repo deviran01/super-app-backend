@@ -6,7 +6,8 @@ content that is already being served.
 
 Packs (catalog `packs`, and `pack` on categories, services and compare groups) are sets of
 services switched on and off together from the dashboard. The app gets only the switched-on
-ones and never sees the bookkeeping: see served_catalog().
+ones, added to the catalog, or alone when a switched-on pack replaces the catalog
+(`exclusive`), and never sees the bookkeeping: see served_catalog().
 
 QA scenarios (scenarios/*.json, enabled with SUPERAPP_SCENARIOS=lab,force-update) overlay the
 content for testing; production runs without any.
@@ -22,7 +23,7 @@ import threading
 from dataclasses import dataclass, field
 from functools import cached_property
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 log = logging.getLogger("superapp.content")
 
@@ -125,18 +126,29 @@ def check_catalog(catalog: Any) -> dict[str, Any]:
     return catalog
 
 
+def served_packs(packs: Any) -> Callable[[Any], bool]:
+    """Whether the app gets an item, given its `pack` (None: the catalog's own). Switched-on
+    packs add to the catalog, unless one replaces it (`exclusive`): then the app gets only
+    the switched-on packs that replace it."""
+    listed = [p for p in packs if isinstance(p, dict) and p.get("active") is True] if isinstance(packs, list) else []
+    alone = {p.get("id") for p in listed if p.get("exclusive") is True}
+    if alone:
+        return lambda pack: pack in alone
+    active = {p.get("id") for p in listed}
+    return lambda pack: pack is None or pack in active
+
+
 def served_catalog(catalog: dict[str, Any]) -> dict[str, Any]:
-    """The catalog as the app gets it: without the categories, services and compare groups of
-    switched-off packs, and without the pack bookkeeping. Compare groups lose members that
-    aren't served and are dropped below two (the app does the same)."""
+    """The catalog as the app gets it: only the categories, services and compare groups
+    served_packs() lets through, without the pack bookkeeping. Compare groups lose members
+    that aren't served and are dropped below two (the app does the same)."""
     if "packs" not in catalog and not any(
         isinstance(item, dict) and "pack" in item
         for key in ("categories", "services", "compareGroups")
         for item in (catalog.get(key) if isinstance(catalog.get(key), list) else [])
     ):
         return catalog
-    packs = catalog.get("packs")
-    active = {p.get("id") for p in packs if isinstance(p, dict) and p.get("active") is True} if isinstance(packs, list) else set()
+    served_by = served_packs(catalog.get("packs"))
 
     def shown(items: Any) -> list[Any]:
         if not isinstance(items, list):
@@ -144,7 +156,7 @@ def served_catalog(catalog: dict[str, Any]) -> dict[str, Any]:
         return [
             {k: v for k, v in item.items() if k != "pack"} if isinstance(item, dict) else item
             for item in items
-            if not isinstance(item, dict) or item.get("pack") is None or item.get("pack") in active
+            if not isinstance(item, dict) or served_by(item.get("pack"))
         ]
 
     served = {k: v for k, v in catalog.items() if k != "packs"}

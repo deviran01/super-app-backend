@@ -1,7 +1,7 @@
 // Services: the apps users open. Grouped by category in display order; drag to reorder
 // within a category, switch them on and off, edit everything the app supports.
 import { fill, h, icon } from "../dom.js";
-import { commit, host, imageUrl, packActive, packTitle, renumber, sortedCategories, sortedServices, state, text } from "../state.js";
+import { commit, host, imageUrl, packTitle, renumber, servedBy, sortedCategories, sortedServices, state, text } from "../state.js";
 import {
   advanced, applyProblems, colorField, confirm, dragHandle, drawer, imageField, linesField, localizedField,
   section, selectField, showError, sortable, textField, toast, toggleField,
@@ -80,10 +80,10 @@ export function render(root) {
   );
 }
 
-/** Which pack an entry belongs to, and whether that pack is switched off. */
+/** Which pack an entry belongs to, and whether the app gets that pack (in the draft). */
 export function packChip(id) {
-  const on = packActive(id);
-  return h("span", { class: `chip ${on ? "accent" : ""}`, title: on ? "In a switched-on pack" : "In a switched-off pack: the app doesn't get it" }, `${packTitle(id)}${on ? "" : " · off"}`);
+  const on = servedBy(state.draft.catalog)(id);
+  return h("span", { class: `chip ${on ? "accent" : ""}`, title: on ? "In a switched-on pack" : "In a pack the app doesn't get: switched off, or another pack replaces the catalog" }, `${packTitle(id)}${on ? "" : " · off"}`);
 }
 
 export function logo(service, size = 40) {
