@@ -11,7 +11,8 @@
   128x128 PNGs in public/icons/categories/. They are one color with two opacity levels,
   so the app's tint keeps the duotone look.
 
-Covers the catalog and the packs that ship with the code (app/packs/*.json).
+Covers the catalog, the packs that ship with the code (app/packs/*.json) and the Iran web
+pack's candidates (tools/iran_web_candidates.py).
 
 Requires Pillow and resvg-py (pip install pillow resvg-py).
 Usage: python3 tools/fetch_assets.py [--logos] [--icons] [--missing] [service or category id...]
@@ -30,6 +31,8 @@ from html.parser import HTMLParser
 from urllib.parse import urljoin
 
 from PIL import Image
+
+from iran_web_candidates import EXTRA_SERVICES
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PUBLIC = os.path.join(HERE, "..", "public")
@@ -251,13 +254,18 @@ def normalize(data):
 
 
 def all_services():
-    """The catalog's services, then the bundled packs'."""
+    """The catalog's services, then the bundled packs', then the Iran web pack's other
+    candidates (tools/iran_web_candidates.py). That pack's own entries ("web-" ids) are
+    copies that use the originals' logos."""
     paths = [os.path.join(HERE, "..", "data", "catalog.json"), *sorted(glob.glob(os.path.join(HERE, "..", "app", "packs", "*.json")))]
     services = {}
     for path in paths:
         with open(path, encoding="utf-8") as f:
             for service in json.load(f)["services"]:
-                services.setdefault(service["id"], service)
+                if not service["id"].startswith("web-"):
+                    services.setdefault(service["id"], service)
+    for row in EXTRA_SERVICES:
+        services.setdefault(row[0], {"id": row[0], "url": row[2]})
     return list(services.values())
 
 

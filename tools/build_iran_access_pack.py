@@ -276,7 +276,7 @@ SERVICES = [
      "پیگیری بسته‌های پست", "Track Iran Post parcels", {"domains": ["post.ir"], "kw": ["post", "پست", "رهگیری", "مرسوله"]}),
     ("irica", "government", "https://www.irica.ir/", "گمرک ایران", "Iran Customs",
      "خدمات و استعلام گمرکی", "Customs services and inquiries", {"domains": ["irica.ir", "irica.gov.ir"], "kw": ["customs", "گمرک"]}),
-    ("sahamedalat", "government", "https://www.sahamedalat.ir/", "سهام عدالت", "Justice Shares",
+    ("sahamedalat", "government", "https://sahamedalat.ir/", "سهام عدالت", "Justice Shares",
      "استعلام و مدیریت سهام عدالت", "Justice shares inquiry", {"kw": ["saham edalat", "سهام عدالت"]}),
     ("shamim", "government", "https://hemayat.sfara.ir/", "سامانه شمیم", "Shamim",
      "استعلام دهک و حمایت‌ها", "Household decile and support inquiry", {"domains": ["sfara.ir"], "kw": ["dahak", "دهک", "یارانه", "حمایت"]}),

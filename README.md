@@ -28,7 +28,8 @@ app/feedback.py             feedback messages and their flood limits (SQLite, da
 app/admin/                  dashboard: API (routes.py), validation (schema.py), draft/publish/
                             history (store.py), accounts and sessions (auth.py), images, UI (static/)
 app/cli.py                  admin accounts from the command line
-app/packs/                  packs that ship with the code (the Iran-accessible sites), added from the dashboard
+app/packs/                  packs that ship with the code (Iran-accessible sites, Iranian sites without an app),
+                            added from the dashboard
 data/catalog.json           the catalog (18 categories, 61 services, compare groups)
 data/release.json           update rules: defaults + per-store overrides and store links
 public/logos/<id>.png       service logos (official app icons, 256 px; dashboard uploads are <id>-<hash>.png);
@@ -53,7 +54,8 @@ deploy/                     deploy.sh and the host nginx site
   behavior the app supports (domains, permissions, popups, cache, keep-alive, user agent…).
 - **Categories**: order, title, color, icon (any glyph image, converted to a tintable icon).
 - **[Packs](#packs-iran-accessible-sites)**: sets of services switched on and off together — the
-  Iran-accessible sites for international internet outages, switched from Overview → *App mode*.
+  Iran-accessible sites for international internet outages, and Iranian sites without an app —
+  switched from Overview → *App mode*.
 - **Compare groups**, **Settings** (feature flags, refresh interval, web rules) and **Releases**
   (soft/hard update versions and the store page, per store).
 - **Draft → Publish**: edits collect in a draft; *Publish* validates it with the app's own
@@ -198,7 +200,8 @@ A pack is a set of categories, services and compare groups that is switched on a
 together. It stays in the catalog either way (each entry names it in `pack`; the catalog lists
 packs in `packs`), but the API serves a pack's entries only while it is switched on, and never
 serves the pack fields themselves: switched off, the app gets exactly what it got before.
-Compare groups lose members that aren't served (and are dropped below two).
+Compare groups lose members that aren't served (and are dropped below two). A pack marked
+`exclusive` replaces the catalog while it's on: the app gets only that pack's entries.
 
 **Iran-accessible sites** (`app/packs/iran-access.json`, built by
 `tools/build_iran_access_pack.py`) is the catalog to switch to when international internet is
@@ -216,7 +219,7 @@ on, the app has 325 services in 30 categories (a 264 KB catalog).
 2. Dashboard → **Packs** → *Add to the draft*. Everything comes in switched off; *Publish* (users
    see no change).
 3. **When needed**: Overview → **App mode** → the pack (or its switch on the Packs page), and
-   confirm. It is live right away: the switch publishes only itself (a new History entry), and
+   confirm. The mode is one choice: picking a pack switches the other packs off. It is live right away: the switch publishes only itself (a new History entry), and
    other unpublished edits stay in the draft. The app picks it up at its next launch, or on
    return once the catalog is older than the refresh interval (Settings). *Current catalog* goes
    back. The server is in Iran, so the dashboard and the API stay reachable on the national
@@ -236,6 +239,25 @@ official domains. Businesses that take payments should show an e-Namad seal like
 service; some only render it from Iran, so check those there before switching on. Unlike the
 catalog's own services, the pack also lists download sites for software and music (Soft98,
 Downloadha, YasDL, Vala Music), by the owner's decision.
+
+**Iranian sites without an app** (`app/packs/iran-web.json`, built by
+`tools/build_iran_web_pack.py`) is an app mode of its own: it replaces the catalog
+(`exclusive`), so while it's on the app shows only these 260 sites in 24 categories (a 205 KB
+catalog) — downloads, news, government, universities, learning, markets, health, travel and
+more. Every site is
+- **reachable on the national network**: an Iranian resolver gives addresses on Iranian networks
+  (sites behind Cloudflare or hosted abroad go down when international internet is cut);
+- **web only**: no app of its own on Myket (Myket's search, plus the site's Cafe Bazaar app
+  checked on Myket by package, since Myket's search misses some). The 48 catalog services with
+  a Myket app aren't in it; the 13 without one are (Divar, Fidibo, Jobinja…);
+- **lawful**: nothing prohibited under Iranian law (no film download sites, VPNs, gambling or
+  foreign Persian media). Copyright alone isn't a criterion: software download sites are in.
+
+`tools/vet_iran_web.py` gathers that evidence for every candidate (the catalog's, the Iran-access
+pack's and `tools/iran_web_candidates.py`'s), and the build tool's tables record each decision:
+`MYKET_APPS` (with the package), `NOT_REACHABLE` and `OTHER`. Entries are copies with `web-` ids
+next to the originals (stats count them apart); a site that stops qualifying moves to a table.
+The draft with both packs is about 475 KB (the 1 MB nginx limit above applies).
 
 ## Editing the catalog
 
